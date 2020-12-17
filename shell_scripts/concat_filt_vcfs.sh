@@ -24,95 +24,138 @@ set -o pipefail
 # Concatenated and filtered vcf file
 
 # RUN
-# concat_filt_vcfs.sh <project_code> <vcf_dir> <sample_list> <input_vcf_file_suffix>
-# concat_filt_vcfs.sh PRJEB7669 ~/vcf/ ../metadata/PRJEB7669_ena_samps.txt .g.vcf.gz.validated
+# concat_filt_vcfs.sh <study_accession> <metadata_file> <vcf_dir> <gvcf_file_suffix> <ref_file>
+# concat_filt_vcfs.sh PRJEB7669 ../metadata/tb_data_collated_28_10_2020_clean.csv ~/vcf/ .g.vcf.gz ~/refgenome/MTB-h37rv_asm19595v2-eg18.fa
 
 # ------------------------------------------------------------------------------
+
+# Setup
 
 # Variables
 nl="\n"
-project_code=${1}
+study_accession=${1}
 
 # Directories
-vcf_dir=${2}
+vcf_dir=${3}
+tmp_dir=tmp/
+logs_dir=logs/
+genomicsDB_dir=genomicsDB/
 
-# Files
-sample_list=$(cat ${3})
-input_vcf_file_suffix=${4}
-output_vcf_file=${vcf_dir}${project_code}.val.concat.filt.no_indels.vcf.gz
-files=$(cat ${3} | sed "s|.*|${vcf_dir}&${input_vcf_file_suffix}|")
+# Files and suffixes/prefixes
+metadata_file=${2}
+gvcf_file_suffix=${4}
+val_gvcf_file_suffix=${val_gvcf_file_suffix}.validated
+ref_file=${5}
+ref_index=${ref_file}.fai
+vcf_map_file=${tmp_dir}vcf_map_file
+failed_samples_file=${logs_dir}failed_samples
+genotyped_vcf_suffix=val.gt.${gvcf_file_suffix}
+output_vcf_file=${vcf_dir}${project_code}.${genotyped_vcf_suffix}
 
-# ------------------------------------------------------------------------------
+# Parameters
+threads=4
+num_genome_chunks=20
 
 # Make temp dir (delete at end)
-if [ ! -d tmp ]; then
-    mkdir tmp
+if [ ! -d ${tmp_dir} ]; then
+    mkdir ${tmp_dir}
 fi
+
+# Make logs file if none
+if [ ! -d ${logs_dir} ]; then
+    mkdir ${logs_dir}
+fi
+
+# Get samples from metadata based on study_accession number
+sample_list=`grep ${study_accession} ${metadata_file} | cut -d, -f1`
+
+# Make a list of the validated vcf files and put into temp file
+vcf_files=`${samples_list} | sed "s|.*|${vcf_dir}&${val_gvcf_file_suffix}|"`
+
+# Commands
+bedtools_cmd="bedtools makewindows -n ${num_genome_chunks} -g ${ref_index}"
+import_cmd="gatk GenomicsDBImport --genomicsdb-workspace-path ${genomicsDB_dir}{2}_genomics_db -L {1} --sample-name-map ${vcf_map_file} --reader-threads ${threads} --batch-size 500"
+genotype_cmd="gatk GenotypeGVCFs -R ${ref_fasta} -V gendb://${genomicsDB_dir}{2}_genomics_db -O ${vcf_dir}{2}${genotyped_vcf_suffix}"
+
 
 # ------------------------------------------------------------------------------
 
-# Check vcf files exist and are not empty and store as a temp file if so
+# Samples map file and log file
 
-if [ ! -f tmp/${project_code}_samples.txt ]; then
-    touch tmp/${project_code}_samples.txt
+# Generate tab-sep file of sample names and locations of GVCFs for GenomicsDBImport
+if [ ! -s ${vcf_map_file} ] || [ ! -f ${vcf_map_file} ]; then
+    touch ${vcf_map_file}
 fi
 
-for file in ${files}; do
-    if [ -f ${file} ] && [ ! -s ${file} ]; then
-        echo ${file} >> tmp/${project_code}_samples.txt
+# Generate failed samples log
+if [ ! -s ${failed_samples_file} ] || [ ! -f ${failed_samples_file} ]; then
+    touch ${failed_samples_file}
+fi
+
+# Check if validated files exist for each sample and add to map if exist
+for samp in ${sample_list}; do
+    if [ -f ${vcf_dir}${samp}${val_gvcf_file_suffix} ]; then
+        # sed "s|.*|&\t${fastq_dir}&.gvcf.gz|" ${metadata_dir}${samples_list_file} >> ${metadata_dir}${project_code}_sample_map.txt
+        echo -e "${samp}\t${vcf_dir}${samp}${gvcf_file_suffix}" >> ${vcf_map_file}
+    else
+        printf "\n"
+        echo -e "${samp}" >> ${failed_samples_file}
+        printf "\n"
+        echo "Failed sample!: ${samp}"
+        printf "\n"
     fi
 done
 
 
-# ------------------------------------------------------------------------------
+# Take uniq of sample map file otherwise gatk commands fail
+uniq ${vcf_map_file} > ${vcf_map_file}.uniq && mv ${vcf_map_file}.uniq ${vcf_map_file}
 
-# ------------------------------------------------------------------------------------------------------------------------------------------------------------
-# Run ValidateVariants - "validate the adherence of a file to VCF format" - https://gatk.broadinstitute.org/hc/en-us/articles/360042914291-ValidateVariants.
-# ------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Take uniq of failed samples file
+uniq ${failed_samples_file} > ${failed_samples_file}.uniq && mv ${failed_samples_file}.uniq ${failed_samples_file}
 
-for samp in $(cat tmp/${project_code}_samples.txt); do
-    if [ ! -f "${vcf_dir}${samp}.gvcf.gz.validated" ]; then
-        printf "\n"
-        echo "Running ValidateVariants on ${samp}"
-        gatk ValidateVariants -R ${ref_dir}${ref_fasta} -V ${vcf_dir}${samp}.gvcf.gz -gvcf && touch ${vcf_dir}${samp}${validated_vcf_suffix}
-        printf "\n"
-    fi
-done
+
+# ---------------------------------------------------------------------------------------------
+# Run GenomicsDBImport - "Import single-sample GVCFs into GenomicsDB before joint genotyping"
+# ---------------------------------------------------------------------------------------------
 
 printf "\n"
+# Run if database is empty
+if [ ! "$(ls -A ${genomicsDB_dir})" ]; then
+
+    echo "Running GenomicsDBImport on ${vcf_map_file}"
+    # Run in parallel
+    ${bedtools_cmd} | awk '{print $1":"$2+1"-"$3" "$1"_"$2+1"_"$3}' | parallel --bar -j ${threads} --col-sep " " ${import_cmd}
+
+    # Run GenotypeGVCFs to do joint variant calling
+    # "This step runs quite quickly and can be rerun at any point when samples are added to the cohort" - see gatk link above
+    printf "\n"
+    echo "Running GenotypeGVCFs on ${genomicsDB_dir}"
+    ${bedtools_cmd} | awk '{print $1":"$2+1"-"$3" "$1"_"$2+1"_"$3}' | parallel -j ${threads} --col-sep " " ${genotype_cmd}
+
+fi
+
+# ------------------------------------------------------------
+    # Concatenate files together with bcftools
+# ------------------------------------------------------------
+
+# bcftools concat -Oz -o genotyped.vcf.gz `%(window_cmd)s | awk '{print \"%(prefix)s.\"$2\".genotyped.vcf.gz\"}'
+if [ ! -f "${output_vcf_file}" ]; then
+    echo "Concatenating VCFs"
+    printf "\n"
+    # ${bedtools_cmd} | awk '{print $1":"$2+1"-"$3" "$1"_"$2+1"_"$3}' | awk '{print $2".gn.genotyped.vcf.gz"}' > ${metadata_dir}genotyped_files.txt
+    # bcftools concat -Oz -o ${final_concat_vcf_file} `${bedtools_cmd} | awk '{print $1":"$2+1"-"$3" "$1"_"$2+1"_"$3}' | awk '{print $2".gn.genotyped.vcf.gz"}'`
+    bcftools concat -Oz -o ${output_vcf_file} `${bedtools_cmd} | awk '{print $1":"$2+1"-"$3" "$1"_"$2+1"_"$3}' | cut -f2 -d" " | sed "s|.*|${vcf_dir}&${genotyped_vcf_suffix}|"`
+fi
+
+# Index merged file
+if [ ! -f "${output_vcf_file}.tbi" ]; then
+    bcftools index -t ${output_vcf_file}
+fi
 
 # ------------------------------------------------------------------------------
-#
-# # Exclude indels
-# bcftools view -V indels ${output_vcf_file} | \
-# # Exclude regions (repetitive regions. Will include some but not all PPE)
-# bcftools view -T ^${exclude_regions_bed_file} | \
-# # 'Clean' VCF file - convert all '|' to '/'. Convert e.g. 1/0:10,90 to 0/0 (score of 90 for 1 overrides score of 10 for 1)
-# setGT.py | \
-# # -c 1: Make sure all SNPs have at least one instance (sample) (for each row (SNP), need at least one sample).
-# # Some rows (SNPs) may now be all 0/0 after previous step
-# # -a: Trim off alternate alleles (in the Alt/Ref cols) which have gone to 0 in setGT
-# # e.g. G    A,T - the T is now 0/0, so goes to G    A
-# # See notes below
-# # Output as uncompressed bcf (for speed. Otherwise next command has to unzip/uncompress)
-# bcftools view -c 1 -a  | \
-# # Change heterozygous calls to "." (unknown)
-# # Command first says to exclude (-e), but second command (-S) says to convert
-# bcftools filter -e 'GT="het"' -S . | \
-# # Include ratio of AN to AC (F_PASS) - has to be at least 90% non-missing (./.)
-# # i.e. if 10% samples are ./. then remove
-# bcftools view -i 'F_PASS(GT!="mis")>0.9' | \
-# # Re-apply 'at least one sample' rule
-# bcftools view -c 1 | \
-# # Re-calculate 'metadata' cols. e.g. Allele Counts (AC)
-# bcftools +fill-tags | \
-# # Exclude monomorphic - all samples have the SNP or all do not (AF = allele freq)
-# bcftools view -e 'AF==1 || AF==0' | \
-# # Trim the ref/alt if any deletions have dropped out:
-# # See notes below
-# bcftools norm -f ${ref_fasta} -Ob -o ${output_vcf_file}
-#
-# # ------------------------------------------------------------------------------
-#
-# # Clean up
-# rm -r tmp
+
+# Clean up
+
+rm -r tmp
+
+# TEST

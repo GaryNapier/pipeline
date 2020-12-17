@@ -12,13 +12,14 @@ set -o pipefail
 # vcfs must be pre-processed up to gvcf stage
 
 # Arguments to script:
-# Project code, vcf directory location, list of samples, input gvcf suffix
+# study accession number (from metadata file column), metadata file, gvcf directory location, gvcf file suffix from ready gvcfs, reference fasta
 
 # Input:
-# Project code, vcf directory location, list of samples, input gvcf suffix, gvcf files
+# study accession number, metadata file, gvcf directory location, gvcf file suffix from ready gvcfs, reference fasta, gvcf files
 
-# Steps:
-# Concat vcfs corresponding to samples > filter vcfs > output vcf file
+# Main steps:
+# Check if validated gvcf files exist for each sample and add to map if exist > GenomicsDBImport (import gvcfs to database) >
+# GenotypeGVCFs (joint variant calling) > bcftool concat (concatenate (rbind) the split genome into one vcf) > index merged file
 
 # Output:
 # Concatenated and filtered vcf file
@@ -66,6 +67,11 @@ if [ ! -d ${logs_dir} ]; then
     mkdir ${logs_dir}
 fi
 
+# Make genomics DB directory if does not exist
+if [ ! -d ${genomicsDB_dir} ]; then
+    mkdir ${genomicsDB_dir}
+fi
+
 # Get samples from metadata based on study_accession number
 sample_list=`grep ${study_accession} ${metadata_file} | cut -d, -f1`
 
@@ -92,7 +98,7 @@ if [ ! -s ${failed_samples_file} ] || [ ! -f ${failed_samples_file} ]; then
     touch ${failed_samples_file}
 fi
 
-# Check if validated files exist for each sample and add to map if exist
+# Check if validated gvcf files exist for each sample and add to map if exist
 for samp in ${sample_list}; do
     if [ -f ${vcf_dir}${samp}${val_gvcf_file_suffix} ]; then
         # sed "s|.*|&\t${fastq_dir}&.gvcf.gz|" ${metadata_dir}${samples_list_file} >> ${metadata_dir}${project_code}_sample_map.txt
@@ -116,6 +122,7 @@ uniq ${failed_samples_file} > ${failed_samples_file}.uniq && mv ${failed_samples
 
 # ---------------------------------------------------------------------------------------------
 # Run GenomicsDBImport - "Import single-sample GVCFs into GenomicsDB before joint genotyping"
+# Run GenotypeGVCFs - Joint variant calling
 # ---------------------------------------------------------------------------------------------
 
 printf "\n"
@@ -135,7 +142,7 @@ if [ ! "$(ls -A ${genomicsDB_dir})" ]; then
 fi
 
 # ------------------------------------------------------------
-    # Concatenate files together with bcftools
+# Concatenate files together with bcftools
 # ------------------------------------------------------------
 
 # bcftools concat -Oz -o genotyped.vcf.gz `%(window_cmd)s | awk '{print \"%(prefix)s.\"$2\".genotyped.vcf.gz\"}'
@@ -157,5 +164,3 @@ fi
 # Clean up
 
 rm -r tmp
-
-# TEST

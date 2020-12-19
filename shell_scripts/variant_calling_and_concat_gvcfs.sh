@@ -8,7 +8,7 @@ set -o pipefail
 
 # ------------------------------------------------------------------------------
 
-# Concatenate and filter vcfs of samples specific to study accession ready for distance matrix calculation
+# Do joint variant calling on validated gvcfs of samples specific to study accession ready for distance matrix calculation.
 # vcfs must be pre-processed up to gvcf stage
 
 # Arguments to script:

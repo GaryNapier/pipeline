@@ -124,7 +124,7 @@ clust <- hclust(as.dist(dm), method = "single")
 # Plot and save
 wh <- 2500
 png(output_plot_file, res = 300, width = wh, height = wh)
-plot(clust)
+plot(clust, cex = 0.3)
 abline(a = threshold, b = 0)
 dev.off()
 

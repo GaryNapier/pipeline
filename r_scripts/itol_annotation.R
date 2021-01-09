@@ -23,7 +23,7 @@
 
 # RUN:
 # Rscript r_scripts/itol_annotation.R <study_accession> <metadata_file> <clusters_data_file_dir> <itol_location>
-# Rscript r_scripts/itol_annotation.R PRJEB7669 ~/metadata/tb_data_collated_28_10_2020_clean.csv metadata/ itol_annotations
+# Rscript r_scripts/itol_annotation.R PRJEB7669 ~/metadata/tb_data_collated_28_10_2020_clean.csv metadata/ itol_annotations/
 
 # Setup ----
 
@@ -46,37 +46,46 @@ nl <- cat("\n")
 
 # Directories
 clusters_data_file_dir <- args[3]
-itol_location <- args[5]
-tmp_dir <- "tmp/"
+itol_location <- args[4]
 
 # Files and suffixes/prefixes
 metadata_file <- args[2]
 
 clusters_data_file <- paste0(clusters_data_file_dir, study_accession, ".clusters")
 
-itol_dr_in_file <- paste0(itol_location, study_accession, ".dr.txt")
+itol_dr_in_file <- paste0(itol_location, "itol.dr.txt")
 itol_clusters_in_file <- paste0(itol_location, "itol.clusters.txt")
-itol_lineage_in_file <- paste0(itol_location, study_accession, "itol.lineages.txt")
+itol_lineage_in_file <- paste0(itol_location, "itol.lineages.txt")
 
-itol_dr_out_file <- paste0(itol_location, study_accession, "itol.dr.txt")
+itol_dr_out_file <- paste0(itol_location, study_accession, ".dr.txt")
 itol_clusters_out_file <- paste0(itol_location, study_accession, ".clusters.txt")
-itol_lineage_out_file <- paste0(itol_location, study_accession, "lineages.txt")
+itol_lineage_out_file <- paste0(itol_location, study_accession, ".lineages.txt")
 
 nl
 print("ARGUMENTS:")
 nl
-print(c("Study accession:", study_accession))
-print(c("clusters_data_file_dir:", clusters_data_file_dir))
-print(c("output_location:", output_location))
-print(c("tmp_dir:", tmp_dir))
+print(c("study_accession:", study_accession))
+print("")
 print(c("metadata_file:", metadata_file))
-print(c("lineage_file:", lineage_file))
 print(c("clusters_data_file:", clusters_data_file))
-print(c("itol_dr_file:", itol_dr_file))
-print(c("itol_clusters_file:", itol_clusters_file))
-print(c("itol_lineage_file:", itol_lineage_file))
+print("")
+print(c("itol_dr_in_file:", itol_dr_in_file))
+print(c("itol_clusters_in_file:", itol_clusters_in_file))
+print(c("itol_lineage_in_file:", itol_lineage_in_file))
+print("")
+print(c("itol_dr_out_file:", itol_dr_out_file))
+print(c("itol_clusters_out_file:", itol_clusters_out_file))
+print(c("itol_lineage_out_file:", itol_lineage_out_file))
 
+# Read in templates ----
 
+# itol_dr_in_file
+# itol_clusters_in_file
+# itol_lineage_in_file
+
+itol_dr_in_file <- readChar(itol_dr_in_file, nchars = 1e6)
+itol_clusters_in_file <- readChar(itol_clusters_in_file, nchars = 1e6)
+itol_lineage_in_file <- readChar(itol_lineage_in_file, nchars = 1e6)
 
 # Read in sample data/metadata and clean ----
 
@@ -88,32 +97,50 @@ samples <- clusters_data$id
 
 # Drug resistance ----
 
-# drugs <- c("rifampicin", "isoniazid", "ethambutol", "pyrazinamide", "streptomycin", "ofloxacin", 
+# drugs <- c("rifampicin", "isoniazid", "ethambutol", "pyrazinamide", "streptomycin", "ofloxacin",
 #            "moxifloxacin", "levofloxacin", "amikacin", "kanamycin", "capreomycin", "ciprofloxacin",
-#            "prothionamide", "ethionamide", "clarithromycin", "clofazimine", "bedaquiline", "cycloserine", 
-#            "linezolid", "para.aminosalicylic_acid", "rifabutin", "delamanid") 
+#            "prothionamide", "ethionamide", "clarithromycin", "clofazimine", "bedaquiline", "cycloserine",
+#            "linezolid", "para.aminosalicylic_acid", "rifabutin", "delamanid")
 
 cols <- c("run_accession", "study_accession", "dr_status")
 
 # Subset rows by study accession and cols by run_accession (sample ID), study_accession and drugs
 dr_data <- subset(metadata, study_accession == study_accession)
-dr_data <- drug_resistance_data$dr_status
+dr_data <- dr_data[, cols]
 
-sus <- ifelse(dr_data == "Susceptible", 1, -1)
-DR <- ifelse(dr_data == "DR", 1, -1)
-MDR <- ifelse(dr_data == "MDR", 1, -1)
-XDR <- ifelse(dr_data == "XDR", 1, -1)
+sus <- ifelse(dr_data$dr_status == "Susceptible", 1, -1)
+DR <- ifelse(dr_data$dr_status == "DR", 1, -1)
+MDR <- ifelse(dr_data$dr_status == "MDR", 1, -1)
+XDR <- ifelse(dr_data$dr_status == "XDR", 1, -1)
 
-dr_df <- cbind(metadata$run_accession, sus, DR, MDR, XDR)
+dr_df <- cbind(dr_data$run_accession, sus, DR, MDR, XDR)
 
 # Write dataframe to template
 
+# Write the template out under the new file name for the study accession
+write.table(itol_dr_in_file, file = itol_dr_out_file, sep="\t",
+            row.names=F, col.names=F, quote = F)
 
-write.table(dr_df, file = itol_dr_out_file, 
+# Append the drug resistance data to the template
+write.table(dr_df, file = itol_dr_out_file,
             append = T, sep="\t",
             row.names=F, col.names=F, quote = F)
 
 
+# Clusters ----
+
+clusters_data
+
+
+
+# Write the template out under the new file name for the study accession
+write.table(itol_clusters_in_file, file = itol_clusters_out_file, sep="\t",
+            row.names=F, col.names=F, quote = F)
+
+# Append the drug resistance data to the template
+write.table(clusters_df, file = itol_clusters_out_file,
+            append = T, sep="\t",
+            row.names=F, col.names=F, quote = F)
 
 
 

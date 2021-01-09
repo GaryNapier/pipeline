@@ -21,7 +21,8 @@
 # Three itol files, one for each type of annotation
 
 # RUN
-# Rscript itol_templates.R <itol_templates_location>
+# Rscript r_scripts/itol_templates.R <itol_templates_location>
+# Rscript r_scripts/itol_templates.R itol_annotations/
 
 # Setup ----
 
@@ -41,17 +42,14 @@ len_str <- function(string){
 
 # Directories
 itol_templates_location <- "itol_annotations/"
-tmp_dir <- "tmp/"
 
 # Files and suffixes/prefixes
 itol_dr_file <- paste0(itol_templates_location, "itol.dr.txt")
 itol_clusters_file <- paste0(itol_templates_location, "itol.clusters.txt")
 itol_lineage_file <- paste0(itol_templates_location, "itol.lineages.txt")
 
-nl
 print("ARGUMENTS:")
-nl
-print(c("tmp_dir:", tmp_dir))
+print("")
 print(c("itol_templates_location:", itol_templates_location))
 print(c("itol_dr_file:", itol_dr_file))
 print(c("itol_clusters_file:", itol_clusters_file))
@@ -68,6 +66,7 @@ binary_template_text <- html_text(read_html(binary_template_url))
 binary_template_text <- gsub("#SEPARATOR TAB", "SEPARATOR TAB", binary_template_text)
 binary_template_text <- gsub("SEPARATOR SPACE", "#SEPARATOR SPACE", binary_template_text)
 binary_template_text <- gsub("SEPARATOR COMMA", "#SEPARATOR COMMA", binary_template_text)
+# Replace comma with tab
 binary_template_text <- gsub("COLOR,#ff0000", "COLOR\t#ff0000", binary_template_text)
 
 
@@ -105,7 +104,7 @@ dr_template_text <- gsub("FIELD_LABELS,f1", "FIELD_LABELS\tSusceptible\tDR\tMDR\
 dr_template_text <- gsub("#FIELD_COLORS,#ff0000", "FIELD_COLORS\t#e8837d\t#ace87d\t#7de2e8\t#b97de8", dr_template_text)
 dr_template_text <- gsub("#LEGEND_SHAPE_SCALES,1,1,0.5", legend_text, dr_template_text)
 
-write.table(dr_template_text, file = itol_dr_file, 
+write.table(dr_template_text, file = itol_dr_file,
             row.names=F,col.names=F, quote = F)
 
 
@@ -113,13 +112,13 @@ write.table(dr_template_text, file = itol_dr_file,
 
 clusters_template_text <- gsub("DATASET_LABEL label1", "DATASET_LABEL\tClusters", strip_template_text)
 
-write.table(range_template_text, file = itol_clusters_file, 
+write.table(range_template_text, file = itol_clusters_file,
             row.names=F,col.names=F, quote = F)
 
 
 # Lineage ----
 
-write.table(range_template_text, file = itol_lineage_file, 
+write.table(range_template_text, file = itol_lineage_file,
             row.names=F,col.names=F, quote = F)
 
 

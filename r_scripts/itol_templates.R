@@ -101,6 +101,7 @@ legend_text <- "LEGEND_TITLE\tDrug susceptibility\nLEGEND_SHAPES\t1\t2\t3\t4\nLE
 dr_template_text <- gsub("DATASET_LABEL,label1", "DATASET_LABEL\tDrug_resistance", binary_template_text)
 dr_template_text <- gsub("FIELD_SHAPES,1", "FIELD_SHAPES\t1\t2\t3\t4", dr_template_text)
 dr_template_text <- gsub("FIELD_LABELS,f1", "FIELD_LABELS\tSusceptible\tDR\tMDR\tXDR", dr_template_text)
+dr_template_text <- gsub("#FIELD_COLORS,#ff0000,#00ff00,#ffff00,#0000ff", "", dr_template_text)
 dr_template_text <- gsub("#FIELD_COLORS,#ff0000", "FIELD_COLORS\t#e8837d\t#ace87d\t#7de2e8\t#b97de8", dr_template_text)
 dr_template_text <- gsub("#LEGEND_SHAPE_SCALES,1,1,0.5", legend_text, dr_template_text)
 
@@ -112,7 +113,7 @@ write.table(dr_template_text, file = itol_dr_file,
 
 clusters_template_text <- gsub("DATASET_LABEL label1", "DATASET_LABEL\tClusters", strip_template_text)
 
-write.table(range_template_text, file = itol_clusters_file,
+write.table(clusters_template_text, file = itol_clusters_file,
             row.names=F,col.names=F, quote = F)
 
 

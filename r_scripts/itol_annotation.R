@@ -23,11 +23,13 @@
 
 # RUN:
 # Rscript r_scripts/itol_annotation.R <study_accession> <metadata_file> <clusters_data_file_dir> <itol_location>
-# Rscript r_scripts/itol_annotation.R PRJEB7669 ~/metadata/tb_data_collated_28_10_2020_clean.csv metadata/ itol_annotations/
+# Rscript r_scripts/itol_annotation.R PRJEB7669 ~/Documents/metadata/tb_data_collated_28_10_2020_clean.csv metadata/ itol_annotations/ 
 
 # Setup ----
 
 library(rvest)
+library(RColorBrewer)
+library(scales)
 
 heaD <- function(x,...){
   head(x, ...)
@@ -37,12 +39,22 @@ len_str <- function(string){
   length(unlist(strsplit(string, split = "")))
 }
 
+hs <- function(x, ...){
+  print(head(x, ...))
+  print("---")
+  str(x, ...)
+}
+
 # Read in args
 args <- commandArgs(trailingOnly=TRUE)
 
 # Variables
-study_accession <- args[1]
+# NOTE: FOR SOME BLOODY STUPID REASON I CAN'T DO THIS LATER IN THE CODE:
+# subset(metadata, study_accession == study_accession)
+# SO I HAVE TO RENAME THE VARIABLE study_acc INSTEAD OF study_accession
+study_acc <- args[1]
 nl <- cat("\n")
+alpha <- 0.7
 
 # Directories
 clusters_data_file_dir <- args[3]
@@ -51,20 +63,20 @@ itol_location <- args[4]
 # Files and suffixes/prefixes
 metadata_file <- args[2]
 
-clusters_data_file <- paste0(clusters_data_file_dir, study_accession, ".clusters")
+clusters_data_file <- paste0(clusters_data_file_dir, study_acc, ".clusters")
 
 itol_dr_in_file <- paste0(itol_location, "itol.dr.txt")
 itol_clusters_in_file <- paste0(itol_location, "itol.clusters.txt")
 itol_lineage_in_file <- paste0(itol_location, "itol.lineages.txt")
 
-itol_dr_out_file <- paste0(itol_location, study_accession, ".dr.txt")
-itol_clusters_out_file <- paste0(itol_location, study_accession, ".clusters.txt")
-itol_lineage_out_file <- paste0(itol_location, study_accession, ".lineages.txt")
+itol_dr_out_file <- paste0(itol_location, study_acc, ".dr.txt")
+itol_clusters_out_file <- paste0(itol_location, study_acc, ".clusters.txt")
+itol_lineage_out_file <- paste0(itol_location, study_acc, ".lineages.txt")
 
 nl
 print("ARGUMENTS:")
 nl
-print(c("study_accession:", study_accession))
+print(c("study_accession:", study_acc))
 print("")
 print(c("metadata_file:", metadata_file))
 print(c("clusters_data_file:", clusters_data_file))
@@ -97,17 +109,16 @@ samples <- clusters_data$id
 
 # Drug resistance ----
 
-# drugs <- c("rifampicin", "isoniazid", "ethambutol", "pyrazinamide", "streptomycin", "ofloxacin",
-#            "moxifloxacin", "levofloxacin", "amikacin", "kanamycin", "capreomycin", "ciprofloxacin",
-#            "prothionamide", "ethionamide", "clarithromycin", "clofazimine", "bedaquiline", "cycloserine",
-#            "linezolid", "para.aminosalicylic_acid", "rifabutin", "delamanid")
-
 cols <- c("run_accession", "study_accession", "dr_status")
 
 # Subset rows by study accession and cols by run_accession (sample ID), study_accession and drugs
-dr_data <- subset(metadata, study_accession == study_accession)
+dr_data <- subset(metadata, study_accession == study_acc)
 dr_data <- dr_data[, cols]
 
+# Clean
+dr_data <- dr_data[!is.na(dr_data["dr_status"]), ]
+
+# Need to convert to binary cols
 sus <- ifelse(dr_data$dr_status == "Susceptible", 1, -1)
 DR <- ifelse(dr_data$dr_status == "DR", 1, -1)
 MDR <- ifelse(dr_data$dr_status == "MDR", 1, -1)
@@ -129,25 +140,74 @@ write.table(dr_df, file = itol_dr_out_file,
 
 # Clusters ----
 
-clusters_data
+# From itol template:
 
+#Examples:
+#assign a red colored strip to leaf 9606, with label 'Human' (label is displayed in the mouseover popups)
+# <id> <col> <label>
+#9606 #ff0000 Human
 
+# Set colours for each cluster
+n_cols_clust <- length(unique(clusters_data$cluster))
+# Get colours - note: In brewer.pal minimal value for n is 3, so have to subset with [] if less than 3
+# Wrap in alpha function
+cluster_cols <- scales::alpha(brewer.pal(n = n_cols_clust, name = "Dark2")[1:n_cols_clust], alpha = alpha)
+
+# Make df for unique clusters and cols 
+clust_col_df <- data.frame(cluster = unique(clusters_data$cluster), col = cluster_cols)
+
+# Merge with cluster data 
+clusters_data <- merge(clusters_data, clust_col_df, by = "cluster")
+
+# Clean - rearrange cols
+clusters_data <- clusters_data[, c("id", "col", "cluster")]
 
 # Write the template out under the new file name for the study accession
 write.table(itol_clusters_in_file, file = itol_clusters_out_file, sep="\t",
             row.names=F, col.names=F, quote = F)
 
-# Append the drug resistance data to the template
-write.table(clusters_df, file = itol_clusters_out_file,
+# Append the clusters data to the template
+write.table(clusters_data, file = itol_clusters_out_file,
             append = T, sep="\t",
             row.names=F, col.names=F, quote = F)
 
+# Lineage ----
 
+# Example:
+# <id> <"range"> <col> <lineage>
+# ERR2446223	range	#FF1919E6	1
+# SRR2100428	range	#FF1919E6	1
 
+cols <- c("run_accession", "study_accession", "lineage")
 
+# Subset data
+lin_data <- subset(metadata, study_accession == study_acc)
+lin_data <- lin_data[, cols]
 
+uniq_lins <- unique(lin_data[!is.na(lin_data[, "lineage"]), "lineage"])
 
+# Get unique cols per lineage
+n_cols_lin <- length(uniq_lins)
+lin_cols <- rainbow(n_cols_lin, alpha = alpha)
 
+# Make df for unique lins and cols 
+lin_col_df <- data.frame(lineage = uniq_lins, col = lin_cols)
+
+# Merge
+lin_data <- merge(lin_data, lin_col_df, by = "lineage")
+
+# Clean - subset and order columns and add "range" column
+lin_data$range <- rep("range", nrow(lin_data))
+lin_data <- lin_data[, c("run_accession", "range", "col", "lineage")]
+
+# Write the template out under the new file name for the study accession
+write.table(itol_lineage_in_file, file = itol_lineage_out_file, sep="\t",
+            row.names=F, col.names=F, quote = F)
+
+# Append the lin data to the template
+write.table(lin_data, file = itol_lineage_out_file,
+            append = T, sep="\t",
+            row.names=F, col.names=F, quote = F)
 
 
 

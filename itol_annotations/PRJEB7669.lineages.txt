@@ -1,0 +1,310 @@
+TREE_COLORS
+#use this template to define branch colors and styles, colored ranges and label colors/font styles/backgrounds
+#lines starting with a hash are comments and ignored during parsing
+
+#=================================================================#
+#                    MANDATORY SETTINGS                           #
+#=================================================================#
+#select the separator which is used to delimit the data below (TAB,SPACE or COMMA).This separator must be used throughout this file (except in the SEPARATOR line, which uses space).
+
+SEPARATOR TAB
+#SEPARATOR SPACE
+#SEPARATOR COMMA
+
+#First 3 fields define the node, type and color
+#Possible types are:
+#'range': defines a colored range (colored background for labels/clade)
+#'clade': defines color/style for all branches in a clade
+#'branch': defines color/style for a single branch
+#'label': defines font color/style for the leaf label
+#'label_background': defines the leaf label background color
+
+#The following additional fields are required:
+#for 'range', field 4 defines the colored range label (used in the legend)
+
+#The following additional fields are optional:
+#for 'label', field 4 defines the font style ('normal',''bold', 'italic' or 'bold-italic') and field 5 defines the numeric scale factor for the font size (eg. with value 2, font size for that label will be 2x the standard size)
+#for 'clade' and 'branch', field 4 defines the branch style ('normal' or 'dashed') and field 5 defines the branch width scale factor (eg. with value 0.5, branch width for that clade will be 0.5 the standard width)
+
+#Internal tree nodes can be specified using IDs directly, or using the 'last common ancestor' method described in iTOL help pages
+#=================================================================#
+#       Actual data follows after the "DATA" keyword              #
+#=================================================================#
+DATA
+#NODE_ID TYPE COLOR LABEL_OR_STYLE SIZE_FACTOR
+
+#Examples
+#internal node with solid branches colored blue and twice the standard width
+#9031|9606 clade #0000ff normal 2
+#internal node with dashed branches colored red and one half the standard width
+#601|340 clade #ff0000 dashed 0.5
+#a single internal branch colored green, dashed and 5 times the normal width
+#915|777 branch #00ff00 dashed 5
+
+#colored range covering all leaves of an internal node,  colored red and with label 'Eukaryota'
+#184922|9606 range #ff0000 Eukaryota
+#examples of colored ranges from iTOL's Tree of Life
+#2190|2287 range #aaffaa Archaea
+#623|1502 range #aaaaff Bacteria
+
+#leaf label for node 9606 will be displayed in green, bold and twice the regular font size
+#9606 label #00ff00 bold 2
+
+#leaf label for node 9031 will be displayed in yellow, bold italic and half the regular font size
+#9031 label #ffff00 bold-italic 0.5
+
+#leaf label for node 8015 will be displayed in blue
+#8015 label #0000ff
+
+#leaf label for node 9606 will have a semi-transparent red background
+#9606 label_background rgba(255,0,0,0.5)
+
+ERR757145	range	#FF0000B3	4.1.2.1.1
+ERR757149	range	#FF0000B3	4.1.2.1.1
+ERR757146	range	#FF0000B3	4.1.2.1.1
+ERR757147	range	#FF0000B3	4.1.2.1.1
+ERR757148	range	#FF0000B3	4.1.2.1.1
+ERR757160	range	#FF0000B3	4.1.2.1.1
+ERR757150	range	#FF0000B3	4.1.2.1.1
+ERR757151	range	#FF0000B3	4.1.2.1.1
+ERR757159	range	#FF0000B3	4.1.2.1.1
+ERR757163	range	#FF0000B3	4.1.2.1.1
+ERR757164	range	#FF0000B3	4.1.2.1.1
+ERR757165	range	#FF0000B3	4.1.2.1.1
+ERR757166	range	#FF0000B3	4.1.2.1.1
+ERR757167	range	#FF0000B3	4.1.2.1.1
+ERR757168	range	#FF0000B3	4.1.2.1.1
+ERR757169	range	#FF0000B3	4.1.2.1.1
+ERR757170	range	#FF0000B3	4.1.2.1.1
+ERR757171	range	#FF0000B3	4.1.2.1.1
+ERR757172	range	#FF0000B3	4.1.2.1.1
+ERR757173	range	#FF0000B3	4.1.2.1.1
+ERR757174	range	#FF0000B3	4.1.2.1.1
+ERR757175	range	#FF0000B3	4.1.2.1.1
+ERR757176	range	#FF0000B3	4.1.2.1.1
+ERR757177	range	#FF0000B3	4.1.2.1.1
+ERR757178	range	#FF0000B3	4.1.2.1.1
+ERR757179	range	#FF0000B3	4.1.2.1.1
+ERR757180	range	#FF0000B3	4.1.2.1.1
+ERR757181	range	#FF0000B3	4.1.2.1.1
+ERR757182	range	#FF0000B3	4.1.2.1.1
+ERR757183	range	#FF0000B3	4.1.2.1.1
+ERR757184	range	#FF0000B3	4.1.2.1.1
+ERR757185	range	#FF0000B3	4.1.2.1.1
+ERR757186	range	#FF0000B3	4.1.2.1.1
+ERR757187	range	#FF0000B3	4.1.2.1.1
+ERR757188	range	#FF0000B3	4.1.2.1.1
+ERR757189	range	#FF0000B3	4.1.2.1.1
+ERR760809	range	#FF0000B3	4.1.2.1.1
+ERR760810	range	#FF0000B3	4.1.2.1.1
+ERR760811	range	#FF0000B3	4.1.2.1.1
+ERR760812	range	#FF0000B3	4.1.2.1.1
+ERR760813	range	#FF0000B3	4.1.2.1.1
+ERR760814	range	#FF0000B3	4.1.2.1.1
+ERR760815	range	#FF0000B3	4.1.2.1.1
+ERR760816	range	#FF0000B3	4.1.2.1.1
+ERR760817	range	#FF0000B3	4.1.2.1.1
+ERR760818	range	#FF0000B3	4.1.2.1.1
+ERR757161	range	#FF0000B3	4.1.2.1.1
+ERR757152	range	#FF0000B3	4.1.2.1.1
+ERR757162	range	#FF0000B3	4.1.2.1.1
+ERR760822	range	#FF0000B3	4.1.2.1.1
+ERR760823	range	#FF0000B3	4.1.2.1.1
+ERR760824	range	#FF0000B3	4.1.2.1.1
+ERR760825	range	#FF0000B3	4.1.2.1.1
+ERR760826	range	#FF0000B3	4.1.2.1.1
+ERR760827	range	#FF0000B3	4.1.2.1.1
+ERR760828	range	#FF0000B3	4.1.2.1.1
+ERR760829	range	#FF0000B3	4.1.2.1.1
+ERR760830	range	#FF0000B3	4.1.2.1.1
+ERR760831	range	#FF0000B3	4.1.2.1.1
+ERR760832	range	#FF0000B3	4.1.2.1.1
+ERR760833	range	#FF0000B3	4.1.2.1.1
+ERR760834	range	#FF0000B3	4.1.2.1.1
+ERR760835	range	#FF0000B3	4.1.2.1.1
+ERR760836	range	#FF0000B3	4.1.2.1.1
+ERR760837	range	#FF0000B3	4.1.2.1.1
+ERR760838	range	#FF0000B3	4.1.2.1.1
+ERR760839	range	#FF0000B3	4.1.2.1.1
+ERR760840	range	#FF0000B3	4.1.2.1.1
+ERR760841	range	#FF0000B3	4.1.2.1.1
+ERR760842	range	#FF0000B3	4.1.2.1.1
+ERR760843	range	#FF0000B3	4.1.2.1.1
+ERR760844	range	#FF0000B3	4.1.2.1.1
+ERR760845	range	#FF0000B3	4.1.2.1.1
+ERR760846	range	#FF0000B3	4.1.2.1.1
+ERR760847	range	#FF0000B3	4.1.2.1.1
+ERR760848	range	#FF0000B3	4.1.2.1.1
+ERR760849	range	#FF0000B3	4.1.2.1.1
+ERR760850	range	#FF0000B3	4.1.2.1.1
+ERR760851	range	#FF0000B3	4.1.2.1.1
+ERR760852	range	#FF0000B3	4.1.2.1.1
+ERR760853	range	#FF0000B3	4.1.2.1.1
+ERR760854	range	#FF0000B3	4.1.2.1.1
+ERR760855	range	#FF0000B3	4.1.2.1.1
+ERR760856	range	#FF0000B3	4.1.2.1.1
+ERR760857	range	#FF0000B3	4.1.2.1.1
+ERR760858	range	#FF0000B3	4.1.2.1.1
+ERR760819	range	#FF0000B3	4.1.2.1.1
+ERR760820	range	#FF0000B3	4.1.2.1.1
+ERR760821	range	#FF0000B3	4.1.2.1.1
+ERR760862	range	#FF0000B3	4.1.2.1.1
+ERR760863	range	#FF0000B3	4.1.2.1.1
+ERR760864	range	#FF0000B3	4.1.2.1.1
+ERR760865	range	#FF0000B3	4.1.2.1.1
+ERR760866	range	#FF0000B3	4.1.2.1.1
+ERR760867	range	#FF0000B3	4.1.2.1.1
+ERR760868	range	#FF0000B3	4.1.2.1.1
+ERR760869	range	#FF0000B3	4.1.2.1.1
+ERR760870	range	#FF0000B3	4.1.2.1.1
+ERR760871	range	#FF0000B3	4.1.2.1.1
+ERR760872	range	#FF0000B3	4.1.2.1.1
+ERR760873	range	#FF0000B3	4.1.2.1.1
+ERR760874	range	#FF0000B3	4.1.2.1.1
+ERR760875	range	#FF0000B3	4.1.2.1.1
+ERR760876	range	#FF0000B3	4.1.2.1.1
+ERR760877	range	#FF0000B3	4.1.2.1.1
+ERR760878	range	#FF0000B3	4.1.2.1.1
+ERR760879	range	#FF0000B3	4.1.2.1.1
+ERR760880	range	#FF0000B3	4.1.2.1.1
+ERR760881	range	#FF0000B3	4.1.2.1.1
+ERR760882	range	#FF0000B3	4.1.2.1.1
+ERR760883	range	#FF0000B3	4.1.2.1.1
+ERR760884	range	#FF0000B3	4.1.2.1.1
+ERR760885	range	#FF0000B3	4.1.2.1.1
+ERR760886	range	#FF0000B3	4.1.2.1.1
+ERR760887	range	#FF0000B3	4.1.2.1.1
+ERR760595	range	#FF0000B3	4.1.2.1.1
+ERR760596	range	#FF0000B3	4.1.2.1.1
+ERR760597	range	#FF0000B3	4.1.2.1.1
+ERR760598	range	#FF0000B3	4.1.2.1.1
+ERR760599	range	#FF0000B3	4.1.2.1.1
+ERR760600	range	#FF0000B3	4.1.2.1.1
+ERR760601	range	#FF0000B3	4.1.2.1.1
+ERR760602	range	#FF0000B3	4.1.2.1.1
+ERR760603	range	#FF0000B3	4.1.2.1.1
+ERR760604	range	#FF0000B3	4.1.2.1.1
+ERR760605	range	#FF0000B3	4.1.2.1.1
+ERR760859	range	#FF0000B3	4.1.2.1.1
+ERR760860	range	#FF0000B3	4.1.2.1.1
+ERR760861	range	#FF0000B3	4.1.2.1.1
+ERR760610	range	#FF0000B3	4.1.2.1.1
+ERR760611	range	#FF0000B3	4.1.2.1.1
+ERR760612	range	#FF0000B3	4.1.2.1.1
+ERR760731	range	#FF0000B3	4.1.2.1.1
+ERR760732	range	#FF0000B3	4.1.2.1.1
+ERR760733	range	#FF0000B3	4.1.2.1.1
+ERR760734	range	#FF0000B3	4.1.2.1.1
+ERR760735	range	#FF0000B3	4.1.2.1.1
+ERR760736	range	#FF0000B3	4.1.2.1.1
+ERR760737	range	#FF0000B3	4.1.2.1.1
+ERR760738	range	#FF0000B3	4.1.2.1.1
+ERR760739	range	#FF0000B3	4.1.2.1.1
+ERR760740	range	#FF0000B3	4.1.2.1.1
+ERR760741	range	#FF0000B3	4.1.2.1.1
+ERR760742	range	#FF0000B3	4.1.2.1.1
+ERR760743	range	#FF0000B3	4.1.2.1.1
+ERR760744	range	#FF0000B3	4.1.2.1.1
+ERR760745	range	#FF0000B3	4.1.2.1.1
+ERR760746	range	#FF0000B3	4.1.2.1.1
+ERR760747	range	#FF0000B3	4.1.2.1.1
+ERR760748	range	#FF0000B3	4.1.2.1.1
+ERR760749	range	#FF0000B3	4.1.2.1.1
+ERR760750	range	#FF0000B3	4.1.2.1.1
+ERR760751	range	#FF0000B3	4.1.2.1.1
+ERR760752	range	#FF0000B3	4.1.2.1.1
+ERR760753	range	#FF0000B3	4.1.2.1.1
+ERR760754	range	#FF0000B3	4.1.2.1.1
+ERR760755	range	#FF0000B3	4.1.2.1.1
+ERR760756	range	#FF0000B3	4.1.2.1.1
+ERR760757	range	#FF0000B3	4.1.2.1.1
+ERR760758	range	#FF0000B3	4.1.2.1.1
+ERR760759	range	#FF0000B3	4.1.2.1.1
+ERR760760	range	#FF0000B3	4.1.2.1.1
+ERR760761	range	#FF0000B3	4.1.2.1.1
+ERR760762	range	#FF0000B3	4.1.2.1.1
+ERR760763	range	#FF0000B3	4.1.2.1.1
+ERR760764	range	#FF0000B3	4.1.2.1.1
+ERR760607	range	#FF0000B3	4.1.2.1.1
+ERR760608	range	#FF0000B3	4.1.2.1.1
+ERR760609	range	#FF0000B3	4.1.2.1.1
+ERR760768	range	#FF0000B3	4.1.2.1.1
+ERR762352	range	#FF0000B3	4.1.2.1.1
+ERR760778	range	#FF0000B3	4.1.2.1.1
+ERR760779	range	#FF0000B3	4.1.2.1.1
+ERR760781	range	#FF0000B3	4.1.2.1.1
+ERR760782	range	#FF0000B3	4.1.2.1.1
+ERR760783	range	#FF0000B3	4.1.2.1.1
+ERR760784	range	#FF0000B3	4.1.2.1.1
+ERR760785	range	#FF0000B3	4.1.2.1.1
+ERR760786	range	#FF0000B3	4.1.2.1.1
+ERR760787	range	#FF0000B3	4.1.2.1.1
+ERR760788	range	#FF0000B3	4.1.2.1.1
+ERR760789	range	#FF0000B3	4.1.2.1.1
+ERR760790	range	#FF0000B3	4.1.2.1.1
+ERR760791	range	#FF0000B3	4.1.2.1.1
+ERR760792	range	#FF0000B3	4.1.2.1.1
+ERR760793	range	#FF0000B3	4.1.2.1.1
+ERR760794	range	#FF0000B3	4.1.2.1.1
+ERR760795	range	#FF0000B3	4.1.2.1.1
+ERR760796	range	#FF0000B3	4.1.2.1.1
+ERR760797	range	#FF0000B3	4.1.2.1.1
+ERR760798	range	#FF0000B3	4.1.2.1.1
+ERR762353	range	#FF0000B3	4.1.2.1.1
+ERR760799	range	#FF0000B3	4.1.2.1.1
+ERR760800	range	#FF0000B3	4.1.2.1.1
+ERR760801	range	#FF0000B3	4.1.2.1.1
+ERR760802	range	#FF0000B3	4.1.2.1.1
+ERR760803	range	#FF0000B3	4.1.2.1.1
+ERR760888	range	#FF0000B3	4.1.2.1.1
+ERR760889	range	#FF0000B3	4.1.2.1.1
+ERR760890	range	#FF0000B3	4.1.2.1.1
+ERR760891	range	#FF0000B3	4.1.2.1.1
+ERR760892	range	#FF0000B3	4.1.2.1.1
+ERR760893	range	#FF0000B3	4.1.2.1.1
+ERR760894	range	#FF0000B3	4.1.2.1.1
+ERR760895	range	#FF0000B3	4.1.2.1.1
+ERR760896	range	#FF0000B3	4.1.2.1.1
+ERR760765	range	#FF0000B3	4.1.2.1.1
+ERR760766	range	#FF0000B3	4.1.2.1.1
+ERR760767	range	#FF0000B3	4.1.2.1.1
+ERR760901	range	#FF0000B3	4.1.2.1.1
+ERR760902	range	#FF0000B3	4.1.2.1.1
+ERR760903	range	#FF0000B3	4.1.2.1.1
+ERR760904	range	#FF0000B3	4.1.2.1.1
+ERR760905	range	#FF0000B3	4.1.2.1.1
+ERR760906	range	#FF0000B3	4.1.2.1.1
+ERR760907	range	#FF0000B3	4.1.2.1.1
+ERR760908	range	#FF0000B3	4.1.2.1.1
+ERR760909	range	#FF0000B3	4.1.2.1.1
+ERR760910	range	#FF0000B3	4.1.2.1.1
+ERR760911	range	#FF0000B3	4.1.2.1.1
+ERR760912	range	#FF0000B3	4.1.2.1.1
+ERR760913	range	#FF0000B3	4.1.2.1.1
+ERR760914	range	#FF0000B3	4.1.2.1.1
+ERR760915	range	#FF0000B3	4.1.2.1.1
+ERR760916	range	#FF0000B3	4.1.2.1.1
+ERR760917	range	#FF0000B3	4.1.2.1.1
+ERR760918	range	#FF0000B3	4.1.2.1.1
+ERR760919	range	#FF0000B3	4.1.2.1.1
+ERR760920	range	#FF0000B3	4.1.2.1.1
+ERR760921	range	#FF0000B3	4.1.2.1.1
+ERR760922	range	#FF0000B3	4.1.2.1.1
+ERR760923	range	#FF0000B3	4.1.2.1.1
+ERR760924	range	#FF0000B3	4.1.2.1.1
+ERR760925	range	#FF0000B3	4.1.2.1.1
+ERR760926	range	#FF0000B3	4.1.2.1.1
+ERR760927	range	#FF0000B3	4.1.2.1.1
+ERR845303	range	#FF0000B3	4.1.2.1.1
+ERR845304	range	#FF0000B3	4.1.2.1.1
+ERR845305	range	#FF0000B3	4.1.2.1.1
+ERR845306	range	#FF0000B3	4.1.2.1.1
+ERR845307	range	#FF0000B3	4.1.2.1.1
+ERR845327	range	#FF0000B3	4.1.2.1.1
+ERR845328	range	#FF0000B3	4.1.2.1.1
+ERR845329	range	#FF0000B3	4.1.2.1.1
+ERR845330	range	#FF0000B3	4.1.2.1.1
+ERR850262	range	#FF0000B3	4.1.2.1.1
+ERR760897	range	#FF0000B3	4.1.2.1.1
+ERR760899	range	#FF0000B3	4.1.2.1.1
+ERR760900	range	#FF0000B3	4.1.2.1.1

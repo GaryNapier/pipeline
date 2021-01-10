@@ -113,6 +113,24 @@ write.table(dr_template_text, file = itol_dr_file,
 
 clusters_template_text <- gsub("DATASET_LABEL label1", "DATASET_LABEL\tClusters", strip_template_text)
 
+#LEGEND_TITLE Dataset_legend
+#LEGEND_POSITION_X 100
+#LEGEND_POSITION_Y 100
+#LEGEND_SHAPES 1 1 2 2
+#LEGEND_COLORS #ff0000 #00ff00 rgba(0,255,0,0.5) #0000ff
+#LEGEND_LABELS value1 value2 value3 value4
+#LEGEND_SHAPE_SCALES 1 1 0.5 1
+
+# LEGEND_TITLE	Clusters
+# #LEGEND_POSITION_X 100
+# #LEGEND_POSITION_Y 100
+# LEGEND_SHAPES	1
+# LEGEND_COLORS	#1B9E77E6
+# LEGEND_LABELS	1
+# #LEGEND_SHAPE_SCALES 1 1 0.5 1
+
+clusters_template_text <- gsub("#LEGEND_TITLE Dataset_legend", "LEGEND_TITLE\tClusters", clusters_template_text)
+
 write.table(clusters_template_text, file = itol_clusters_file,
             row.names=F,col.names=F, quote = F)
 

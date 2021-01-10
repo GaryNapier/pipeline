@@ -162,6 +162,46 @@ clusters_data <- merge(clusters_data, clust_col_df, by = "cluster")
 # Clean - rearrange cols
 clusters_data <- clusters_data[, c("id", "col", "cluster")]
 
+# Do legend shapes and labels
+
+#LEGEND_TITLE Dataset_legend
+#LEGEND_POSITION_X 100
+#LEGEND_POSITION_Y 100
+#LEGEND_SHAPES 1 1 2 2
+#LEGEND_COLORS #ff0000 #00ff00 rgba(0,255,0,0.5) #0000ff
+#LEGEND_LABELS value1 value2 value3 value4
+#LEGEND_SHAPE_SCALES 1 1 0.5 1
+
+# LEGEND_TITLE	Clusters
+# #LEGEND_POSITION_X 100
+# #LEGEND_POSITION_Y 100
+# LEGEND_SHAPES	1
+# LEGEND_COLORS	#1B9E77E6
+# LEGEND_LABELS	1
+# #LEGEND_SHAPE_SCALES 1 1 0.5 1
+
+
+# Legend shapes - repeat "1" for as many unique clusters and intersperse with "\t"
+leg_shapes <- paste0("LEGEND_SHAPES\t", 
+                     paste0(paste0(rep(1, length(unique(clusters_data$cluster))), "\t"), collapse = ""))
+
+itol_clusters_in_file <- gsub("#LEGEND_SHAPES 1 1 2 2", leg_shapes, itol_clusters_in_file)
+
+
+# Legend colours - same for labels but just the unique cols
+leg_cols <- paste0("LEGEND_COLORS\t", 
+                     paste0(paste0(unique(clusters_data$col), "\t"), collapse = ""))
+
+itol_clusters_in_file <- gsub("#LEGEND_COLORS #ff0000 #00ff00 rgba\\(0,255,0,0.5\\) #0000ff", 
+                              leg_cols, itol_clusters_in_file)
+
+# Legend labels - same for labels but just the unique values
+leg_labels <- paste0("LEGEND_LABELS\t", 
+                     paste0(paste0(unique(clusters_data$cluster), "\t"), collapse = ""))
+
+itol_clusters_in_file <- gsub("#LEGEND_LABELS value1 value2 value3 value4", 
+                              leg_labels, itol_clusters_in_file)
+
 # Write the template out under the new file name for the study accession
 write.table(itol_clusters_in_file, file = itol_clusters_out_file, sep="\t",
             row.names=F, col.names=F, quote = F)

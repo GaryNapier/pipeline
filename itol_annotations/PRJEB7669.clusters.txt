@@ -44,12 +44,12 @@ COLOR_BRANCHES	0
 #5: left pointing triangle
 #6: checkmark
 
-#LEGEND_TITLE Dataset_legend
+LEGEND_TITLE	Clusters
 #LEGEND_POSITION_X 100
 #LEGEND_POSITION_Y 100
-#LEGEND_SHAPES 1 1 2 2
-#LEGEND_COLORS #ff0000 #00ff00 rgba(0,255,0,0.5) #0000ff
-#LEGEND_LABELS value1 value2 value3 value4
+LEGEND_SHAPES	1	
+LEGEND_COLORS	#1B9E77B2	
+LEGEND_LABELS	1	
 #LEGEND_SHAPE_SCALES 1 1 0.5 1
 
 #width of the colored strip

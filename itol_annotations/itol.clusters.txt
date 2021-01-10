@@ -44,7 +44,7 @@ COLOR_BRANCHES	0
 #5: left pointing triangle
 #6: checkmark
 
-#LEGEND_TITLE Dataset_legend
+LEGEND_TITLE	Clusters
 #LEGEND_POSITION_X 100
 #LEGEND_POSITION_Y 100
 #LEGEND_SHAPES 1 1 2 2

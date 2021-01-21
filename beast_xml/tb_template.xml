@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" required="" version="2.6">
+
+    <data
+id="STUDY_ACCESSION"
+spec="Alignment"
+name="alignment">
+                        <!-- <sequence id="seq_ERR757145_01/01/2013" spec="Sequence" taxon="ERR757145_01/01/2013" totalcount="4" value="CGATCT...CCCTTTCA"/> -->
+
+                    DATA
+                    </data>
+
+
+
+
+
+
+
+
+
+<map name="Uniform" >beast.math.distributions.Uniform</map>
+<map name="Exponential" >beast.math.distributions.Exponential</map>
+<map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
+<map name="Normal" >beast.math.distributions.Normal</map>
+<map name="Beta" >beast.math.distributions.Beta</map>
+<map name="Gamma" >beast.math.distributions.Gamma</map>
+<map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
+<map name="prior" >beast.math.distributions.Prior</map>
+<map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
+<map name="OneOnX" >beast.math.distributions.OneOnX</map>
+
+
+<run id="mcmc" spec="MCMC" chainLength="10000000">
+    <state id="state" spec="State" storeEvery="5000">
+        <tree id="Tree.t:STUDY_ACCESSION" spec="beast.evolution.tree.Tree" name="stateNode">
+            <trait id="dateTrait.t:STUDY_ACCESSION" spec="beast.evolution.tree.TraitSet" dateFormat="dd/M/yyyy" traitname="date" value="">
+                <taxa id="TaxonSet.STUDY_ACCESSION" spec="TaxonSet">
+                    <alignment idref="STUDY_ACCESSION">
+                        <constantSiteWeights id="IntegerParameter.0" spec="parameter.IntegerParameter" dimension="4" lower="0" upper="0">758511 1449901 1444524 758336</constantSiteWeights>
+                     </alignment>
+                </taxa>
+            </trait>
+            <taxonset idref="TaxonSet.STUDY_ACCESSION"/>
+        </tree>
+        <parameter id="mutationRate.s:STUDY_ACCESSION" spec="parameter.RealParameter" name="stateNode">MUTATIONRATE</parameter>
+        <parameter id="clockRate.c:STUDY_ACCESSION" spec="parameter.RealParameter" name="stateNode">CLOCKRATE</parameter>
+        <parameter id="popSize.t:STUDY_ACCESSION" spec="parameter.RealParameter" lower="POPSIZELOWER" name="stateNode" upper="POPSIZEUPPER">POPSIZE</parameter>
+        <parameter id="freqParameter.s:STUDY_ACCESSION" spec="parameter.RealParameter" dimension="4" lower="0.0" name="stateNode" upper="1.0">FREQPARAMETER</parameter>
+        <parameter id="rateAC.s:STUDY_ACCESSION" spec="parameter.RealParameter" lower="0.0" name="stateNode">1.0</parameter>
+        <parameter id="rateAG.s:STUDY_ACCESSION" spec="parameter.RealParameter" lower="0.0" name="stateNode">1.0</parameter>
+        <parameter id="rateAT.s:STUDY_ACCESSION" spec="parameter.RealParameter" lower="0.0" name="stateNode">1.0</parameter>
+        <parameter id="rateCG.s:STUDY_ACCESSION" spec="parameter.RealParameter" lower="0.0" name="stateNode">1.0</parameter>
+        <parameter id="rateGT.s:STUDY_ACCESSION" spec="parameter.RealParameter" lower="0.0" name="stateNode">1.0</parameter>
+    </state>
+
+    <init id="RandomTree.t:STUDY_ACCESSION" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree.t:STUDY_ACCESSION" taxa="@STUDY_ACCESSION">
+        <populationModel id="ConstantPopulation0.t:STUDY_ACCESSION" spec="ConstantPopulation">
+            <parameter id="randomPopSize.t:STUDY_ACCESSION" spec="parameter.RealParameter" name="popSize">1.0</parameter>
+        </populationModel>
+    </init>
+
+    <distribution id="posterior" spec="util.CompoundDistribution">
+        <distribution id="prior" spec="util.CompoundDistribution">
+            <distribution id="CoalescentConstant.t:STUDY_ACCESSION" spec="Coalescent">
+                <populationModel id="ConstantPopulation.t:STUDY_ACCESSION" spec="ConstantPopulation" popSize="@popSize.t:STUDY_ACCESSION"/>
+                <treeIntervals id="TreeIntervals.t:STUDY_ACCESSION" spec="TreeIntervals" tree="@Tree.t:STUDY_ACCESSION"/>
+            </distribution>
+            <prior id="ClockPrior.c:STUDY_ACCESSION" name="distribution" x="@clockRate.c:STUDY_ACCESSION">
+                <Uniform id="Uniform.0" name="distr" upper="Infinity"/>
+            </prior>
+            <prior id="FrequenciesPrior.s:STUDY_ACCESSION" name="distribution" x="@freqParameter.s:STUDY_ACCESSION">
+                <Uniform id="Uniform.3" name="distr"/>
+            </prior>
+            <prior id="PopSizePrior.t:STUDY_ACCESSION" name="distribution" x="@popSize.t:STUDY_ACCESSION">
+                <LogNormal id="LogNormalDistributionModel.0" name="distr">
+                    <parameter id="RealParameter.13" spec="parameter.RealParameter" estimate="false" name="M">1.0</parameter>
+                    <parameter id="RealParameter.14" spec="parameter.RealParameter" estimate="false" lower="0.0" name="S" upper="5.0">1.25</parameter>
+                </LogNormal>
+            </prior>
+            <prior id="RateACPrior.s:STUDY_ACCESSION" name="distribution" x="@rateAC.s:STUDY_ACCESSION">
+                <Gamma id="Gamma.0" name="distr">
+                    <parameter id="RealParameter.1" spec="parameter.RealParameter" estimate="false" name="alpha">0.05</parameter>
+                    <parameter id="RealParameter.2" spec="parameter.RealParameter" estimate="false" name="beta">10.0</parameter>
+                </Gamma>
+            </prior>
+            <prior id="RateAGPrior.s:STUDY_ACCESSION" name="distribution" x="@rateAG.s:STUDY_ACCESSION">
+                <Gamma id="Gamma.1" name="distr">
+                    <parameter id="RealParameter.3" spec="parameter.RealParameter" estimate="false" name="alpha">0.05</parameter>
+                    <parameter id="RealParameter.4" spec="parameter.RealParameter" estimate="false" name="beta">20.0</parameter>
+                </Gamma>
+            </prior>
+            <prior id="RateATPrior.s:STUDY_ACCESSION" name="distribution" x="@rateAT.s:STUDY_ACCESSION">
+                <Gamma id="Gamma.2" name="distr">
+                    <parameter id="RealParameter.5" spec="parameter.RealParameter" estimate="false" name="alpha">0.05</parameter>
+                    <parameter id="RealParameter.6" spec="parameter.RealParameter" estimate="false" name="beta">10.0</parameter>
+                </Gamma>
+            </prior>
+            <prior id="RateCGPrior.s:STUDY_ACCESSION" name="distribution" x="@rateCG.s:STUDY_ACCESSION">
+                <Gamma id="Gamma.3" name="distr">
+                    <parameter id="RealParameter.7" spec="parameter.RealParameter" estimate="false" name="alpha">0.05</parameter>
+                    <parameter id="RealParameter.8" spec="parameter.RealParameter" estimate="false" name="beta">10.0</parameter>
+                </Gamma>
+            </prior>
+            <prior id="RateGTPrior.s:STUDY_ACCESSION" name="distribution" x="@rateGT.s:STUDY_ACCESSION">
+                <Gamma id="Gamma.5" name="distr">
+                    <parameter id="RealParameter.11" spec="parameter.RealParameter" estimate="false" name="alpha">0.05</parameter>
+                    <parameter id="RealParameter.12" spec="parameter.RealParameter" estimate="false" name="beta">10.0</parameter>
+                </Gamma>
+            </prior>
+        </distribution>
+        <distribution id="likelihood" spec="util.CompoundDistribution" useThreads="true">
+            <distribution id="treeLikelihood.STUDY_ACCESSION" spec="ThreadedTreeLikelihood" data="@STUDY_ACCESSION" tree="@Tree.t:STUDY_ACCESSION">
+                <siteModel id="SiteModel.s:STUDY_ACCESSION" spec="SiteModel" mutationRate="@mutationRate.s:STUDY_ACCESSION">
+                    <parameter id="gammaShape.s:STUDY_ACCESSION" spec="parameter.RealParameter" estimate="false" name="shape">1.0</parameter>
+                    <parameter id="proportionInvariant.s:STUDY_ACCESSION" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
+                    <substModel id="gtr.s:STUDY_ACCESSION" spec="GTR" rateAC="@rateAC.s:STUDY_ACCESSION" rateAG="@rateAG.s:STUDY_ACCESSION" rateAT="@rateAT.s:STUDY_ACCESSION" rateCG="@rateCG.s:STUDY_ACCESSION" rateGT="@rateGT.s:STUDY_ACCESSION">
+                        <parameter id="rateCT.s:STUDY_ACCESSION" spec="parameter.RealParameter" estimate="false" lower="0.0" name="rateCT">1.0</parameter>
+                        <frequencies id="estimatedFreqs.s:STUDY_ACCESSION" spec="Frequencies" frequencies="@freqParameter.s:STUDY_ACCESSION"/>
+                    </substModel>
+                </siteModel>
+                <branchRateModel id="StrictClock.c:STUDY_ACCESSION" spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c:STUDY_ACCESSION"/>
+            </distribution>
+        </distribution>
+    </distribution>
+
+    <operator id="FixMeanMutationRatesOperator" spec="DeltaExchangeOperator" delta="0.75" weight="2.0">
+        <parameter idref="mutationRate.s:STUDY_ACCESSION"/>
+        <weightvector id="weightparameter" spec="parameter.IntegerParameter" estimate="false" lower="0" upper="0">669</weightvector>
+    </operator>
+
+    <operator id="StrictClockRateScaler.c:STUDY_ACCESSION" spec="ScaleOperator" parameter="@clockRate.c:STUDY_ACCESSION" scaleFactor="0.75" weight="3.0"/>
+
+    <operator id="strictClockUpDownOperator.c:STUDY_ACCESSION" spec="UpDownOperator" scaleFactor="0.75" weight="3.0">
+        <up idref="clockRate.c:STUDY_ACCESSION"/>
+        <down idref="Tree.t:STUDY_ACCESSION"/>
+    </operator>
+
+    <operator id="CoalescentConstantTreeScaler.t:STUDY_ACCESSION" spec="ScaleOperator" scaleFactor="0.5" tree="@Tree.t:STUDY_ACCESSION" weight="3.0"/>
+
+    <operator id="CoalescentConstantTreeRootScaler.t:STUDY_ACCESSION" spec="ScaleOperator" rootOnly="true" scaleFactor="0.5" tree="@Tree.t:STUDY_ACCESSION" weight="3.0"/>
+
+    <operator id="CoalescentConstantUniformOperator.t:STUDY_ACCESSION" spec="Uniform" tree="@Tree.t:STUDY_ACCESSION" weight="30.0"/>
+
+    <operator id="CoalescentConstantSubtreeSlide.t:STUDY_ACCESSION" spec="SubtreeSlide" tree="@Tree.t:STUDY_ACCESSION" weight="15.0"/>
+
+    <operator id="CoalescentConstantNarrow.t:STUDY_ACCESSION" spec="Exchange" tree="@Tree.t:STUDY_ACCESSION" weight="15.0"/>
+
+    <operator id="CoalescentConstantWide.t:STUDY_ACCESSION" spec="Exchange" isNarrow="false" tree="@Tree.t:STUDY_ACCESSION" weight="3.0"/>
+
+    <operator id="CoalescentConstantWilsonBalding.t:STUDY_ACCESSION" spec="WilsonBalding" tree="@Tree.t:STUDY_ACCESSION" weight="3.0"/>
+
+    <operator id="PopSizeScaler.t:STUDY_ACCESSION" spec="ScaleOperator" parameter="@popSize.t:STUDY_ACCESSION" scaleFactor="0.75" weight="3.0"/>
+
+    <operator id="FrequenciesExchanger.s:STUDY_ACCESSION" spec="DeltaExchangeOperator" delta="0.01" weight="0.1">
+        <parameter idref="freqParameter.s:STUDY_ACCESSION"/>
+    </operator>
+
+    <operator id="RateACScaler.s:STUDY_ACCESSION" spec="ScaleOperator" parameter="@rateAC.s:STUDY_ACCESSION" scaleFactor="0.5" weight="0.1"/>
+
+    <operator id="RateAGScaler.s:STUDY_ACCESSION" spec="ScaleOperator" parameter="@rateAG.s:STUDY_ACCESSION" scaleFactor="0.5" weight="0.1"/>
+
+    <operator id="RateATScaler.s:STUDY_ACCESSION" spec="ScaleOperator" parameter="@rateAT.s:STUDY_ACCESSION" scaleFactor="0.5" weight="0.1"/>
+
+    <operator id="RateCGScaler.s:STUDY_ACCESSION" spec="ScaleOperator" parameter="@rateCG.s:STUDY_ACCESSION" scaleFactor="0.5" weight="0.1"/>
+
+    <operator id="RateGTScaler.s:STUDY_ACCESSION" spec="ScaleOperator" parameter="@rateGT.s:STUDY_ACCESSION" scaleFactor="0.5" weight="0.1"/>
+
+    <logger id="tracelog" spec="Logger" fileName="STUDY_ACCESSION.log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">
+        <log idref="posterior"/>
+        <log idref="likelihood"/>
+        <log idref="prior"/>
+        <log idref="treeLikelihood.STUDY_ACCESSION"/>
+        <log id="TreeHeight.t:STUDY_ACCESSION" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:STUDY_ACCESSION"/>
+        <log idref="clockRate.c:STUDY_ACCESSION"/>
+        <log idref="mutationRate.s:STUDY_ACCESSION"/>
+        <log idref="popSize.t:STUDY_ACCESSION"/>
+        <log idref="CoalescentConstant.t:STUDY_ACCESSION"/>
+        <log idref="freqParameter.s:STUDY_ACCESSION"/>
+        <log idref="rateAC.s:STUDY_ACCESSION"/>
+        <log idref="rateAG.s:STUDY_ACCESSION"/>
+        <log idref="rateAT.s:STUDY_ACCESSION"/>
+        <log idref="rateCG.s:STUDY_ACCESSION"/>
+        <log idref="rateGT.s:STUDY_ACCESSION"/>
+    </logger>
+
+    <logger id="screenlog" spec="Logger" logEvery="1000">
+        <log idref="posterior"/>
+        <log idref="likelihood"/>
+        <log idref="prior"/>
+    </logger>
+
+    <logger id="treelog.t:STUDY_ACCESSION" spec="Logger" fileName="$(tree).trees" logEvery="1000" mode="tree">
+        <log id="TreeWithMetaDataLogger.t:STUDY_ACCESSION" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree.t:STUDY_ACCESSION"/>
+    </logger>
+
+    <operatorschedule id="OperatorSchedule" spec="OperatorSchedule"/>
+
+</run>
+
+</beast>

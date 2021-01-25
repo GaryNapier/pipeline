@@ -46,7 +46,7 @@ plots_dir=plots/
 
 # Files
 study_accession_list=$(cat ${metadata_local_dir}study_accession_list.txt)
-metadata_file=${metadata_dir}tb_data_collated_28_10_2020_clean.csv
+metadata_file=${metadata_dir}tb_data_collated_28_10_2020_clean.txt
 xml_template_file=${xml_script_location}tb_template.xml
 ref_fasta_file=${ref_dir}MTB-h37rv_asm19595v2-eg18.fa
 ex_loci_file=${ref_dir}excluded_loci.bed

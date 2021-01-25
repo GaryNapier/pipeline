@@ -27,8 +27,8 @@ set -o pipefail
 
 # RUN
 # Assume run from ~/transmission :
-# ./shell_scripts/plink_dist_and_pca.sh <study_accession>, <vcf_dir>, <output_dir>
-# ./shell_scripts/plink_dist_and_pca.sh PRJEB7669 ~/vcf/ dist_and_pca/
+# shell_scripts/plink_dist_and_pca.sh <study_accession> <vcf_input_file>                          <output_dir>
+# shell_scripts/plink_dist_and_pca.sh PRJEB7669         ~/vcf/PRJEB7669.filt.val.gt.g.vcf.gz      dist_and_pca/
 
 # ------------------------------------------------------------------------------
 
@@ -38,11 +38,12 @@ set -o pipefail
 study_accession=${1}
 
 # Directories
-vcf_dir=${2}
+# vcf_dir=${2}
 output_dir=${3}
 
 # Files
-vcf_input_file=${vcf_dir}${study_accession}.filt.val.gt.g.vcf.gz
+# vcf_input_file=${vcf_dir}${study_accession}.filt.val.gt.g.vcf.gz
+vcf_input_file=${2}
 output_dist_file=${output_dir}${study_accession}.dist
 output_pca_file=${output_dir}${study_accession}.pca
 

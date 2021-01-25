@@ -15,6 +15,7 @@ set -o pipefail
 # Adapted from:
 # https://github.com/pathogenseq/fastq2matrix/tree/master/scripts
 # filter_tb_vcf.py
+# And see https://github.com/pathogenseq/fastq2matrix/blob/master/fastq2matrix/vcf.py for vcf_class
 
 # Arguments to script:
 # multi-sample vcf file name, output (filtered multi-sample vcf) file name,  bed file name excluding regions, reference fasta file name
@@ -33,8 +34,8 @@ set -o pipefail
 
 # RUN
 # Assume run from ~/transmission :
-# ./shell_scripts/variant_filtering.sh <multi-sample vcf file name> <output file name> <bed file name> <ref fasta>
-# ./shell_scripts/variant_filtering.sh ~/vcf/PRJEB7669.val.gt.g.vcf.gz ~/vcf/PRJEB7669.filt.val.gt.g.vcf.gz ~/refgenome/excluded_loci.bed ~/refgenome/MTB-h37rv_asm19595v2-eg18.fa
+# shell_scripts/variant_filtering.sh <multi-sample vcf file name>       <output file name>                      <bed file name>               <ref fasta>
+# shell_scripts/variant_filtering.sh ~/vcf/PRJEB7669.val.gt.g.vcf.gz    ~/vcf/PRJEB7669.filt.val.gt.g.vcf.gz    ~/refgenome/excluded_loci.bed ~/refgenome/MTB-h37rv_asm19595v2-eg18.fa
 
 # ------------------------------------------------------------------------------
 

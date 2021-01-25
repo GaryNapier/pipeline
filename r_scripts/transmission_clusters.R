@@ -58,8 +58,8 @@
 
 # RUN:
 # Assume run from ~/transmission:
-# Rscript r_scripts/transmission_clusters.R <study_accession> <threshold> <dm and id dir> <output dir clusters> <output dir plot>
-# Rscript r_scripts/transmission_clusters.R PRJEB7669 50 dist_and_pca/ metadata/ plots/
+# Rscript r_scripts/transmission_clusters.R <study_accession> <threshold> <dm_file>                         <id_file>                                 <output dir clusters> <output dir plot>
+# Rscript r_scripts/transmission_clusters.R PRJEB7669         50          dist_and_pca/PRJEB7669.dist.dist  dist_and_pca/PRJEB7669.dist.dist.id       metadata/             plots/
 
 # Setup ----
 
@@ -72,13 +72,16 @@ threshold <- as.numeric(args[2])
 nl <- cat("\n")
 
 # Directories
-dm_dir <- args[3]
-output_clusters_dir <- args[4]
-output_plot_dir <- args[5]
+# dm_dir <- args[3]
+output_clusters_dir <- args[45]
+output_plot_dir <- args[6]
 
 # Files and suffixes/prefixes
 dm_file <- paste0(dm_dir, study_accession, ".dist.dist")
 id_file <- paste0(dm_dir, study_accession, ".dist.dist.id")
+
+dm_file <- args[3]
+id_file <- args[4]
 output_clusters_file <- paste0(output_clusters_dir, study_accession, ".clusters")
 output_plot_file <- paste0(output_plot_dir, study_accession, ".clusters.png")
 

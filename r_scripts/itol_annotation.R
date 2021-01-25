@@ -22,8 +22,8 @@
 # Three itol files, one for each type of annotation
 
 # RUN:
-# Rscript r_scripts/itol_annotation.R <study_accession> <metadata_file> <clusters_data_file_dir> <itol_location>
-# Rscript r_scripts/itol_annotation.R PRJEB7669 ~/Documents/metadata/tb_data_collated_28_10_2020_clean.csv metadata/ itol_annotations/ 
+# Rscript r_scripts/itol_annotation.R <study_accession> <metadata_file>                                            <clusters_data_file>                   <itol_location>
+# Rscript r_scripts/itol_annotation.R PRJEB7669         ~/Documents/metadata/tb_data_collated_28_10_2020_clean.csv metadata/PRJEB7669.clusters            itol_annotations/ 
 
 # Setup ----
 
@@ -57,13 +57,14 @@ nl <- cat("\n")
 alpha <- 0.7
 
 # Directories
-clusters_data_file_dir <- args[3]
+# clusters_data_file_dir <- args[3]
 itol_location <- args[4]
 
 # Files and suffixes/prefixes
 metadata_file <- args[2]
 
-clusters_data_file <- paste0(clusters_data_file_dir, study_acc, ".clusters")
+# clusters_data_file <- paste0(clusters_data_file_dir, study_acc, ".clusters")
+clusters_data_file <- args[3]
 
 itol_dr_in_file <- paste0(itol_location, "itol.dr.txt")
 itol_clusters_in_file <- paste0(itol_location, "itol.clusters.txt")

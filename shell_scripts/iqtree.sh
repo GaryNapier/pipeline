@@ -26,8 +26,8 @@ set -o pipefail
 
 # RUN
 # Assume run from ~/transmission :
-# ./shell_scripts/iqtree.sh <study_accession> <fasta_dir> <metadata_dir> <newick_output_dir>
-# ./shell_scripts/iqtree.sh PRJEB7669 fasta/ metadata/ newick/
+# ./shell_scripts/iqtree.sh <study_accession>   <fasta_input_file>                                <cluster_file>                    <newick_output_dir>
+# ./shell_scripts/iqtree.sh PRJEB7669           fasta/PRJEB7669.filt.val.gt.g.snps.fa             metadata/PRJEB7669.clusters       newick/
 
 # ------------------------------------------------------------------------------
 
@@ -37,16 +37,18 @@ set -o pipefail
 study_accession=${1?Error: enter sudy accession number e.g. PRJEB7669}
 
 # Directories
-fasta_dir=${2?Error: enter directory of input fasta file}
-cluster_file_dir=${3?Error: enter directory of cluster file}
+# fasta_dir=${2?Error: enter directory of input fasta file}
+# cluster_file_dir=${3?Error: enter directory of cluster file}
 newick_output_dir=${4?Error: enter where iqtree results are to be saved}
 tmp_dir=tmp/
 
 
 # Files
-fasta_input_file=${fasta_dir}${study_accession}.filt.val.gt.g.snps.fa
+# fasta_input_file=${fasta_dir}${study_accession}.filt.val.gt.g.snps.fa
+fasta_input_file=${2?Error: enter name of input fasta file}
 fasta_filtered_file=${fasta_input_file}.filt
-cluster_file=${cluster_file_dir}${study_accession}.clusters
+# cluster_file=${cluster_file_dir}${study_accession}.clusters
+cluster_file=${3?Error: enter name of cluster file}
 tmp_cluster_ids_file=${tmp_dir}${study_accession}.clustered_samps
 
 # Parameters
@@ -86,7 +88,7 @@ cut -d' ' -f1 ${cluster_file} | tail -n +2 > ${tmp_cluster_ids_file}
 # ------------------------------------------------------------------------------
 
 # Filter fasta file - remove samples that do not meet the threshold SNP distance for cluster inclusion
-# n.b. second 'grep' gets rid of 'line separator' - soem bloody thing that grep puts in where something is missing i.e. the samples that are excluded
+# n.b. second 'grep' gets rid of 'line separator' - some bloody thing that grep puts in where something is missing i.e. the samples that are excluded
 
 grep -A1 -f ${tmp_cluster_ids_file} ${fasta_input_file} | grep -v "\--" > ${fasta_filtered_file}
 

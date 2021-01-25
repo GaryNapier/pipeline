@@ -26,8 +26,8 @@ set -o pipefail
 
 # RUN
 # Assume run from ~/transmission :
-# ./shell_scripts/variant_calling_and_concat_gvcfs.sh <study_accession> <metadata_file> <vcf_dir> <gvcf_file_suffix> <ref_file>
-# ./shell_scripts/variant_calling_and_concat_gvcfs.sh PRJEB7669 ~/metadata/tb_data_collated_28_10_2020_clean.csv ~/vcf/ .g.vcf.gz ~/refgenome/MTB-h37rv_asm19595v2-eg18.fa
+# shell_scripts/variant_calling_and_concat_gvcfs.sh <study_accession> <metadata_file>                                  <vcf_dir>  <gvcf_file_suffix>  <ref_file>
+# shell_scripts/variant_calling_and_concat_gvcfs.sh PRJEB7669         ~/metadata/tb_data_collated_28_10_2020_clean.csv ~/vcf/     .g.vcf.gz           ~/refgenome/MTB-h37rv_asm19595v2-eg18.fa
 
 # ------------------------------------------------------------------------------
 

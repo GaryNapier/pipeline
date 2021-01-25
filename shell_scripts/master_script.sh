@@ -1,4 +1,4 @@
-#! /bin/bash -x
+#! /bin/bash
 
 # master_script.sh
 
@@ -35,7 +35,7 @@ metadata_dir=~/metadata/
 metadata_local_dir=metadata/
 fasta_dir=fasta/
 vcf_dir=vcf/
-ref_dir=~/refgenome
+ref_dir=~/refgenome/
 xml_script_location=beast_xml/
 beast_results_dir=beast_results/
 date_column=collection_date
@@ -45,46 +45,48 @@ dist_and_pca_dir=dist_and_pca/
 plots_dir=plots/
 
 # Files
-study_accession_list=${metadata_local_dir}study_accession_list.txt
+study_accession_list=$(cat ${metadata_local_dir}study_accession_list.txt)
 metadata_file=${metadata_dir}tb_data_collated_28_10_2020_clean.csv
 xml_template_file=${xml_script_location}tb_template.xml
 ref_fasta_file=${ref_dir}MTB-h37rv_asm19595v2-eg18.fa
-ex_loci_file=${refgenome}excluded_loci.bed
+ex_loci_file=${ref_dir}excluded_loci.bed
 
 # Parameters
 
 # Commands
 
 # Print arguments
-printf ''
-echo 'Arguments:'
-printf ''
-echo ${}
-printf ''
 
+printf "\n"
+echo "Processing study accessions:"
+echo ${study_accession_list}
+printf "\n"
 
 for study_accession in ${study_accession_list}; do
 
     echo "Running ${study_accession}"
+    printf "\n"
 
     # Setup - LOOP (i.e. anything that depends on study_accession)
 
     # Files - define file names unless already created
 
-    echo "Files for multiple scripts"
+    echo "Files for multiple scripts:"
     clusters_data_file=${metadata_local_dir}${study_accession}.clusters
     val_multi_vcf_file=${vcf_dir}${study_accession}.val.gt.g.vcf.gz
     filt_multi_vcf_file=${vcf_dir}${study_accession}.filt.val.gt.g.vcf.gz
 
     printf "${clusters_data_file} \n ${val_multi_vcf_file} \n ${filt_multi_vcf_file} \n"
+    printf "\n"
 
     # ------------------------------------------------------------------------------
 
     # Concat VCFs
 
-    echo "Concat VCF command"
+    echo "Concat VCF command:"
 
     echo "shell_scripts/variant_calling_and_concat_gvcfs.sh   ${study_accession}  ${metadata_file} ${vcf_dir} ${gvcf_file_suffix} ${ref_fasta_file}"
+    printf "\n"
 
     echo "Running concat vcfs"
 

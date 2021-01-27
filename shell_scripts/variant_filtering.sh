@@ -70,6 +70,7 @@ printf "\n"
 # Do filtering
 # -------------
 
+printf "\n"
 echo "Filtering vcf"
 printf "\n"
 
@@ -100,7 +101,7 @@ bcftools +fill-tags | \
 bcftools view -e 'AF==1 || AF==0' | \
 # Trim the ref/alt if any deletions have dropped out:
 # See notes below
-bcftools norm -f ${ref_fasta} -Ob -o ${output_vcf_file}
+bcftools norm -f ${ref_fasta} -Oz -o ${output_vcf_file}
 
 # Index filtered file
 if [ ! -f "${output_vcf_file}.tbi" ]; then

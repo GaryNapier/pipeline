@@ -38,7 +38,6 @@ set -o pipefail
 study_accession=${1}
 
 # Directories
-# vcf_dir=${2}
 output_dir=${3}
 
 # Files
@@ -57,8 +56,6 @@ printf "\n"
 echo "Arguments:"
 printf "\n"
 echo ${study_accession}
-echo ${vcf_dir}
-echo ${output_dir}
 echo ${vcf_input_file}
 echo ${output_dist_file}
 echo ${output_pca_file}

@@ -72,14 +72,10 @@ threshold <- as.numeric(args[2])
 nl <- cat("\n")
 
 # Directories
-# dm_dir <- args[3]
-output_clusters_dir <- args[45]
+output_clusters_dir <- args[5]
 output_plot_dir <- args[6]
 
 # Files and suffixes/prefixes
-dm_file <- paste0(dm_dir, study_accession, ".dist.dist")
-id_file <- paste0(dm_dir, study_accession, ".dist.dist.id")
-
 dm_file <- args[3]
 id_file <- args[4]
 output_clusters_file <- paste0(output_clusters_dir, study_accession, ".clusters")
@@ -90,7 +86,6 @@ print("ARGUMENTS:")
 nl
 print(c("Study accession:", study_accession))
 print(c("Threshold:", threshold))
-print(c("DM directory:", dm_dir))
 print(c("DM file:", dm_file))
 print(c("ID file:", id_file))
 print(c("Output clusters directory:", output_clusters_dir))
@@ -210,4 +205,3 @@ write.table(cluster_table, file = output_clusters_file, quote = F, row.names = F
 #
 # # Convert to dataframe
 # cluster_table <- data.frame(id = names(clusters), cluster = clusters)
-

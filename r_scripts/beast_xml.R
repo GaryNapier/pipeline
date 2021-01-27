@@ -4,7 +4,7 @@
 
 
 # Description
-# 
+#
 
 # Arguments to script:
 
@@ -40,38 +40,38 @@ hs <- function(x, ...){
 # Arguments ----
 
 option_list = list(
-  make_option(c("-s", "--STUDY_ACCESSION"), type="character", default=NULL, 
-              help="input study accession number", metavar="character"), 
-  
-  make_option(c("-t", "--template_file_name"), type="character", default=NULL, 
-              help="input template xml file", metavar="character"), 
-  
-  make_option(c("-f", "--dated_fasta_file_name"), type="character", default=NULL, 
-              help="input template xml file", metavar="character"), 
-  
-  make_option(c("-o", "--output_file_location"), type="character", default="./", 
-              help="file location to save output file to", metavar="character"), 
-  
-  make_option(c("-M", "--MUTATIONRATE"), type="character", default="1.0", 
-              help="input mutation rate, default = 1.0", metavar="character"), 
-  
-  make_option(c("-C", "--CLOCKRATE"), type="character", default="1.0E-7", 
-              help="input clockrate, default = 1.0E-7", metavar="character"), 
-  
-  make_option(c("-P", "--POPSIZE"), type="character", default="0.3", 
-              help="input popsize, default = 0.3", metavar="character"), 
-  
-  make_option(c("-L", "--POPSIZELOWER"), type="character", default="0.0", 
+  make_option(c("-s", "--STUDY_ACCESSION"), type="character", default=NULL,
+              help="input study accession number", metavar="character"),
+
+  make_option(c("-t", "--template_file_name"), type="character", default=NULL,
+              help="input template xml file", metavar="character"),
+
+  make_option(c("-f", "--dated_fasta_file_name"), type="character", default=NULL,
+              help="input template xml file", metavar="character"),
+
+  make_option(c("-o", "--output_file_location"), type="character", default="./",
+              help="file location to save output file to", metavar="character"),
+
+  make_option(c("-M", "--MUTATIONRATE"), type="character", default="1.0",
+              help="input mutation rate, default = 1.0", metavar="character"),
+
+  make_option(c("-C", "--CLOCKRATE"), type="character", default="1.0E-7",
+              help="input clockrate, default = 1.0E-7", metavar="character"),
+
+  make_option(c("-P", "--POPSIZE"), type="character", default="0.3",
+              help="input popsize, default = 0.3", metavar="character"),
+
+  make_option(c("-L", "--POPSIZELOWER"), type="character", default="0.0",
               help="input popsize, lower value, default = 0.0", metavar="character"),
-  
-  make_option(c("-U", "--POPSIZEUPPER"), type="character", default="200.0", 
+
+  make_option(c("-U", "--POPSIZEUPPER"), type="character", default="200.0",
                 help="input popsize, upper value, default = 200.0", metavar="character"),
-  
-  make_option(c("-F", "--FREQPARAMETER"), type="character", default="0.25", 
+
+  make_option(c("-F", "--FREQPARAMETER"), type="character", default="0.25",
               help="input freqparameter, default = 0.25", metavar="character")
-  
-  
-); 
+
+
+);
 
 opt_parser = OptionParser(option_list=option_list);
 opt = parse_args(opt_parser);
@@ -82,7 +82,7 @@ print("---")
 print(str(opt))
 
 # Save parameter names to loop through and do gsub (except DATA)
-# Note order of params - POPSIZE has to come last because is a subset of the other two. 
+# Note order of params - POPSIZE has to come last because is a subset of the other two.
 params <- c("STUDY_ACCESSION", "MUTATIONRATE", "CLOCKRATE", "POPSIZELOWER", "POPSIZEUPPER", "POPSIZE", "FREQPARAMETER")
 
 # Set up DATA sub-template
@@ -101,20 +101,20 @@ DATA <- "<sequence id=\"seq_ID\" spec=\"Sequence\" taxon=\"ID\" totalcount=\"4\"
 # POPSIZELOWER <- "0.0"
 # POPSIZEUPPER <- "200.0"
 # FREQPARAMETER <- "0.25"
-# 
-# opt <- c(STUDY_ACCESSION, template_file_name, dated_fasta_file_location, output_file_location, 
+#
+# opt <- c(STUDY_ACCESSION, template_file_name, dated_fasta_file_location, output_file_location,
 #               MUTATIONRATE, CLOCKRATE, POPSIZE, POPSIZELOWER, POPSIZEUPPER, FREQPARAMETER)
-# 
+#
 # x <- list()
 # for(i in opt){
 #   x[[i]] <- i
 # }
-# 
-# names(x) <- c("STUDY_ACCESSION", "template_file_name", "dated_fasta_file_location", "output_file_location", 
+#
+# names(x) <- c("STUDY_ACCESSION", "template_file_name", "dated_fasta_file_location", "output_file_location",
 #               "MUTATIONRATE", "CLOCKRATE", "POPSIZE", "POPSIZELOWER", "POPSIZEUPPER", "FREQPARAMETER")
-# 
+#
 # opt <- x
-# 
+#
 # print(opt)
 
 # -------------------
@@ -124,7 +124,7 @@ DATA <- "<sequence id=\"seq_ID\" spec=\"Sequence\" taxon=\"ID\" totalcount=\"4\"
 
 # Files ----
 
-fasta_file <- paste0(opt$dated_fasta_file_location, opt$STUDY_ACCESSION, ".filt.val.gt.g.snps.fa.filt.dated.fa")
+fasta_file <- opt$dated_fasta_file_name
 output_file <- paste0(opt$output_file_location, opt$STUDY_ACCESSION, ".xml")
 
 print("FILES:")
@@ -134,7 +134,7 @@ print(c("output file name: ", output_file))
 
 # Read in data ----
 
-template <- readChar(template_file_name, nchars = 1e6)
+template <- readChar(opt$template_file_name, nchars = 1e6)
 fasta <- readLines(fasta_file)
 
 # Substitutions ----
@@ -149,7 +149,7 @@ for(param in params){
 
 # Get samples from fasta
 samples <- grep("^>", fasta, value = T, perl = T)
-# Strip ">" from samples 
+# Strip ">" from samples
 samples <- gsub(">", "", samples)
 
 # Get seqs from fasta
@@ -181,15 +181,15 @@ write.table(template, file = output_file,
 
 # Beast parameters
 
-# See Transmission analysis of a large tuberculosis outbreak in London: a mathematical modelling study using genomic data 
+# See Transmission analysis of a large tuberculosis outbreak in London: a mathematical modelling study using genomic data
 # Open Access - Yuanwei Xu - 11 November 2020 https://doi.org/10.1099/mgen.0.000450
 
 # The phylogenetic tree-building software beast2 (version 2.6.1) [12] was used to build timed phylogenetic trees.
 
-# A preliminary check using TempEst [13] showed positive correlation between genetic divergence and sampling time and a 
+# A preliminary check using TempEst [13] showed positive correlation between genetic divergence and sampling time and a
 # moderate level of temporal signal (TempEst R^2=0.21).
 
-# Because of moderate temporal signal in the SNP data, we adopted a strict molecular clock, supplying the tip dates, 
+# Because of moderate temporal signal in the SNP data, we adopted a strict molecular clock, supplying the tip dates,
 # and we used a fixed rate parameter of 1.0x10^7 per site per year, corresponding to 0.44 substitutions per genome per year.
 
 # Tip Dates > 'as dates with format dd/M/yyyy'
@@ -201,8 +201,8 @@ write.table(template, file = output_file,
 # Priors > Tree.t = Coalescent Constant Population
 # Priors > popSize > Log Normal > initial = [Lower = 0], [Upper = 200]
 
-# Because the K3Pu model of nucleotide substitution was not available in beast2, we used the generalized time reversible (GTR) 
-# substitution model [17], which had the next lowest Bayesian information criterion (BIC) score (Delta6910.964) 
+# Because the K3Pu model of nucleotide substitution was not available in beast2, we used the generalized time reversible (GTR)
+# substitution model [17], which had the next lowest Bayesian information criterion (BIC) score (Delta6910.964)
 # on the basis of model testing using iq-tree [18].
 
 # Site Model > Change JC69 to GTR
@@ -214,7 +214,7 @@ write.table(template, file = output_file,
 
 # [Why is Rate CT estimated unchecked?]
 
-# We used the beast2 correction for ascertainment bias, specifying the number of invariant A, C, G and T sites as 
+# We used the beast2 correction for ascertainment bias, specifying the number of invariant A, C, G and T sites as
 # 758511 1449901 1444524 758336.
 # Note that this must be manually added to the xml and may not appear when the xml is loaded into the BEAUti2 (version 2.6.1) software.
 
@@ -225,21 +225,12 @@ write.table(template, file = output_file,
 
 # We ran the Markov chain Monte Carlo (MCMC) method for 100000000 iterations, sampling every 10000th iteration.
 
-# We verified chain convergence (by confirming multiple independent chains converged to the same posterior values) as well as good mixing 
+# We verified chain convergence (by confirming multiple independent chains converged to the same posterior values) as well as good mixing
 # and an effective sample size (ESS) of greater than 200 for all parameters using Tracer (version 1.7.1) [19].
 #
 # A maximum clade credibility (MCC) tree was created using TreeAnnotator (version 2.6.0), with 10% of the chain discarded as burn-in,
 # resulting in a posterior collection of 9000 trees.
 
-# Instead of trying to obtain a single optimal timed phylogenetic tree from this posterior set, we sampled a collection of 
+# Instead of trying to obtain a single optimal timed phylogenetic tree from this posterior set, we sampled a collection of
 # 50 of them at random. This ensures that we capture as much diversity as possible from the beast posterior, to achieve robust
 # uncertainty quantification in our subsequent analysis.
-
-
-
-
-
-
-
-
-

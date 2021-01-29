@@ -51,6 +51,9 @@ fasta_filtered_file=${fasta_input_file}.filt
 cluster_file=${3?Error: enter name of cluster file}
 tmp_cluster_ids_file=${tmp_dir}${study_accession}.clustered_samps
 
+# Directories
+fasta_dir=`dirname ${fasta_input_file}`/
+
 # Parameters
 
 # Commands
@@ -60,7 +63,6 @@ printf "\n"
 echo "Arguments:"
 printf "\n"
 echo ${study_accession}
-echo ${fasta_dir}
 echo ${newick_output_dir}
 echo ${tmp_dir}
 echo ${fasta_input_file}

@@ -76,13 +76,13 @@ printf "\n"
 echo "Running plink --distance square:"
 printf "\n"
 
-plink --bcf ${vcf_input_file} --distance square --double-id --allow-extra-chr --out ${output_dist_file}
+plink --vcf ${vcf_input_file} --distance square --double-id --allow-extra-chr --out ${output_dist_file}
 
 printf "\n"
 echo "Running plink --pca:"
 printf "\n"
 
-plink --bcf ${vcf_input_file} --pca --double-id --allow-extra-chr --out ${output_pca_file}
+plink --vcf ${vcf_input_file} --pca --double-id --allow-extra-chr --out ${output_pca_file}
 
 # plink --vcf ~/vcf/PRJEB7669.filt.val.gt.g.vcf.gz --mds-plot 10 eigendecomp --cluster --double-id --allow-extra-chr --out PRJEB7669.pca
 

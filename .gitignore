@@ -1,2 +1,9 @@
 beast_results/
 beast_xml/PRJEB7669.xml
+dist_and_pca/
+fasta/
+itol_annotations/
+logs/
+metadata/PRJEB7669.clusters
+newick/
+plots/

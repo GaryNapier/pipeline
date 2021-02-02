@@ -8,9 +8,9 @@ Options in effect:
 
 Hostname: s7
 Working directory: /mnt/storage7/gary/transmission
-Start time: Fri Jan 29 12:56:35 2021
+Start time: Fri Jan 29 16:32:39 2021
 
-Random number seed: 1611924995
+Random number seed: 1611937959
 257677 MB RAM detected; reserving 128838 MB for main workspace.
 --vcf: dist_and_pca/PRJEB7669.pca-temporary.bed +
 dist_and_pca/PRJEB7669.pca-temporary.bim +
@@ -28,4 +28,4 @@ Relationship matrix calculation complete.
 --pca: Results saved to dist_and_pca/PRJEB7669.pca.eigenval and
 dist_and_pca/PRJEB7669.pca.eigenvec .
 
-End time: Fri Jan 29 12:56:35 2021
+End time: Fri Jan 29 16:32:39 2021

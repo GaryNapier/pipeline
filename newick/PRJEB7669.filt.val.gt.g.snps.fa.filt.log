@@ -4,8 +4,8 @@ Heiko Schmidt, Dominik Schrempf, Michael Woodhams.
 
 Host:    s7 (AVX2, FMA3, 251 GB RAM)
 Command: iqtree -s fasta/PRJEB7669.filt.val.gt.g.snps.fa.filt -m GTR+G -nt AUTO
-Seed:    550318 (Using SPRNG - Scalable Parallel Random Number Generator)
-Time:    Fri Jan 29 12:56:51 2021
+Seed:    636319 (Using SPRNG - Scalable Parallel Random Number Generator)
+Time:    Fri Jan 29 16:32:55 2021
 Kernel:  AVX+FMA - auto-detect threads (96 CPU cores detected)
 
 Reading alignment file fasta/PRJEB7669.filt.val.gt.g.snps.fa.filt ... Fasta format detected
@@ -326,15 +326,16 @@ Alignment was printed to fasta/PRJEB7669.filt.val.gt.g.snps.fa.filt.uniqueseq.ph
 
 For your convenience alignment with unique sequences printed to fasta/PRJEB7669.filt.val.gt.g.snps.fa.filt.uniqueseq.phy
 
-Create initial parsimony tree by phylogenetic likelihood library (PLL)... 0.022 seconds
+Create initial parsimony tree by phylogenetic likelihood library (PLL)... 0.023 seconds
 
 NOTE: 12 MB RAM (0 GB) is required!
 Measuring multi-threading efficiency up to 96 CPU cores
 Increase to 10 rounds for branch lengths
-470 trees examined
-Threads: 1 / Time: 96.120 sec / Speedup: 1.000 / Efficiency: 100% / LogL: -8296
-Threads: 2 / Time: 114.712 sec / Speedup: 0.838 / Efficiency: 42% / LogL: -8296
-BEST NUMBER OF THREADS: 1
+487 trees examined
+Threads: 1 / Time: 96.012 sec / Speedup: 1.000 / Efficiency: 100% / LogL: -8350
+Threads: 2 / Time: 87.343 sec / Speedup: 1.099 / Efficiency: 55% / LogL: -8350
+Threads: 3 / Time: 70.306 sec / Speedup: 1.366 / Efficiency: 46% / LogL: -8350
+BEST NUMBER OF THREADS: 2
 
 Estimate model parameters (epsilon = 0.100)
 1. Initial log-likelihood: -5043.873
@@ -344,42 +345,40 @@ Optimal log-likelihood: -4803.371
 Rate parameters:  A-C: 1.05917  A-G: 2.56754  A-T: 0.79759  C-G: 0.87718  C-T: 3.14165  G-T: 1.00000
 Base frequencies:  A: 0.178  C: 0.322  G: 0.341  T: 0.159
 Gamma shape alpha: 998.446
-Parameters optimization took 3 rounds (1.017 sec)
-Computing ML distances based on estimated model parameters... 0.330 sec
+Parameters optimization took 3 rounds (0.661 sec)
+Computing ML distances based on estimated model parameters... 0.306 sec
 Computing BIONJ tree...
 0.033 seconds
 Log-likelihood of BIONJ tree: -4805.312
 --------------------------------------------------------------------
 |             INITIALIZING CANDIDATE TREE SET                      |
 --------------------------------------------------------------------
-Generating 98 parsimony trees... 2.613 second
-Computing log-likelihood of 98 initial trees ... 2.522 seconds
+Generating 98 parsimony trees... 2.534 second
+Computing log-likelihood of 98 initial trees ... 2.076 seconds
 Current best score: -4803.371
 
 Do NNI search on 20 best initial trees
 Estimate model parameters (epsilon = 0.100)
-BETTER TREE FOUND at iteration 1: -4803.371
-BETTER TREE FOUND at iteration 2: -4803.371
-BETTER TREE FOUND at iteration 3: -4803.369
-BETTER TREE FOUND at iteration 9: -4803.369
-Iteration 10 / LogL: -4803.369 / Time: 0h:3m:39s
-Iteration 20 / LogL: -4803.371 / Time: 0h:3m:41s
+BETTER TREE FOUND at iteration 1: -4803.370
+Iteration 10 / LogL: -4803.371 / Time: 0h:4m:20s
+BETTER TREE FOUND at iteration 17: -4803.369
+Iteration 20 / LogL: -4803.371 / Time: 0h:4m:22s
 Finish initializing candidate tree set (20)
-Current best tree score: -4803.369 / CPU time: 8.700
+Current best tree score: -4803.369 / CPU time: 7.710
 Number of iterations: 20
 --------------------------------------------------------------------
 |               OPTIMIZING CANDIDATE TREE SET                      |
 --------------------------------------------------------------------
-Iteration 30 / LogL: -4815.032 / Time: 0h:3m:45s (0h:10m:14s left)
-Iteration 40 / LogL: -4823.061 / Time: 0h:3m:50s (0h:6m:47s left)
-Iteration 50 / LogL: -4803.397 / Time: 0h:3m:55s (0h:4m:43s left)
-Iteration 60 / LogL: -4809.825 / Time: 0h:4m:0s (0h:3m:19s left)
-Iteration 70 / LogL: -4806.832 / Time: 0h:4m:4s (0h:2m:18s left)
-Iteration 80 / LogL: -4823.056 / Time: 0h:4m:9s (0h:1m:31s left)
-Iteration 90 / LogL: -4821.678 / Time: 0h:4m:13s (0h:0m:54s left)
-Iteration 100 / LogL: -4803.413 / Time: 0h:4m:18s (0h:0m:23s left)
-Iteration 110 / LogL: -4808.441 / Time: 0h:4m:23s (0h:0m:-3s left)
-TREE SEARCH COMPLETED AFTER 110 ITERATIONS / Time: 0h:4m:23s
+Iteration 30 / LogL: -4803.400 / Time: 0h:4m:26s (0h:13m:18s left)
+Iteration 40 / LogL: -4828.818 / Time: 0h:4m:29s (0h:8m:52s left)
+Iteration 50 / LogL: -4803.401 / Time: 0h:4m:33s (0h:6m:14s left)
+Iteration 60 / LogL: -4803.400 / Time: 0h:4m:37s (0h:4m:28s left)
+Iteration 70 / LogL: -4810.164 / Time: 0h:4m:41s (0h:3m:11s left)
+Iteration 80 / LogL: -4803.400 / Time: 0h:4m:45s (0h:2m:13s left)
+Iteration 90 / LogL: -4803.401 / Time: 0h:4m:49s (0h:1m:27s left)
+Iteration 100 / LogL: -4803.399 / Time: 0h:4m:52s (0h:0m:50s left)
+Iteration 110 / LogL: -4811.684 / Time: 0h:4m:56s (0h:0m:19s left)
+TREE SEARCH COMPLETED AFTER 118 ITERATIONS / Time: 0h:4m:59s
 
 --------------------------------------------------------------------
 |                    FINALIZING TREE SEARCH                        |
@@ -391,15 +390,15 @@ Optimal log-likelihood: -4803.369
 Rate parameters:  A-C: 1.05734  A-G: 2.56481  A-T: 0.79606  C-G: 0.87613  C-T: 3.13921  G-T: 1.00000
 Base frequencies:  A: 0.178  C: 0.322  G: 0.341  T: 0.159
 Gamma shape alpha: 998.446
-Parameters optimization took 1 rounds (0.143 sec)
+Parameters optimization took 1 rounds (0.111 sec)
 BEST SCORE FOUND : -4803.369
 Total tree length: 0.804
 
-Total number of iterations: 110
-CPU time used for tree search: 51.026 sec (0h:0m:51s)
-Wall-clock time used for tree search: 51.406 sec (0h:0m:51s)
-Total CPU time used: 373.773 sec (0h:6m:13s)
-Total wall-clock time used: 263.895 sec (0h:4m:23s)
+Total number of iterations: 118
+CPU time used for tree search: 85.081 sec (0h:1m:25s)
+Wall-clock time used for tree search: 44.999 sec (0h:0m:44s)
+Total CPU time used: 562.031 sec (0h:9m:22s)
+Total wall-clock time used: 299.752 sec (0h:4m:59s)
 
 Analysis results written to: 
   IQ-TREE report:                fasta/PRJEB7669.filt.val.gt.g.snps.fa.filt.iqtree
@@ -407,4 +406,4 @@ Analysis results written to:
   Likelihood distances:          fasta/PRJEB7669.filt.val.gt.g.snps.fa.filt.mldist
   Screen log file:               fasta/PRJEB7669.filt.val.gt.g.snps.fa.filt.log
 
-Date and Time: Fri Jan 29 13:01:15 2021
+Date and Time: Fri Jan 29 16:37:55 2021

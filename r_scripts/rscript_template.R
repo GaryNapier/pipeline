@@ -42,6 +42,10 @@ hs <- function(x, ...){
 # Arguments ----
 
 option_list = list(
+  # EXAMPLE:
+  # make_option(c("-t", "--template_file_name"), type="character", default=NULL,
+  #             help="input template xml file", metavar="character"),
+  
   make_option(c("-", "--"), type="", default=NULL, 
               help="", metavar="")
 ); 
@@ -56,7 +60,7 @@ print(str(opt))
 
 # Files ----
 
-template_file <- paste0(opt$<path>, opt$<study accession>, "")
+template_file <- opt$template_file_name
 
 print("FILES:")
 print(c(": ", ))

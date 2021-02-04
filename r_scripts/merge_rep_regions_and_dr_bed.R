@@ -93,6 +93,9 @@ dr <- read.csv(dr_file, header = T, stringsAsFactors = F)
 out_file <- paste0(out_location, "excluded_loci_rep_and_dr.bed")
 
 
+subset(gff, gene_id == "EBG00000313325")
+
+
 print("REP REGIONS BED:")
 head(rep_regions)
 print("GFF")
@@ -110,7 +113,7 @@ head(out_file)
 gff <- drop_cols(gff, c("Parent", "Alias"))
 
 # Only need the genes
-gff <- subset(gff, type == "gene")
+# gff <- subset(gff, type == "gene")
 
 # Tidy up Name col - if name is unavailable then fill in with gene ID (to match drug resistance genes file)
 gff$Name <- ifelse(is.na(gff$Name), gff$gene_id, gff$Name)
@@ -119,11 +122,20 @@ gff$Name <- ifelse(is.na(gff$Name), gff$gene_id, gff$Name)
 dr_genes <- unique(dr$Gene)
 gff <- subset(gff, Name %in% dr_genes)
 
+# Retain "gene" - anything that is actually "gene" or anything that is e.g. rRNA_gene
+gff <- gff[grepl("gene", gff$type), ]
+
+# Sort out description col
+gff$description <- gsub("Probable ", "", gff$description)
+gff$description <- gsub("Possible ", "", gff$description)
+gff$description <- gsub(" ", "_", gff$description)
+
+gff$description <- ifelse(is.na(gff$description), gff$biotype, gff$description)
+
 
 # rep_regions bed file
 
 # Name cols based on gff data
-
 names(rep_regions) <- c("seqid", "start", "end", "gene_id", "description")
 
 
@@ -139,7 +151,19 @@ df <- rbind(rep_regions, dr_df)
 df <- df[order(df$start), ]
 
 # Remove duplicates
-df <- df[!(duplicated(df[, c("gene_id")])), ]
+df <- df[!(duplicated(df[, "gene_id"]) ), ]
+
+
+
+
+df[ df[, "gene_id"] %in%  df[duplicated(df[, "gene_id"]), ]$gene_id, ]
+
+
+subset(gff, gene_id == "Rv0605")
+
+subset(rep_regions, gene_id == "Rv0605")
+
+
 
 
 print("DF")
@@ -149,3 +173,36 @@ str(df)
 
 print("GENES IN DR LIST THAT ARE NOT IN DF LIST")
 df$gene_id[!(dr_genes %in% df$gene_id)]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

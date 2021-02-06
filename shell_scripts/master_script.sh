@@ -279,110 +279,162 @@ for study_accession in ${study_accession_list}; do
 
     # ------------------------------------------------------------------------------
 
-    # Beast
+    # Subset fasta - chop filt_fasta_file into clusters outputted by r_scripts/transmission_clusters
 
-    echo "------------------------------------------------------------------------------"
+    clust_fasta_dir=`dirname ${filt_fasta_file}`/
+    clust_fasta_files=${clust_fasta_dir}${study_accession}.clust_*
 
-    echo "Beast"
-    printf "\n"
-
-    # ---
-
-    # Create dated fasta file for Beast
-
-    # Files:
-    dated_fasta_file=${filt_fasta_file}.dated.fa
-
-    if [ ! -f ${dated_fasta_file} ]; then
+    # n.b. weird/ugly syntax/code for checking if multiple fasta files exist because don't know how many there will be or even if the first cluster is '1'.
+    # It's likely to be '1', but the clusters are arbitrarily numbered by the transmission_clusters.R script
+    if ! ls ${clust_fasta_files} 1> /dev/null 2>&1; then
 
         echo "------------------------------------------------------------------------------"
 
-        echo "Dated fasta file"
+        echo "Subset fasta"
         printf "\n"
 
-        echo "Running fasta_add_annotations.py - outputs ${dated_fasta_file}"
-        printf "\n"
-
-        # Run fasta_add_annotations.py to concatenate the metadata collection date with the sample ID in the fasta file
-        # e.g. >ERR1234 -> >ERR1234_01_01_10
-        # - see https://github.com/pathogenseq/pathogenseq-scripts/tree/master/scripts
+        echo "Running shell_scripts/subset_fasta.sh - outputs ${clust_fasta_files}"
         set -x
-        fasta_add_annotations.py    --fasta ${filt_fasta_file} --csv ${metadata_file} --out ${dated_fasta_file} --annotations ${date_column}
+        shell_scripts/subset_fasta.sh ${study_accession} ${clusters_data_file} ${filt_fasta_file}
         set +x
         echo "------------------------------------------------------------------------------"
         printf "\n"
     else
         echo "------------------------------------------------------------------------------"
-        echo "File ${dated_fasta_file} exists, skipping fasta_add_annotations.py"
+        echo "File(s) ${clust_fasta_files} exist(s), skipping shell_scripts/subset_fasta.sh"
         echo "------------------------------------------------------------------------------"
         printf "\n"
     fi
 
-    # ---
+# End for-loop on study accession numbers from study_accession_list
+done
 
-    # Create XML file for Beast
 
-    xml_file=${xml_script_location}${study_accession}.xml
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-    if [ ! -f ${xml_file} ]; then
+# Beast loop
 
-        echo "------------------------------------------------------------------------------"
+for study_accession in ${study_accession_list}; do
 
-        echo "Create Beast XML file from template"
-        printf "\n"
+    # Redefine cluster fasta files
 
-        echo "Running beast_xml.R command - outputs ${xml_file}"
-        set -x
-        Rscript r_scripts/beast_xml.R -s ${study_accession} -t ${xml_template_file} -f ${dated_fasta_file} -o ${xml_script_location}
-        set +x
-        echo "------------------------------------------------------------------------------"
-        printf "\n"
-    else
-        echo "------------------------------------------------------------------------------"
-        echo "File ${xml_file} exists, skipping r_scripts/beast_xml.R"
-        echo "------------------------------------------------------------------------------"
-        printf "\n"
-    fi
+    clust_fasta_files${clust_fasta_dir}${study_accession}.clust_*
 
-    # ---
+    for file in $(ls ${clust_fasta_files}); do
 
-    # Run Beast
 
-    # Beast output files
-    beast_log_file=${beast_results_dir}${study_accession}.log
-    beast_trees_file=${beast_results_dir}${study_accession}.trees
-    beast_state_file=${beast_results_dir}${study_accession}.xml.state
 
-    if [ ! -f ${beast_log_file} ] || [ ! -f ${beast_trees_file} ] || [ ! -f ${beast_state_file} ];then
+        #
+        # # ------------------------------------------------------------------------------
+        #
+        # # Beast
+        #
+        # echo "------------------------------------------------------------------------------"
+        #
+        # echo "Beast"
+        # printf "\n"
+        #
+        # # ---
+        #
+        # # Create dated fasta file for Beast
+        #
+        # # Files:
+        # dated_fasta_file=${filt_fasta_file}.dated.fa
+        #
+        # if [ ! -f ${dated_fasta_file} ]; then
+        #
+        #     echo "------------------------------------------------------------------------------"
+        #
+        #     echo "Dated fasta file"
+        #     printf "\n"
+        #
+        #     echo "Running fasta_add_annotations.py - outputs ${dated_fasta_file}"
+        #     printf "\n"
+        #
+        #     # Run fasta_add_annotations.py to concatenate the metadata collection date with the sample ID in the fasta file
+        #     # e.g. >ERR1234 -> >ERR1234_01_01_10
+        #     # - see https://github.com/pathogenseq/pathogenseq-scripts/tree/master/scripts
+        #     set -x
+        #     fasta_add_annotations.py    --fasta ${filt_fasta_file} --csv ${metadata_file} --out ${dated_fasta_file} --annotations ${date_column}
+        #     set +x
+        #     echo "------------------------------------------------------------------------------"
+        #     printf "\n"
+        # else
+        #     echo "------------------------------------------------------------------------------"
+        #     echo "File ${dated_fasta_file} exists, skipping fasta_add_annotations.py"
+        #     echo "------------------------------------------------------------------------------"
+        #     printf "\n"
+        # fi
+        #
+        # # ---
+        #
+        # # Create XML file for Beast
+        #
+        # xml_file=${xml_script_location}${study_accession}.xml
+        #
+        # if [ ! -f ${xml_file} ]; then
+        #
+        #     echo "------------------------------------------------------------------------------"
+        #
+        #     echo "Create Beast XML file from template"
+        #     printf "\n"
+        #
+        #     echo "Running beast_xml.R command - outputs ${xml_file}"
+        #     set -x
+        #     Rscript r_scripts/beast_xml.R -s ${study_accession} -t ${xml_template_file} -f ${dated_fasta_file} -o ${xml_script_location}
+        #     set +x
+        #     echo "------------------------------------------------------------------------------"
+        #     printf "\n"
+        # else
+        #     echo "------------------------------------------------------------------------------"
+        #     echo "File ${xml_file} exists, skipping r_scripts/beast_xml.R"
+        #     echo "------------------------------------------------------------------------------"
+        #     printf "\n"
+        # fi
+        #
+        # # ---
+        #
+        # # Run Beast
+        #
+        # # Beast output files
+        # beast_log_file=${beast_results_dir}${study_accession}.log
+        # beast_trees_file=${beast_results_dir}${study_accession}.trees
+        # beast_state_file=${beast_results_dir}${study_accession}.xml.state
+        #
+        # if [ ! -f ${beast_log_file} ] || [ ! -f ${beast_trees_file} ] || [ ! -f ${beast_state_file} ];then
+        #
+        #     echo "------------------------------------------------------------------------------"
+        #
+        #     echo "Run Beast"
+        #     printf "\n"
+        #
+        #     echo "Running BEAST - outputs ${beast_log_file}, ${beast_trees_file} and ${beast_state_file}"
+        #     set -x
+        #     # Run Beast and clean up - put in right folder
+        #     beast ${xml_file} && mv ${study_accession}.log ${study_accession}.trees ${study_accession}.xml.state ${beast_results_dir}
+        #     set +x
+        #     echo "------------------------------------------------------------------------------"
+        #     printf "\n"
+        # else
+        #     echo "------------------------------------------------------------------------------"
+        #     echo "Files ${beast_log_file}, ${beast_trees_file} and ${beast_state_file} exist, skipping beast"
+        #     echo "------------------------------------------------------------------------------"
+        #     printf "\n"
+        #
+        # fi
+        #
+        # # # ------------------------------------------------------------------------------
+        # # #
+        # # # # Transphylo
+        # # #
+        # # # echo "Transphylo command"
+        # # #
+        # # # echo "Running Transphylo"
 
-        echo "------------------------------------------------------------------------------"
-
-        echo "Run Beast"
-        printf "\n"
-
-        echo "Running BEAST - outputs ${beast_log_file}, ${beast_trees_file} and ${beast_state_file}"
-        set -x
-        # Run Beast and clean up - put in right folder
-        beast ${xml_file} && mv ${study_accession}.log ${study_accession}.trees ${study_accession}.xml.state ${beast_results_dir}
-        set +x
-        echo "------------------------------------------------------------------------------"
-        printf "\n"
-    else
-        echo "------------------------------------------------------------------------------"
-        echo "Files ${beast_log_file}, ${beast_trees_file} and ${beast_state_file} exist, skipping beast"
-        echo "------------------------------------------------------------------------------"
-        printf "\n"
-
-    fi
-
-    # # ------------------------------------------------------------------------------
-    # #
-    # # # Transphylo
-    # #
-    # # echo "Transphylo command"
-    # #
-    # # echo "Running Transphylo"
-
+    # End Beast loop on fasta files of clusters
+    done
+# End study accession loop
 done
 
 

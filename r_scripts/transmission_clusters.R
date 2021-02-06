@@ -142,7 +142,7 @@ clusters <- clusters[clusters %in% which(table(clusters) > 1)]
 cluster_table <- data.frame(id = names(clusters), cluster = clusters)
 
 # Save
-write.table(cluster_table, file = output_clusters_file, quote = F, row.names = F)
+write.table(cluster_table, file = output_clusters_file, quote = F, row.names = F, sep = "\t")
 
 # ---------------------
 # APPENDIX - examples

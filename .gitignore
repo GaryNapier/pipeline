@@ -4,7 +4,9 @@ dist_and_pca/
 fasta/
 itol_annotations/
 logs/
-metadata/PRJEB7669.clusters
+metadata/*.clusters
 newick/
 plots/
 refs.bib
+shell_scripts/reset.sh
+tmp/

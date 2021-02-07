@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# master_script.sh
+# master_script_beast_setup.sh
 
 set -e
 set -u
@@ -8,7 +8,7 @@ set -o pipefail
 
 # ------------------------------------------------------------------------------
 
-# Master script for transmission analysis
+# Master script for transmission analysis up to the point of running Beast
 
 # Arguments to script:
 
@@ -19,7 +19,7 @@ set -o pipefail
 # Output:
 
 # RUN
-# Assume run from
+# Assume run from transmission/
 
 # ------------------------------------------------------------------------------
 
@@ -29,6 +29,7 @@ cd ~/transmission
 
 # Variables
 gvcf_file_suffix=.g.vcf.gz
+date_column=collection_date
 
 # Directories
 metadata_dir=~/metadata/
@@ -38,7 +39,6 @@ vcf_dir=~/vcf/
 ref_dir=~/refgenome/
 xml_script_location=beast_xml/
 beast_results_dir=beast_results/
-date_column=collection_date
 itol_annotation_dir=itol_annotations/
 newick_output_dir=newick/
 dist_and_pca_dir=dist_and_pca/
@@ -52,6 +52,7 @@ ref_fasta_file=${ref_dir}MTB-h37rv_asm19595v2-eg18.fa
 ex_loci_file=${ref_dir}excluded_loci_rep_regions_dr_regions.bed
 
 # Parameters
+
 
 # Commands
 
@@ -310,18 +311,21 @@ for study_accession in ${study_accession_list}; do
 done
 
 
+# NOW RUN shell_scripts/master_script_beast.sh
+
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
 # Beast loop
 
-for study_accession in ${study_accession_list}; do
-
-    # Redefine cluster fasta files
-
-    clust_fasta_files${clust_fasta_dir}${study_accession}.clust_*
-
-    for file in $(ls ${clust_fasta_files}); do
+# for study_accession in ${study_accession_list}; do
+#
+#     # Redefine cluster fasta files
+#
+#     clust_fasta_files${clust_fasta_dir}${study_accession}.clust_*
+#
+#     for file in $(ls ${clust_fasta_files}); do
 
 
 
@@ -433,9 +437,9 @@ for study_accession in ${study_accession_list}; do
         # # # echo "Running Transphylo"
 
     # End Beast loop on fasta files of clusters
-    done
-# End study accession loop
-done
+#     done
+# # End study accession loop
+# done
 
 
 

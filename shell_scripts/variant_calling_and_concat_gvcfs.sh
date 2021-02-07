@@ -99,19 +99,19 @@ fi
 # Get samples from metadata based on study_accession number, store as file
 grep ${study_accession} ${metadata_file} | cut -d, -f1 > ${sample_list_file}
 
-echo "Samples:"
-cat ${sample_list_file}
+echo "Head of samples:"
+head ${sample_list_file}
 printf "\n"
 
 # Make a list of the validated vcf file names
 vcf_files=`cat ${sample_list_file} | sed "s|.*|${vcf_dir}&${val_gvcf_file_suffix}|"`
 
-echo "vcf file names:"
-echo ${vcf_files}
-printf "\n"
+# echo "Head of vcf file names:"
+# echo ${vcf_files} | head
+# printf "\n"
 
 # Commands
-# see https://github.com/pathogenseq/fastq2matrix/blob/08480865bd2248ddb35a6d9e7321fff66fdd7a0c/scripts/merge_vcfs.py for use of gatk GenomicsDBImport 
+# see https://github.com/pathogenseq/fastq2matrix/blob/08480865bd2248ddb35a6d9e7321fff66fdd7a0c/scripts/merge_vcfs.py for use of gatk GenomicsDBImport
 bedtools_cmd="bedtools makewindows -n ${num_genome_chunks} -g ${ref_index}"
 import_cmd="gatk GenomicsDBImport --genomicsdb-workspace-path ${genomicsDB_dir}{2}_genomics_db -L {1} --sample-name-map ${vcf_map_file} --reader-threads ${threads} --batch-size 500"
 genotype_cmd="gatk GenotypeGVCFs -R ${ref_file} -V gendb://${genomicsDB_dir}{2}_genomics_db -O ${tmp_dir}{2}${genotyped_vcf_suffix}"

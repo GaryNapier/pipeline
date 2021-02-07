@@ -15,8 +15,8 @@
 # Output:
 
 # RUN:
-  # Rscript r_scripts/beast_xml.R -s <study_acc>  -t <template_file_name>      -f <dated_fasta_file_name> -o <output_file_location>
-# Rscript r_scripts/beast_xml.R -s PRJEB7669    -t beast_xml/tb_template.xml -f fasta/                    -o beast_xml/
+# Rscript r_scripts/beast_xml.R -s <study_acc>  -t <template_file_name>      -f <dated_fasta_file_name> -o <output_file_name>
+# Rscript r_scripts/beast_xml.R -s PRJEB7669    -t beast_xml/tb_template.xml -f fasta/                  -o beast_xml/PRJEB7669.clust_1.xml
 
 # Setup ----
 
@@ -49,7 +49,7 @@ option_list = list(
   make_option(c("-f", "--dated_fasta_file_name"), type="character", default=NULL,
               help="input template xml file", metavar="character"),
 
-  make_option(c("-o", "--output_file_location"), type="character", default="./",
+  make_option(c("-o", "--output_file_name"), type="character", default="./",
               help="file location to save output file to", metavar="character"),
 
   make_option(c("-M", "--MUTATIONRATE"), type="character", default="1.0",
@@ -65,7 +65,7 @@ option_list = list(
               help="input popsize, lower value, default = 0.0", metavar="character"),
 
   make_option(c("-U", "--POPSIZEUPPER"), type="character", default="200.0",
-                help="input popsize, upper value, default = 200.0", metavar="character"),
+              help="input popsize, upper value, default = 200.0", metavar="character"),
 
   make_option(c("-F", "--FREQPARAMETER"), type="character", default="0.25",
               help="input freqparameter, default = 0.25", metavar="character")
@@ -94,7 +94,7 @@ DATA <- "<sequence id=\"seq_ID\" spec=\"Sequence\" taxon=\"ID\" totalcount=\"4\"
 # STUDY_ACCESSION <- "PRJEB7669"
 # template_file_name <- "beast_xml/tb_template.xml"
 # dated_fasta_file_location <- "fasta/"
-# output_file_location <- "beast_xml/"
+# output_file_name <- "beast_xml/PRJEB7669.xml"
 # MUTATIONRATE <- "1.0"
 # CLOCKRATE <- "1.0E-7"
 # POPSIZE <- "0.3"
@@ -102,7 +102,7 @@ DATA <- "<sequence id=\"seq_ID\" spec=\"Sequence\" taxon=\"ID\" totalcount=\"4\"
 # POPSIZEUPPER <- "200.0"
 # FREQPARAMETER <- "0.25"
 #
-# opt <- c(STUDY_ACCESSION, template_file_name, dated_fasta_file_location, output_file_location,
+# opt <- c(STUDY_ACCESSION, template_file_name, dated_fasta_file_location, output_file_name,
 #               MUTATIONRATE, CLOCKRATE, POPSIZE, POPSIZELOWER, POPSIZEUPPER, FREQPARAMETER)
 #
 # x <- list()
@@ -110,7 +110,7 @@ DATA <- "<sequence id=\"seq_ID\" spec=\"Sequence\" taxon=\"ID\" totalcount=\"4\"
 #   x[[i]] <- i
 # }
 #
-# names(x) <- c("STUDY_ACCESSION", "template_file_name", "dated_fasta_file_location", "output_file_location",
+# names(x) <- c("STUDY_ACCESSION", "template_file_name", "dated_fasta_file_location", "output_file_name",
 #               "MUTATIONRATE", "CLOCKRATE", "POPSIZE", "POPSIZELOWER", "POPSIZEUPPER", "FREQPARAMETER")
 #
 # opt <- x
@@ -125,7 +125,7 @@ DATA <- "<sequence id=\"seq_ID\" spec=\"Sequence\" taxon=\"ID\" totalcount=\"4\"
 # Files ----
 
 fasta_file <- opt$dated_fasta_file_name
-output_file <- paste0(opt$output_file_location, opt$STUDY_ACCESSION, ".xml")
+output_file <- paste0(opt$output_file_name)
 
 print("FILES:")
 print(c("dated fasta file name: ", fasta_file))

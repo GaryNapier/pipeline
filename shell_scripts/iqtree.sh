@@ -26,8 +26,9 @@ set -o pipefail
 
 # RUN
 # Assume run from ~/transmission :
-# ./shell_scripts/iqtree.sh <study_accession>   <fasta_input_file>                                <cluster_file>                    <newick_output_dir>
-# ./shell_scripts/iqtree.sh PRJEB7669           fasta/PRJEB7669.filt.val.gt.g.snps.fa             metadata/PRJEB7669.clusters       newick/
+# shell_scripts/iqtree.sh <study_accession>   <fasta_input_file>                                <cluster_file>                    <newick_output_dir>
+# shell_scripts/iqtree.sh PRJEB7669           fasta/PRJEB7669.filt.val.gt.g.snps.fa             metadata/PRJEB7669.clusters       newick/
+# shell_scripts/iqtree.sh KARONGA             fasta/KARONGA.filt.val.gt.g.snps.fa               metadata/KARONGA.clusters       newick/
 
 # ------------------------------------------------------------------------------
 
@@ -85,7 +86,7 @@ fi
 # ------------------------------------------------------------------------------
 
 # Pull just list of samples from cluster file
-cut -d' ' -f1 ${cluster_file} | tail -n +2 > ${tmp_cluster_ids_file}
+cut -f1 ${cluster_file} | tail -n +2 > ${tmp_cluster_ids_file}
 
 # ------------------------------------------------------------------------------
 

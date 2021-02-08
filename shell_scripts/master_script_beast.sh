@@ -56,69 +56,25 @@ echo "Processing study accessions:"
 cat ${study_accession_list}
 printf "\n"
 
-
 # Beast loop
 
 for study_accession in ${study_accession_list}; do
 
     # Define cluster numbers from clusters file (result of transmission_clusters.R)
     clusters_file=${metadata_dir}${study_accession}.clusters
-    cluster_nums=`cat ${clusters_file} | tail -n +2 | cut -f2 | sort | uniq`
+    cluster_nums=$(cat ${clusters_file} | tail -n +2 | cut -f2 | sort -n | uniq)
 
-    # Loop over
+    # Loop over cluster numbers
     for clust_num in ${cluster_nums}; do
-
-
-        # ------------------------------------------------------------------------------
-
-        # Beast
-
-        echo "------------------------------------------------------------------------------"
-
-        echo "Beast"
-        printf "\n"
-
-        # ---
-
-        # Create dated fasta file for Beast
-
-        # Files:
-        # In:
-        clust_fasta_file=${fasta_dir}${study_accession}.clust_${clust_num}.fa
-        # Out:
-        dated_fasta_file=${study_accession}.clust_${clust_num}.dated.fa
-
-
-        if [ ! -f ${dated_fasta_file} ]; then
-
-            echo "------------------------------------------------------------------------------"
-
-            echo "Dated fasta file"
-            printf "\n"
-
-            echo "Running fasta_add_annotations.py - outputs ${dated_fasta_file}"
-            printf "\n"
-
-            # Run fasta_add_annotations.py to concatenate the metadata collection date with the sample ID in the fasta file
-            # e.g. >ERR1234 -> >ERR1234_01_01_10
-            # - see https://github.com/pathogenseq/pathogenseq-scripts/tree/master/scripts
-            set -x
-            fasta_add_annotations.py --fasta ${clust_fasta_file} --csv ${metadata_file} --out ${dated_fasta_file} --annotations ${date_column}
-            set +x
-            echo "------------------------------------------------------------------------------"
-            printf "\n"
-        else
-            echo "------------------------------------------------------------------------------"
-            echo "File ${dated_fasta_file} exists, skipping fasta_add_annotations.py"
-            echo "------------------------------------------------------------------------------"
-            printf "\n"
-        fi
-
-        # ---
 
         # Create XML file for Beast
 
+        # Define files
+        # In:
+        dated_fasta_file=${fasta_dir}${study_accession}.clust_${clust_num}.fa
+        # Out:
         xml_file=${xml_script_location}${study_accession}.clust_${clust_num}.xml
+
 
         if [ ! -f ${xml_file} ]; then
 
@@ -140,7 +96,7 @@ for study_accession in ${study_accession_list}; do
             printf "\n"
         fi
 
-        ---
+        # ------------------------------------------------------------------------------
 
         # Run Beast
 
@@ -159,7 +115,7 @@ for study_accession in ${study_accession_list}; do
             echo "Running BEAST - outputs ${beast_log_file}, ${beast_trees_file} and ${beast_state_file}"
             set -x
             # Run Beast and clean up - put in right folder
-            beast ${xml_file} && mv ${study_accession}.clust_${clust_num}.log ${beast_results_dir}${study_accession}.clust_${clust_num}.trees ${study_accession}.clust_${clust_num}.xml.state ${beast_results_dir}
+            beast ${xml_file} && mv ${study_accession}.clust_${clust_num}.log ${study_accession}.clust_${clust_num}.trees ${study_accession}.clust_${clust_num}.xml.state ${beast_results_dir}
             set +x
             echo "------------------------------------------------------------------------------"
             printf "\n"

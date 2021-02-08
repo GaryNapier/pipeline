@@ -280,7 +280,39 @@ for study_accession in ${study_accession_list}; do
 
     # ------------------------------------------------------------------------------
 
-    # Subset fasta - chop filt_fasta_file into clusters outputted by r_scripts/transmission_clusters
+    # Create dated fasta file for Beast
+
+    # Define out file
+    dated_fasta_file=${study_accession}.dated.fa
+
+    if [ ! -f ${dated_fasta_file} ]; then
+
+        echo "------------------------------------------------------------------------------"
+
+        echo "Dated fasta file"
+        printf "\n"
+
+        echo "Running fasta_add_annotations.py - outputs ${dated_fasta_file}"
+        printf "\n"
+
+        # Run fasta_add_annotations.py to concatenate the metadata collection date with the sample ID in the fasta file
+        # e.g. >ERR1234 -> >ERR1234_01_01_10
+        # - see https://github.com/pathogenseq/pathogenseq-scripts/tree/master/scripts
+        set -x
+        fasta_add_annotations.py --fasta ${filt_fasta_file} --csv ${metadata_file} --out ${dated_fasta_file} --annotations ${date_column}
+        set +x
+        echo "------------------------------------------------------------------------------"
+        printf "\n"
+    else
+        echo "------------------------------------------------------------------------------"
+        echo "File ${dated_fasta_file} exists, skipping fasta_add_annotations.py"
+        echo "------------------------------------------------------------------------------"
+        printf "\n"
+    fi
+
+    # ------------------------------------------------------------------------------
+
+    # Subset fasta - chop dated_fasta_file into clusters outputted by r_scripts/transmission_clusters
 
     clust_fasta_dir=`dirname ${filt_fasta_file}`/
     clust_fasta_files=${clust_fasta_dir}${study_accession}.clust_*
@@ -296,7 +328,7 @@ for study_accession in ${study_accession_list}; do
 
         echo "Running shell_scripts/subset_fasta.sh - outputs ${clust_fasta_files}"
         set -x
-        shell_scripts/subset_fasta.sh ${study_accession} ${clusters_data_file} ${filt_fasta_file}
+        shell_scripts/subset_fasta.sh ${study_accession} ${clusters_data_file} ${dated_fasta_file}
         set +x
         echo "------------------------------------------------------------------------------"
         printf "\n"
@@ -306,6 +338,7 @@ for study_accession in ${study_accession_list}; do
         echo "------------------------------------------------------------------------------"
         printf "\n"
     fi
+
 
 # End for-loop on study accession numbers from study_accession_list
 done

@@ -46,7 +46,7 @@ plots_dir=plots/
 
 # Files
 study_accession_list=$(cat ${metadata_local_dir}study_accession_list.txt)
-metadata_file=${metadata_dir}tb_data_collated_28_10_2020_clean.csv
+metadata_file=${metadata_dir}tb_data_28_01_2021_clean.csv
 xml_template_file=${xml_script_location}tb_template.xml
 ref_fasta_file=${ref_dir}MTB-h37rv_asm19595v2-eg18.fa
 ex_loci_file=${ref_dir}excluded_loci_rep_regions_dr_regions.bed
@@ -205,7 +205,7 @@ for study_accession in ${study_accession_list}; do
         echo "Running transmission clusters - outputs file ${clusters_data_file} and plot in ${plots_dir}"
         set -x
         # Rscript r_scripts/transmission_clusters.R <study_accession>   <threshold> <dm_file>    <id_file>       <output dir>           <output dir for plot>
-        Rscript r_scripts/transmission_clusters.R   ${study_accession}  50          ${dist_file} ${dist_id_file} ${metadata_local_dir}  ${plots_dir}
+        Rscript r_scripts/transmission_clusters.R   ${study_accession}  100         ${dist_file} ${dist_id_file} ${metadata_local_dir}  ${plots_dir}
         set +x
         echo "------------------------------------------------------------------------------"
         printf "\n"

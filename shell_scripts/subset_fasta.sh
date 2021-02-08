@@ -83,7 +83,7 @@ printf '\n'
 # head -n 1 ${clusters_file}  | cat - test_clust_1 test_clust_2 > test_clusts
 
 # Take unique clusters (1, 2, 3 etc) and store
-clusts=$(tail -n +2 ${clusters_file} | cut -f2 | sort | uniq)
+clusts=$(tail -n +2 ${clusters_file} | cut -f2 | sort -n | uniq)
 
 # Loop through the file and subset on cluster
 for clust in ${clusts}; do

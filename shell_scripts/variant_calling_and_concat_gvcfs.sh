@@ -96,15 +96,27 @@ if [ ! -d ${genomicsDB_dir} ]; then
     mkdir ${genomicsDB_dir}
 fi
 
-# Get samples from metadata based on study_accession number, store as file
-grep ${study_accession} ${metadata_file} | cut -d, -f1 > ${sample_list_file}
+# Filter samples on study_accession
+# grep ${study_accession} ${metadata_file} | cut -d, -f1 > ${sample_list_file}
+
+# Filter samples:
+# on study_accession number
+# take out mixed infections (";")
+# take out blank lineages
+# take out blank dates
+# save samples to file
+
+cat ${metadata_file} | \
+csvtk grep -f study_accession_word -p ${study_accession} | \
+csvtk grep -f sub_lineage -p ";" -p "^$" -r -v | \
+csvtk grep -f collection_date -p "^$" -r -v | csvtk cut -f wgs_id | tail -n +2 > ${sample_list_file}
 
 echo "Head of samples:"
 head ${sample_list_file}
 printf "\n"
 
 # Make a list of the validated vcf file names
-vcf_files=`cat ${sample_list_file} | sed "s|.*|${vcf_dir}&${val_gvcf_file_suffix}|"`
+# vcf_files=`cat ${sample_list_file} | sed "s|.*|${vcf_dir}&${val_gvcf_file_suffix}\\n|"`
 
 # echo "Head of vcf file names:"
 # echo ${vcf_files} | head

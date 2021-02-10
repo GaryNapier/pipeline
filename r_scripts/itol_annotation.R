@@ -23,7 +23,7 @@
 
 # RUN:
 # Rscript r_scripts/itol_annotation.R <study_accession> <metadata_file>                                            <clusters_data_file>                   <itol_location>
-# Rscript r_scripts/itol_annotation.R PRJEB7669         ~/Documents/metadata/tb_data_collated_28_10_2020_clean.csv metadata/PRJEB7669.clusters            itol_annotations/ 
+# Rscript r_scripts/itol_annotation.R PRJEB7669         ~/Documents/metadata/tb_data_28_01_2021_clean.csv metadata/PRJEB7669.clusters            itol_annotations/ 
 
 # Setup ----
 
@@ -110,10 +110,12 @@ samples <- clusters_data$id
 
 # Drug resistance ----
 
-cols <- c("run_accession", "study_accession", "dr_status")
+# cols <- c("run_accession", "study_accession", "dr_status")
+cols <- c("wgs_id", "study_accession_word", "dr_status")
 
 # Subset rows by study accession and cols by run_accession (sample ID), study_accession and drugs
-dr_data <- subset(metadata, study_accession == study_acc)
+# dr_data <- subset(metadata, study_accession == study_acc)
+dr_data <- subset(metadata, study_accession_word == study_acc)
 dr_data <- dr_data[, cols]
 
 # Clean
@@ -125,7 +127,8 @@ DR <- ifelse(dr_data$dr_status == "DR", 1, -1)
 MDR <- ifelse(dr_data$dr_status == "MDR", 1, -1)
 XDR <- ifelse(dr_data$dr_status == "XDR", 1, -1)
 
-dr_df <- cbind(dr_data$run_accession, sus, DR, MDR, XDR)
+# dr_df <- cbind(dr_data$run_accession, sus, DR, MDR, XDR)
+dr_df <- cbind(dr_data$wgs_id, sus, DR, MDR, XDR)
 
 # Write dataframe to template
 
@@ -149,13 +152,20 @@ write.table(dr_df, file = itol_dr_out_file,
 #9606 #ff0000 Human
 
 # Set colours for each cluster
-n_cols_clust <- length(unique(clusters_data$cluster))
-# Get colours - note: In brewer.pal minimal value for n is 3, so have to subset with [] if less than 3
-# Wrap in alpha function
-cluster_cols <- scales::alpha(brewer.pal(n = n_cols_clust, name = "Dark2")[1:n_cols_clust], alpha = alpha)
+n_clusts <- length(unique(clusters_data$cluster))
+## 
+## Wrap in alpha function
+# cluster_cols <- scales::alpha(brewer.pal(n = n_clusts, name = "Dark2")[1:n_clusts], alpha = alpha)
+
+# Potentially a large number of clusters, so need just two cols and alternate between them for each clust
+# Might work, might not
+# n.b. In brewer.pal minimal value for n is 3, so have to subset with [] if less than 3
+# cluster_cols <- scales::alpha(brewer.pal(n = 10, name = "Set3"), alpha = alpha)
+cluster_cols <- brewer.pal(n = 10, name = "Set3")
 
 # Make df for unique clusters and cols 
-clust_col_df <- data.frame(cluster = unique(clusters_data$cluster), col = cluster_cols)
+# clust_col_df <- data.frame(cluster = unique(clusters_data$cluster), col = cluster_cols)
+clust_col_df <- data.frame(cluster = unique(clusters_data$cluster), col = rep(cluster_cols, len = n_clusts) )
 
 # Merge with cluster data 
 clusters_data <- merge(clusters_data, clust_col_df, by = "cluster")
@@ -184,14 +194,14 @@ clusters_data <- clusters_data[, c("id", "col", "cluster")]
 
 # Legend shapes - repeat "1" for as many unique clusters and intersperse with "\t"
 leg_shapes <- paste0("LEGEND_SHAPES\t", 
-                     paste0(paste0(rep(1, length(unique(clusters_data$cluster))), "\t"), collapse = ""))
+                     paste0(paste0(rep(1, n_clusts), "\t"), collapse = ""))
 
 itol_clusters_in_file <- gsub("#LEGEND_SHAPES 1 1 2 2", leg_shapes, itol_clusters_in_file)
 
 
 # Legend colours - same for labels but just the unique cols
 leg_cols <- paste0("LEGEND_COLORS\t", 
-                     paste0(paste0(unique(clusters_data$col), "\t"), collapse = ""))
+                     paste0(paste0(clust_col_df$col, "\t"), collapse = ""))
 
 itol_clusters_in_file <- gsub("#LEGEND_COLORS #ff0000 #00ff00 rgba\\(0,255,0,0.5\\) #0000ff", 
                               leg_cols, itol_clusters_in_file)
@@ -208,7 +218,7 @@ write.table(itol_clusters_in_file, file = itol_clusters_out_file, sep="\t",
             row.names=F, col.names=F, quote = F)
 
 # Append the clusters data to the template
-write.table(clusters_data, file = itol_clusters_out_file,
+write.table(clusters_data[, c("id", "col", "cluster")], file = itol_clusters_out_file,
             append = T, sep="\t",
             row.names=F, col.names=F, quote = F)
 
@@ -219,27 +229,27 @@ write.table(clusters_data, file = itol_clusters_out_file,
 # ERR2446223	range	#FF1919E6	1
 # SRR2100428	range	#FF1919E6	1
 
-cols <- c("run_accession", "study_accession", "lineage")
+cols <- c("wgs_id", "study_accession_word", "main_lineage")
 
 # Subset data
-lin_data <- subset(metadata, study_accession == study_acc)
+lin_data <- subset(metadata, study_accession_word == study_acc)
 lin_data <- lin_data[, cols]
 
-uniq_lins <- unique(lin_data[!is.na(lin_data[, "lineage"]), "lineage"])
+uniq_lins <- sort(unique(lin_data[!is.na(lin_data[, "main_lineage"]), "main_lineage"]))
 
 # Get unique cols per lineage
 n_cols_lin <- length(uniq_lins)
 lin_cols <- rainbow(n_cols_lin, alpha = alpha)
 
 # Make df for unique lins and cols 
-lin_col_df <- data.frame(lineage = uniq_lins, col = lin_cols)
+lin_col_df <- data.frame(main_lineage = uniq_lins, col = lin_cols)
 
 # Merge
-lin_data <- merge(lin_data, lin_col_df, by = "lineage")
+lin_data <- merge(lin_data, lin_col_df, by = "main_lineage")
 
 # Clean - subset and order columns and add "range" column
 lin_data$range <- rep("range", nrow(lin_data))
-lin_data <- lin_data[, c("run_accession", "range", "col", "lineage")]
+lin_data <- lin_data[, c("wgs_id", "range", "col", "main_lineage")]
 
 # Write the template out under the new file name for the study accession
 write.table(itol_lineage_in_file, file = itol_lineage_out_file, sep="\t",

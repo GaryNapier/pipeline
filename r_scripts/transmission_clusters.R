@@ -63,6 +63,8 @@
 
 # Setup ----
 
+library(dynamicTreeCut)
+
 # Read in args
 args <- commandArgs(trailingOnly=TRUE)
 
@@ -107,13 +109,14 @@ row.names(dm) <- ids
 colnames(dm) <- ids
 
 # Convert to 'distance matrix' (take out upper triangle)
-dm[upper.tri(dm, diag = T)] <- 0
+# dm[upper.tri(dm, diag = T)] <- 0
 
 # Need to divide matrix by 2 because Plink assumes diploid
 dm <- dm/2
 
 # Check
 dm[1:10, 1:10]
+
 
 # Cluster using 'single' method.
 # Clusters all samples within distance of threshold (i.e. transitively)
@@ -136,7 +139,23 @@ dev.off()
 clusters <- sort(cutree(clust, h = threshold))
 
 # Filter for clusters (take out the samples with their own number, i.e., those not in a group)
-clusters <- clusters[clusters %in% which(table(clusters) > 1)]
+clusters <- clusters[clusters %in% names(which(table(clusters) > 2))]
+
+# dm_no_single <- dm[names(clusters), names(clusters)]
+# 
+# clust_no_single <- hclust(as.dist(dm_no_single), method = "single")
+# 
+# clusters_no_single <- sort(cutree(clust_no_single, h = threshold))
+# increase <- 1
+# while(any(table(clusters_no_single) == 2)){
+#   increase <- increase + 1
+#   clusters_no_single <- sort(cutree(clust_no_single, h = threshold+increase))
+# }
+# threshold+increase
+# table(clusters_no_single)
+
+# Find two-sample clusters (sample names)
+# two_samp_clusts <- names(clusters[clusters %in% names(which(table(clusters) == 2))])
 
 # Convert to dataframe
 cluster_table <- data.frame(id = names(clusters), cluster = clusters)

@@ -22,14 +22,16 @@
 # Three itol files, one for each type of annotation
 
 # RUN:
-# Rscript r_scripts/itol_annotation.R <study_accession> <metadata_file>                                            <clusters_data_file>                   <itol_location>
-# Rscript r_scripts/itol_annotation.R PRJEB7669         ~/Documents/metadata/tb_data_28_01_2021_clean.csv metadata/PRJEB7669.clusters            itol_annotations/ 
+# Rscript r_scripts/itol_annotation.R <metadata_file>                                       <itol_location>
+# Rscript r_scripts/itol_annotation.R ~/Documents/metadata/tb_data_28_01_2021_clean.csv     itol_annotations/
 
 # Setup ----
 
 library(rvest)
 library(RColorBrewer)
 library(scales)
+library(colorspace) # lighten()
+library(gplots) # col2hex
 
 heaD <- function(x,...){
   head(x, ...)
@@ -45,6 +47,9 @@ hs <- function(x, ...){
   str(x, ...)
 }
 
+# Reset
+# rm(list=ls())
+
 # Read in args
 args <- commandArgs(trailingOnly=TRUE)
 
@@ -52,39 +57,46 @@ args <- commandArgs(trailingOnly=TRUE)
 # NOTE: FOR SOME BLOODY STUPID REASON I CAN'T DO THIS LATER IN THE CODE:
 # subset(metadata, study_accession == study_accession)
 # SO I HAVE TO RENAME THE VARIABLE study_acc INSTEAD OF study_accession
-study_acc <- args[1]
+# study_acc <- args[1]
 nl <- cat("\n")
-alpha <- 0.7
+alpha <- 0.8
 
 # Directories
 # clusters_data_file_dir <- args[3]
-itol_location <- args[4]
+itol_location <- args[2]
 
 # Files and suffixes/prefixes
-metadata_file <- args[2]
+metadata_file <- args[1]
 
 # clusters_data_file <- paste0(clusters_data_file_dir, study_acc, ".clusters")
-clusters_data_file <- args[3]
+# clusters_data_file <- args[3]
 
 itol_dr_in_file <- paste0(itol_location, "itol.dr.txt")
 itol_clusters_in_file <- paste0(itol_location, "itol.clusters.txt")
 itol_lineage_in_file <- paste0(itol_location, "itol.lineages.txt")
+itol_major_lineage_in_file <- paste0(itol_location, "itol.major_lineages.txt")
 
-itol_dr_out_file <- paste0(itol_location, study_acc, ".dr.txt")
-itol_clusters_out_file <- paste0(itol_location, study_acc, ".clusters.txt")
-itol_lineage_out_file <- paste0(itol_location, study_acc, ".lineages.txt")
+# itol_dr_out_file <- paste0(itol_location, study_acc, ".dr.txt")
+# itol_clusters_out_file <- paste0(itol_location, study_acc, ".clusters.txt")
+# itol_lineage_out_file <- paste0(itol_location, study_acc, ".lineages.txt")
 
-nl
+metadata_file_base <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(metadata_file))
+
+itol_dr_out_file <- paste0(itol_location, metadata_file_base, ".dr.txt")
+itol_clusters_out_file <- paste0(itol_location, metadata_file_base, ".clusters.txt")
+itol_lineage_out_file <- paste0(itol_location, metadata_file_base, ".lineages.txt")
+itol_major_lins_out_file <- paste0(itol_location, metadata_file_base, ".major_lins.txt")
+
 print("ARGUMENTS:")
-nl
-print(c("study_accession:", study_acc))
+# print(c("study_accession:", study_acc))
 print("")
 print(c("metadata_file:", metadata_file))
-print(c("clusters_data_file:", clusters_data_file))
+# print(c("clusters_data_file:", clusters_data_file))
 print("")
 print(c("itol_dr_in_file:", itol_dr_in_file))
 print(c("itol_clusters_in_file:", itol_clusters_in_file))
 print(c("itol_lineage_in_file:", itol_lineage_in_file))
+print(c("itol_major_lineage_in_file", itol_major_lineage_in_file))
 print("")
 print(c("itol_dr_out_file:", itol_dr_out_file))
 print(c("itol_clusters_out_file:", itol_clusters_out_file))
@@ -96,44 +108,92 @@ print(c("itol_lineage_out_file:", itol_lineage_out_file))
 # itol_clusters_in_file
 # itol_lineage_in_file
 
-itol_dr_in_file <- readChar(itol_dr_in_file, nchars = 1e6)
-itol_clusters_in_file <- readChar(itol_clusters_in_file, nchars = 1e6)
-itol_lineage_in_file <- readChar(itol_lineage_in_file, nchars = 1e6)
+itol_dr <- readChar(itol_dr_in_file, nchars = 1e6)
+itol_clusters <- readChar(itol_clusters_in_file, nchars = 1e6)
+itol_lineage <- readChar(itol_lineage_in_file, nchars = 1e6) 
+itol_major_lins <- readChar(itol_major_lineage_in_file, nchars = 1e6)
 
 # Read in sample data/metadata and clean ----
 
 metadata <- read.csv(metadata_file, stringsAsFactors = F)
-clusters_data <- read.table(clusters_data_file, header = T, stringsAsFactors = F)
+# clusters_data <- read.table(clusters_data_file, header = T, stringsAsFactors = F)
 
 # Get list of samples from clusters data
-samples <- clusters_data$id
+# samples <- clusters_data$id
+
+
 
 # Drug resistance ----
 
 # cols <- c("run_accession", "study_accession", "dr_status")
-cols <- c("wgs_id", "study_accession_word", "dr_status")
+# dr_columns <- c("wgs_id", "study_accession_word", "dr_status")
 
-# Subset rows by study accession and cols by run_accession (sample ID), study_accession and drugs
+# Subset rows by study accession and cols by wgs_id, (sample ID) and drugs
 # dr_data <- subset(metadata, study_accession == study_acc)
-dr_data <- subset(metadata, study_accession_word == study_acc)
-dr_data <- dr_data[, cols]
+# dr_data <- subset(metadata, study_accession_word == study_acc)
+# dr_data <- dr_data[, cols]
+dr_data <- metadata[, c("wgs_id", "dr_status")]
 
 # Clean
-dr_data <- dr_data[!is.na(dr_data["dr_status"]), ]
+# dr_data <- dr_data[!is.na(dr_data["dr_status"]), ]
 
 # Need to convert to binary cols
-sus <- ifelse(dr_data$dr_status == "Susceptible", 1, -1)
-DR <- ifelse(dr_data$dr_status == "DR", 1, -1)
-MDR <- ifelse(dr_data$dr_status == "MDR", 1, -1)
-XDR <- ifelse(dr_data$dr_status == "XDR", 1, -1)
+# sus <- ifelse(dr_data$dr_status == "Susceptible", 1, -1)
+# DR <- ifelse(dr_data$dr_status == "DR", 1, -1)
+# MDR <- ifelse(dr_data$dr_status == "MDR", 1, -1)
+# XDR <- ifelse(dr_data$dr_status == "XDR", 1, -1)
+
+dr_status <- c("Sensitive", "Pre-MDR", "MDR", "Pre-XDR", "XDR", "Other")
+
+# sus <- ifelse(dr_data$dr_status == "Sensitive", 1, -1)
+# pre_mdr <- ifelse(dr_data$dr_status == "Pre-MDR", 1, -1)
+# MDR <- ifelse(dr_data$dr_status == "MDR", 1, -1)
+# pre_xdr <- ifelse(dr_data$dr_status == "pre-XDR", 1, -1)
+# XDR <- ifelse(dr_data$dr_status == "XDR", 1, -1)
+# other <- ifelse(dr_data$dr_status == "Other", 1, -1)
 
 # dr_df <- cbind(dr_data$run_accession, sus, DR, MDR, XDR)
-dr_df <- cbind(dr_data$wgs_id, sus, DR, MDR, XDR)
+# dr_df <- cbind(dr_data$wgs_id, sus, DR, MDR, XDR)
+# dr_df <- cbind(dr_data$wgs_id, sus, pre_mdr, MDR, pre_xdr, XDR, other)
+
+
+# Define colours for each category
+dr_colours <- alpha(col2hex(c("green1", "yellow2", "orange1", "red1", "black", "grey")), alpha = alpha)
+
+# Combine in df
+dr_df <- data.frame(dr_status, dr_colours)
+
+# Merge with dr data
+dr_df <- merge(dr_data, dr_df, by = "dr_status", all.x = T, sort = F)
+
+# Clean
+dr_df <- dr_df[, c("wgs_id", "dr_colours", "dr_status")]
+
+# DR legend
+
+# Legend shapes - repeat "1" for as many unique clusters and intersperse with "\t"
+leg_shapes_dr <- paste0("LEGEND_SHAPES\t", 
+                     paste0(paste0(rep(1, length(dr_status)), "\t"), collapse = ""))
+
+itol_dr <- gsub("#LEGEND_SHAPES 1 1 2 2", leg_shapes_dr, itol_dr)
+
+# Legend colours - same for labels but just the unique cols
+leg_cols_dr <- paste0("LEGEND_COLORS\t", 
+                   paste0(paste0(dr_colours, "\t"), collapse = ""))
+
+itol_dr <- gsub("#LEGEND_COLORS #ff0000 #00ff00 rgba\\(0,255,0,0.5\\) #0000ff", leg_cols_dr, itol_dr)
+
+# Legend labels - same for labels but just the unique values
+leg_labels_dr <- paste0("LEGEND_LABELS\t", 
+                     paste0(paste0(dr_status, "\t"), collapse = ""))
+
+itol_dr <- gsub("#LEGEND_LABELS value1 value2 value3 value4", 
+                              leg_labels_dr, itol_dr)
 
 # Write dataframe to template
 
 # Write the template out under the new file name for the study accession
-write.table(itol_dr_in_file, file = itol_dr_out_file, sep="\t",
+write.table(itol_dr, file = itol_dr_out_file, sep="\t",
             row.names=F, col.names=F, quote = F)
 
 # Append the drug resistance data to the template
@@ -142,117 +202,62 @@ write.table(dr_df, file = itol_dr_out_file,
             row.names=F, col.names=F, quote = F)
 
 
-# Clusters ----
-
-# From itol template:
-
-#Examples:
-#assign a red colored strip to leaf 9606, with label 'Human' (label is displayed in the mouseover popups)
-# <id> <col> <label>
-#9606 #ff0000 Human
-
-# Set colours for each cluster
-n_clusts <- length(unique(clusters_data$cluster))
-## 
-## Wrap in alpha function
-# cluster_cols <- scales::alpha(brewer.pal(n = n_clusts, name = "Dark2")[1:n_clusts], alpha = alpha)
-
-# Potentially a large number of clusters, so need just two cols and alternate between them for each clust
-# Might work, might not
-# n.b. In brewer.pal minimal value for n is 3, so have to subset with [] if less than 3
-# cluster_cols <- scales::alpha(brewer.pal(n = 10, name = "Set3"), alpha = alpha)
-cluster_cols <- brewer.pal(n = 10, name = "Set3")
-
-# Make df for unique clusters and cols 
-# clust_col_df <- data.frame(cluster = unique(clusters_data$cluster), col = cluster_cols)
-clust_col_df <- data.frame(cluster = unique(clusters_data$cluster), col = rep(cluster_cols, len = n_clusts) )
-
-# Merge with cluster data 
-clusters_data <- merge(clusters_data, clust_col_df, by = "cluster")
-
-# Clean - rearrange cols
-clusters_data <- clusters_data[, c("id", "col", "cluster")]
-
-# Do legend shapes and labels
-
-#LEGEND_TITLE Dataset_legend
-#LEGEND_POSITION_X 100
-#LEGEND_POSITION_Y 100
-#LEGEND_SHAPES 1 1 2 2
-#LEGEND_COLORS #ff0000 #00ff00 rgba(0,255,0,0.5) #0000ff
-#LEGEND_LABELS value1 value2 value3 value4
-#LEGEND_SHAPE_SCALES 1 1 0.5 1
-
-# LEGEND_TITLE	Clusters
-# #LEGEND_POSITION_X 100
-# #LEGEND_POSITION_Y 100
-# LEGEND_SHAPES	1
-# LEGEND_COLORS	#1B9E77E6
-# LEGEND_LABELS	1
-# #LEGEND_SHAPE_SCALES 1 1 0.5 1
-
-
-# Legend shapes - repeat "1" for as many unique clusters and intersperse with "\t"
-leg_shapes <- paste0("LEGEND_SHAPES\t", 
-                     paste0(paste0(rep(1, n_clusts), "\t"), collapse = ""))
-
-itol_clusters_in_file <- gsub("#LEGEND_SHAPES 1 1 2 2", leg_shapes, itol_clusters_in_file)
-
-
-# Legend colours - same for labels but just the unique cols
-leg_cols <- paste0("LEGEND_COLORS\t", 
-                     paste0(paste0(clust_col_df$col, "\t"), collapse = ""))
-
-itol_clusters_in_file <- gsub("#LEGEND_COLORS #ff0000 #00ff00 rgba\\(0,255,0,0.5\\) #0000ff", 
-                              leg_cols, itol_clusters_in_file)
-
-# Legend labels - same for labels but just the unique values
-leg_labels <- paste0("LEGEND_LABELS\t", 
-                     paste0(paste0(unique(clusters_data$cluster), "\t"), collapse = ""))
-
-itol_clusters_in_file <- gsub("#LEGEND_LABELS value1 value2 value3 value4", 
-                              leg_labels, itol_clusters_in_file)
-
-# Write the template out under the new file name for the study accession
-write.table(itol_clusters_in_file, file = itol_clusters_out_file, sep="\t",
-            row.names=F, col.names=F, quote = F)
-
-# Append the clusters data to the template
-write.table(clusters_data[, c("id", "col", "cluster")], file = itol_clusters_out_file,
-            append = T, sep="\t",
-            row.names=F, col.names=F, quote = F)
 
 # Lineage ----
 
 # Example:
-# <id> <"range"> <col> <lineage>
-# ERR2446223	range	#FF1919E6	1
-# SRR2100428	range	#FF1919E6	1
-
-cols <- c("wgs_id", "study_accession_word", "main_lineage")
+# <id>        <"range"> <col>     <lineage>
+# ERR2446223	range	    #FF1919E6	1
+# SRR2100428	range	    #FF1919E6	1
 
 # Subset data
-lin_data <- subset(metadata, study_accession_word == study_acc)
-lin_data <- lin_data[, cols]
+lin_data <- metadata[, c("wgs_id", "main_lineage")]
 
+# Get unique lins and split into numeric and 'word' strains - 'word' strains should be animal ones
 uniq_lins <- sort(unique(lin_data[!is.na(lin_data[, "main_lineage"]), "main_lineage"]))
+uniq_lins_num <- grep("\\d", uniq_lins, value = T)
+uniq_lins_char <- grep("[^0-9]", uniq_lins, value = T)
 
-# Get unique cols per lineage
-n_cols_lin <- length(uniq_lins)
-lin_cols <- rainbow(n_cols_lin, alpha = alpha)
+# Get unique cols per lineage, per category
+n_cols_lin_num <- length(uniq_lins_num)
+lin_colours_num <- rainbow(n_cols_lin_num, alpha = alpha)
+lin_colours_char <- col2hex(c("grey20", "grey40", "grey60"))
+lin_colours <- c(lin_colours_num, lin_colours_char)
 
 # Make df for unique lins and cols 
-lin_col_df <- data.frame(main_lineage = uniq_lins, col = lin_cols)
+lin_col_df <- data.frame(main_lineage = uniq_lins, col = lin_colours)
 
 # Merge
 lin_data <- merge(lin_data, lin_col_df, by = "main_lineage")
 
 # Clean - subset and order columns and add "range" column
-lin_data$range <- rep("range", nrow(lin_data))
-lin_data <- lin_data[, c("wgs_id", "range", "col", "main_lineage")]
+# lin_data$range <- rep("range", nrow(lin_data))
+# lin_data <- lin_data[, c("wgs_id", "range", "col", "main_lineage")]
+lin_data <- lin_data[, c("wgs_id", "col", "main_lineage")]
+
+# Lineage legend
+
+# Legend shapes - repeat "1" for as many unique clusters and intersperse with "\t"
+leg_shapes_lineage <- paste0("LEGEND_SHAPES\t",
+                        paste0(paste0(rep(1, length(uniq_lins)), "\t"), collapse = ""))
+
+itol_lineage <- gsub("#LEGEND_SHAPES 1 1 2 2", leg_shapes_lineage, itol_lineage)
+
+# Legend colours - same for labels but just the unique cols
+leg_cols_lineage <- paste0("LEGEND_COLORS\t",
+                      paste0(paste0(lin_colours, "\t"), collapse = ""))
+
+itol_lineage <- gsub("#LEGEND_COLORS #ff0000 #00ff00 rgba\\(0,255,0,0.5\\) #0000ff", leg_cols_lineage, itol_lineage)
+
+# Legend labels - same for labels but just the unique values
+leg_labels_lineage <- paste0("LEGEND_LABELS\t",
+                        paste0(paste0(uniq_lins, "\t"), collapse = ""))
+
+itol_lineage <- gsub("#LEGEND_LABELS value1 value2 value3 value4",
+                leg_labels_lineage, itol_lineage)
 
 # Write the template out under the new file name for the study accession
-write.table(itol_lineage_in_file, file = itol_lineage_out_file, sep="\t",
+write.table(itol_lineage, file = itol_lineage_out_file, sep="\t",
             row.names=F, col.names=F, quote = F)
 
 # Append the lin data to the template
@@ -262,6 +267,148 @@ write.table(lin_data, file = itol_lineage_out_file,
 
 
 
+# Major lineages ----
+
+# Have to take major lins from sublins first (rather than adding the major lin to metadata first) 
+# because of the sodding animal lineages
+
+major_lin_data <- metadata[, c("wgs_id", "sub_lineage")]
+sub_lins <- sort(unique(major_lin_data$sub_lineage))
+# Remove animal strains
+animal <- c("M.bovis", "M.caprae", "M.orygis")
+sub_lins <- sub_lins[!(sub_lins %in% animal)]
+major_lins <- unique(substr(sub_lins, 1, 3)) 
+major_lins_split <- split(major_lins, substr(major_lins, 1, 1))
+all_major_lins_cols <- vector()
+for(i in seq(major_lins_split)){
+  all_major_lins_cols <- append(all_major_lins_cols, rainbow(length(major_lins_split[[i]]), alpha = alpha))
+}
+# Add animal strain colours to major lin colours
+all_major_lins_cols <- c(all_major_lins_cols, lin_colours_char)
+
+# Add major lin column to metadata for merge
+metadata$major_lineage <- substr(metadata$sub_lineage, 1, 3)
+
+# Add animal strains back in
+metadata$major_lineage <- ifelse(metadata$sub_lineage %in% animal, metadata$sub_lineage, metadata$major_lineage)
+
+# Re-define major lins data now with the animal strains
+major_lin_data <- metadata[, c("wgs_id", "major_lineage")]
+
+# Re-define major_lines now with animal strains... Christ this is a fucking ball-ache. 
+major_lins <- c(major_lins, animal)
+
+# Put major lins and colours in dataframe
+major_lins_df <- data.frame(major_lineage = major_lins, col = all_major_lins_cols)
+
+# Merge
+major_lins_df <- merge(major_lin_data, major_lins_df, by = "major_lineage", all.x = T, sort = F)
+
+# Clean
+major_lins_df <- major_lins_df[, c("wgs_id", "col", "major_lineage")]
+
+
+# Major lineage legend
+
+
+# Legend shapes - repeat "1" for as many unique clusters and intersperse with "\t"
+leg_shapes_major_lineage <- paste0("LEGEND_SHAPES\t",
+                             paste0(paste0(rep(1, length(major_lins)), "\t"), collapse = ""))
+
+itol_major_lins <- gsub("#LEGEND_SHAPES 1 1 2 2", leg_shapes_major_lineage, itol_major_lins)
+
+# Legend colours - same for labels but just the unique cols
+leg_cols_major_lineage <- paste0("LEGEND_COLORS\t",
+                           paste0(paste0(all_major_lins_cols, "\t"), collapse = ""))
+
+itol_major_lins <- gsub("#LEGEND_COLORS #ff0000 #00ff00 rgba\\(0,255,0,0.5\\) #0000ff", leg_cols_major_lineage, itol_major_lins)
+
+# Legend labels - same for labels but just the unique values
+leg_labels_major_lineage <- paste0("LEGEND_LABELS\t",
+                             paste0(paste0(major_lins, "\t"), collapse = ""))
+
+itol_major_lins <- gsub("#LEGEND_LABELS value1 value2 value3 value4",
+                     leg_labels_major_lineage, itol_major_lins)
+
+# Write the template out under the new file name for the study accession
+write.table(itol_major_lins, file = itol_major_lins_out_file, sep="\t",
+            row.names=F, col.names=F, quote = F)
+
+# Append the lin data to the template
+write.table(major_lins_df, file = itol_major_lins_out_file,
+            append = T, sep="\t",
+            row.names=F, col.names=F, quote = F)
+
+
+
+
+
+# Clusters ----
+
+
+# Subset data
+clusters_data <- metadata[, c("wgs_id", "sub_lineage")]
+
+# Set colours for each cluster
+n_clusts_total <- length(unique(clusters_data$sub_lineage))
+
+## Wrap in alpha function
+# cluster_cols <- scales::alpha(brewer.pal(n = n_clusts, name = "Dark2")[1:n_clusts], alpha = alpha)
+
+# Define colours for all sublins (!!!)
+# Loop through the major lins and assign a new rainbow of length number of sublins in the major lin
+sub_lins <- sort(unique(clusters_data$sub_lineage))
+# Drop animal lineages
+sub_lins <- sub_lins[!(sub_lins %in% animal)]
+sublin_split <- split(sub_lins, substr(sub_lins, 1, 3))
+all_sublin_cols <- vector()
+for(i in seq(sublin_split)){
+  all_sublin_cols <- append(all_sublin_cols, rainbow(length(sublin_split[[i]]), alpha = alpha))
+}
+# Append animal
+all_sublin_cols <- c(all_sublin_cols, lin_colours_char)
+
+# Make df for unique clusters and cols
+clust_col_df <- data.frame(sub_lineage = sort(unique(clusters_data$sub_lineage)), col = all_sublin_cols)
+
+# Merge with cluster data
+clusters_data <- merge(clusters_data, clust_col_df, by = "sub_lineage")
+
+# Clean - rearrange cols
+# clusters_data <- clusters_data[, c("id", "col", "cluster")]
+clusters_data <- clusters_data[, c("wgs_id", "col", "sub_lineage")]
+
+# Do legend shapes and labels
+
+# Legend shapes - repeat "1" for as many unique clusters and intersperse with "\t"
+leg_shapes <- paste0("LEGEND_SHAPES\t",
+                     paste0(paste0(rep(1, n_clusts_total), "\t"), collapse = ""))
+
+itol_clusters <- gsub("#LEGEND_SHAPES 1 1 2 2", leg_shapes, itol_clusters)
+
+
+# Legend colours - same for labels but just the unique cols
+leg_cols <- paste0("LEGEND_COLORS\t",
+                   paste0(paste0(clust_col_df$col, "\t"), collapse = ""))
+
+itol_clusters <- gsub("#LEGEND_COLORS #ff0000 #00ff00 rgba\\(0,255,0,0.5\\) #0000ff",
+                              leg_cols, itol_clusters)
+
+# Legend labels - same for labels but just the unique values
+leg_labels <- paste0("LEGEND_LABELS\t",
+                     paste0(paste0(unique(clusters_data$sub_lineage), "\t"), collapse = ""))
+
+itol_clusters <- gsub("#LEGEND_LABELS value1 value2 value3 value4",
+                              leg_labels, itol_clusters)
+
+# Write the template out under the new file name for the study accession
+write.table(itol_clusters, file = itol_clusters_out_file, sep="\t",
+            row.names=F, col.names=F, quote = F)
+
+# Append the clusters data to the template
+write.table(clusters_data, file = itol_clusters_out_file,
+            append = T, sep="\t",
+            row.names=F, col.names=F, quote = F)
 
 
 
@@ -272,4 +419,4 @@ write.table(lin_data, file = itol_lineage_out_file,
 
 
 
- 
+

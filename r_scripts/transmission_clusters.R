@@ -63,8 +63,6 @@
 
 # Setup ----
 
-library(dynamicTreeCut)
-
 # Read in args
 args <- commandArgs(trailingOnly=TRUE)
 

@@ -28,7 +28,7 @@ set -o pipefail
 # Assume run from ~/transmission :
 # shell_scripts/iqtree.sh <study_accession>   <fasta_input_file>                                <cluster_file>                    <newick_output_dir>
 # shell_scripts/iqtree.sh PRJEB7669           fasta/PRJEB7669.filt.val.gt.g.snps.fa             metadata/PRJEB7669.clusters       newick/
-# shell_scripts/iqtree.sh KARONGA             fasta/KARONGA.filt.val.gt.g.snps.fa               metadata/KARONGA.clusters       newick/
+# shell_scripts/iqtree.sh KARONGA             fasta/KARONGA.filt.val.gt.g.snps.fa               metadata/KARONGA.clusters         newick/
 
 # ------------------------------------------------------------------------------
 

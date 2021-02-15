@@ -27,6 +27,10 @@ set -o pipefail
 
 cd ~/transmission
 
+# Thailand test data - 52 samples
+cat ../metadata/tb_data_28_01_2021_clean.csv | csvtk grep -f wgs_id -P thailand_test/thailand_test_samples.txt > thailand_test/thailand_test_metadata.csv
+cat thailand_test/thailand_test_metadata.csv | sed 's/THAILAND/THAILAND_TEST/' > thailand_test/x && mv thailand_test/x thailand_test/thailand_test_metadata.csv
+
 # Variables
 gvcf_file_suffix=.g.vcf.gz
 date_column=collection_date
@@ -46,10 +50,12 @@ plots_dir=plots/
 
 # Files
 study_accession_list=$(cat ${metadata_local_dir}study_accession_list.txt)
-metadata_file=${metadata_dir}tb_data_28_01_2021_clean.csv
+# metadata_file=${metadata_dir}tb_data_28_01_2021_clean.csv
+metadata_file=thailand_test/thailand_test_metadata.csv
 xml_template_file=${xml_script_location}tb_template.xml
 ref_fasta_file=${ref_dir}MTB-h37rv_asm19595v2-eg18.fa
 ex_loci_file=${ref_dir}excluded_loci_rep_regions_dr_regions.bed
+
 
 # Parameters
 
@@ -92,8 +98,8 @@ for study_accession in ${study_accession_list}; do
         printf "\n"
         echo "Running shell_scripts/variant_calling_and_concat_gvcfs.sh - outputs file ${val_multi_vcf_file}"
         set -x
-        # shell_scripts/variant_calling_and_concat_gvcfs.sh <study_accession>   <metadata_file>  <vcf_dir>  <gvcf_file_suffix>  <ref_file>
-        shell_scripts/variant_calling_and_concat_gvcfs.sh   ${study_accession}  ${metadata_file} ${vcf_dir} ${gvcf_file_suffix} ${ref_fasta_file}
+        # shell_scripts/variant_calling_and_concat_gvcfs.sh <study_accession>   <metadata_file>  <vcf_dir>  <gvcf_file_suffix>  <ref_file>          <threads>
+        shell_scripts/variant_calling_and_concat_gvcfs.sh   ${study_accession}  ${metadata_file} ${vcf_dir} ${gvcf_file_suffix} ${ref_fasta_file}   20
         set +x
         echo "------------------------------------------------------------------------------"
         printf "\n"
@@ -249,66 +255,67 @@ for study_accession in ${study_accession_list}; do
     fi
 
 
+    # # ------------------------------------------------------------------------------
+    #
+    # # Create dated fasta file for Beast
+    #
+    # # Define out file
+    # dated_fasta_file=${fasta_dir}${study_accession}.dated.fa
+    #
+    # if [ ! -f ${dated_fasta_file} ]; then
+    #
+    #     echo "------------------------------------------------------------------------------"
+    #
+    #     echo "Dated fasta file"
+    #     printf "\n"
+    #
+    #     echo "Running fasta_add_annotations.py - outputs ${dated_fasta_file}"
+    #     printf "\n"
+    #
+    #     # Run fasta_add_annotations.py to concatenate the metadata collection date with the sample ID in the fasta file
+    #     # e.g. >ERR1234 -> >ERR1234_01_01_10
+    #     # - see https://github.com/pathogenseq/pathogenseq-scripts/tree/master/scripts
+    #     set -x
+    #     fasta_add_annotations.py --fasta ${filt_fasta_file} --csv ${metadata_file} --out ${dated_fasta_file} --annotations ${date_column} --id-key wgs_id
+    #     set +x
+    #     echo "------------------------------------------------------------------------------"
+    #     printf "\n"
+    # else
+    #     echo "------------------------------------------------------------------------------"
+    #     echo "File ${dated_fasta_file} exists, skipping fasta_add_annotations.py"
+    #     echo "------------------------------------------------------------------------------"
+    #     printf "\n"
+    # fi
+
     # ------------------------------------------------------------------------------
 
-    # Create dated fasta file for Beast
-
-    # Define out file
-    dated_fasta_file=${study_accession}.dated.fa
-
-    if [ ! -f ${dated_fasta_file} ]; then
-
-        echo "------------------------------------------------------------------------------"
-
-        echo "Dated fasta file"
-        printf "\n"
-
-        echo "Running fasta_add_annotations.py - outputs ${dated_fasta_file}"
-        printf "\n"
-
-        # Run fasta_add_annotations.py to concatenate the metadata collection date with the sample ID in the fasta file
-        # e.g. >ERR1234 -> >ERR1234_01_01_10
-        # - see https://github.com/pathogenseq/pathogenseq-scripts/tree/master/scripts
-        set -x
-        fasta_add_annotations.py --fasta ${filt_fasta_file} --csv ${metadata_file} --out ${dated_fasta_file} --annotations ${date_column}
-        set +x
-        echo "------------------------------------------------------------------------------"
-        printf "\n"
-    else
-        echo "------------------------------------------------------------------------------"
-        echo "File ${dated_fasta_file} exists, skipping fasta_add_annotations.py"
-        echo "------------------------------------------------------------------------------"
-        printf "\n"
-    fi
-
-    # ------------------------------------------------------------------------------
-
-    # Subset fasta - chop dated_fasta_file into clusters outputted by r_scripts/transmission_clusters
-
-    clust_fasta_dir=`dirname ${filt_fasta_file}`/
-    clust_fasta_files=${clust_fasta_dir}${study_accession}.clust_*
-
-    # n.b. weird/ugly syntax/code for checking if multiple fasta files exist because don't know how many there will be or even if the first cluster is '1'.
-    # It's likely to be '1', but the clusters are arbitrarily numbered by the transmission_clusters.R script
-    if ! ls ${clust_fasta_files} 1> /dev/null 2>&1; then
-
-        echo "------------------------------------------------------------------------------"
-
-        echo "Subset fasta"
-        printf "\n"
-
-        echo "Running shell_scripts/subset_fasta.sh - outputs ${clust_fasta_files}"
-        set -x
-        shell_scripts/subset_fasta.sh ${study_accession} ${clusters_data_file} ${dated_fasta_file}
-        set +x
-        echo "------------------------------------------------------------------------------"
-        printf "\n"
-    else
-        echo "------------------------------------------------------------------------------"
-        echo "File(s) ${clust_fasta_files} exist(s), skipping shell_scripts/subset_fasta.sh"
-        echo "------------------------------------------------------------------------------"
-        printf "\n"
-    fi
+    # # Subset fasta - chop dated_fasta_file into clusters outputted by r_scripts/transmission_clusters.R
+    #
+    # clust_fasta_dir=`dirname ${dated_fasta_file}`/
+    # clust_fasta_files=${clust_fasta_dir}${study_accession}.clust_*
+    #
+    # # n.b. weird/ugly syntax/code for checking if multiple fasta files exist because don't know how many there will be or even if the first cluster is '1'.
+    # # It's likely to be '1', but the clusters are arbitrarily numbered by the transmission_clusters.R script
+    # if ! ls ${clust_fasta_files} 1> /dev/null 2>&1; then
+    #
+    #     echo "------------------------------------------------------------------------------"
+    #
+    #     echo "Subset fasta"
+    #     printf "\n"
+    #
+    #     echo "Running shell_scripts/subset_fasta.sh - outputs ${clust_fasta_files}"
+    #     set -x
+    #
+    #     shell_scripts/subset_fasta.sh ${study_accession} ${clusters_data_file} ${dated_fasta_file}
+    #     set +x
+    #     echo "------------------------------------------------------------------------------"
+    #     printf "\n"
+    # else
+    #     echo "------------------------------------------------------------------------------"
+    #     echo "File(s) ${clust_fasta_files} exist(s), skipping shell_scripts/subset_fasta.sh"
+    #     echo "------------------------------------------------------------------------------"
+    #     printf "\n"
+    # fi
 
 
 # End for-loop on study accession numbers from study_accession_list

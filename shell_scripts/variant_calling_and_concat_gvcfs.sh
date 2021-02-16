@@ -104,12 +104,15 @@ fi
 # take out mixed infections (";")
 # take out blank lineages
 # take out blank dates
+# take out NA dates
 # save samples to file
 
 cat ${metadata_file} | \
 csvtk grep -f study_accession_word -p ${study_accession} | \
 csvtk grep -f sub_lineage -p ";" -p "^$" -r -v | \
-csvtk grep -f collection_date -p "^$" -r -v | csvtk cut -f wgs_id | tail -n +2 > ${sample_list_file}
+csvtk grep -f collection_date -p "^$" -r -v | \
+csvtk grep -f collection_date -p "^NA" -r -v | \
+csvtk cut -f wgs_id | tail -n +2 > ${sample_list_file}
 
 echo "Head of samples:"
 head ${sample_list_file}

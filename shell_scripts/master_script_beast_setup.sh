@@ -211,7 +211,10 @@ for study_accession in ${study_accession_list}; do
         echo "Running transmission clusters - outputs file ${clusters_data_file} and plot in ${plots_dir}"
         set -x
         # Rscript r_scripts/transmission_clusters.R <study_accession>   <threshold> <dm_file>    <id_file>       <output dir>           <output dir for plot>
-        Rscript r_scripts/transmission_clusters.R   ${study_accession}  100         ${dist_file} ${dist_id_file} ${metadata_local_dir}  ${plots_dir}
+        # Rscript r_scripts/transmission_clusters.R   ${study_accession}  100         ${dist_file} ${dist_id_file} ${metadata_local_dir}  ${plots_dir}
+
+        # Rscript r_scripts/transmission_clusters.R <study_accession>   <metadata_file>    <file to save results to>
+        Rscript r_scripts/transmission_clusters.R   ${study_accession}  ${metadata_file}   ${metadata_local_dir}
         set +x
         echo "------------------------------------------------------------------------------"
         printf "\n"

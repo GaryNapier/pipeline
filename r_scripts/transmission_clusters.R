@@ -2,6 +2,110 @@
 
 # transmission_clusters.R
 
+# Description:
+# Take the 'major lineage' - the first decimal place of the sublineage e.g. 1.2.1.1 -> 1.2 for each sample
+# Clean animal strains - "M.bovis", "M.caprae", "M.orygis" - these stay the same
+# Remove samples for which there are only one or two samples in that major lineage - cannot pass one or two samples to Beast
+
+# Arguments to script:
+# Study accession, metadata file, location to save file
+
+# Input:
+# Metadata
+
+# Main steps:
+# Read in data
+# Define major lineage
+# Clean animal
+# Remove one/two sample lineages from list
+# Save to file
+
+# Output:
+# Tab-sep list of samples in the study accession and their major lineage:
+# wgs_id          major_lineage
+# SAMEA2533789    2.2
+# SAMEA2534474    2.2
+# SRR5709823      2.2
+# ...etc
+
+# RUN:
+# Assume run from ~/transmission:
+# Rscript r_scripts/transmission_clusters.R <study_accession>   <metadata_file>                             <output_clusters_dir>
+# Rscript r_scripts/transmission_clusters.R PRJEB7669           ~/metadata/tb_data_28_01_2021_clean.csv     metadata/             
+
+
+# Setup ----
+
+# Read in args
+args <- commandArgs(trailingOnly=TRUE)
+
+# Variables
+study_accession <- args[1]
+# threshold <- as.numeric(args[2])
+nl <- cat("\n")
+
+# Directories
+output_clusters_dir <- args[3]
+# output_plot_dir <- args[6]
+
+# Files and suffixes/prefixes
+# dm_file <- args[3]
+# id_file <- args[4]
+metadata_file <- args[2]
+output_clusters_file <- paste0(output_clusters_dir, study_accession, ".clusters")
+# output_plot_file <- paste0(output_plot_dir, study_accession, ".clusters.png")
+
+nl
+print("ARGUMENTS:")
+nl
+print(c("Study accession:", study_accession))
+# print(c("Threshold:", threshold))
+# print(c("DM file:", dm_file))
+# print(c("ID file:", id_file))
+# print(c("Output clusters directory:", output_clusters_dir))
+# print(c("Output plot directory:", output_plot_dir))
+print(c("Metadata file: ", metadata_file))
+print(c("Cluster output file name:", output_clusters_file))
+# print(c("Plot output file name:", output_plot_file))
+
+# Read in data and clean ----
+
+
+metadata <- read.csv(metadata_file, header = T, stringsAsFactors = F)
+
+# Make "major lineage" column - first decimal place of sublineage
+metadata$major_lineage <- substr(metadata$sub_lineage, 1, 3)
+
+# Clean animal strains
+animal <- c("M.bovis", "M.caprae", "M.orygis")
+metadata$major_lineage <- ifelse(metadata$sub_lineage %in% animal, metadata$sub_lineage, metadata$major_lineage)
+
+# Subset on study accession - n.b. have to change the name of the variable
+study_acc <- study_accession
+metadata <- subset(metadata, study_accession_word == study_acc)
+
+# Get just the id and major linege columns
+metadata <- metadata[, c("wgs_id", "major_lineage")]
+
+# Get the samples for which there are only 1 or two sampples
+single_lins <- names(which(table(metadata$major_lineage) < 3))
+
+# Remove these 
+metadata <- subset(metadata, !(major_lineage %in% single_lins))
+
+# Write to file
+write.table(metadata, file = output_clusters_file, quote = F, row.names = F, sep = "\t")
+
+
+
+
+# ---------------
+# ---------------
+# OLD OLD OLD
+# ---------------
+# ---------------
+
+
 # Find samples within a SNP distance of a given threshold and cluster together.
 
 # Example:
@@ -61,71 +165,39 @@
 # Rscript r_scripts/transmission_clusters.R <study_accession> <threshold> <dm_file>                         <id_file>                                 <output dir clusters> <output dir plot>
 # Rscript r_scripts/transmission_clusters.R PRJEB7669         50          dist_and_pca/PRJEB7669.dist.dist  dist_and_pca/PRJEB7669.dist.dist.id       metadata/             plots/
 
-# Setup ----
-
-# Read in args
-args <- commandArgs(trailingOnly=TRUE)
-
-# Variables
-study_accession <- args[1]
-threshold <- as.numeric(args[2])
-nl <- cat("\n")
-
-# Directories
-output_clusters_dir <- args[5]
-output_plot_dir <- args[6]
-
-# Files and suffixes/prefixes
-dm_file <- args[3]
-id_file <- args[4]
-output_clusters_file <- paste0(output_clusters_dir, study_accession, ".clusters")
-output_plot_file <- paste0(output_plot_dir, study_accession, ".clusters.png")
-
-nl
-print("ARGUMENTS:")
-nl
-print(c("Study accession:", study_accession))
-print(c("Threshold:", threshold))
-print(c("DM file:", dm_file))
-print(c("ID file:", id_file))
-print(c("Output clusters directory:", output_clusters_dir))
-print(c("Output plot directory:", output_plot_dir))
-print(c("Cluster output file name:", output_clusters_file))
-print(c("Plot output file name:", output_plot_file))
-
-# Read in data and clean ----
+# ---
 
 # Read in distance matrix and IDs
-dm <- read.delim(dm_file, header = F)
-ids <- read.delim(id_file, header = F)
+# dm <- read.delim(dm_file, header = F)
+# ids <- read.delim(id_file, header = F)
 
 # Only need first col
-ids <- ids[, 1]
+# ids <- ids[, 1]
 
 # Add row and col names to dm
-row.names(dm) <- ids
-colnames(dm) <- ids
+# row.names(dm) <- ids
+# colnames(dm) <- ids
 
 # Convert to 'distance matrix' (take out upper triangle)
 # dm[upper.tri(dm, diag = T)] <- 0
 
 # Need to divide matrix by 2 because Plink assumes diploid
-dm <- dm/2
+# dm <- dm/2
 
 # Check
-dm[1:10, 1:10]
+# dm[1:10, 1:10]
 
 
 # Cluster using 'single' method.
 # Clusters all samples within distance of threshold (i.e. transitively)
-clust <- hclust(as.dist(dm), method = "single")
+# clust <- hclust(as.dist(dm), method = "single")
 
 # Plot and save
-wh <- 2500
-png(output_plot_file, res = 300, width = wh, height = wh)
-plot(clust, cex = 0.3)
-abline(a = threshold, b = 0)
-dev.off()
+# wh <- 2500
+# png(output_plot_file, res = 300, width = wh, height = wh)
+# plot(clust, cex = 0.3)
+# abline(a = threshold, b = 0)
+# dev.off()
 
 # Cut tree at threshold (12 in example below)
 # This numbers each group/cluster (members of the same group/cluster have the same number
@@ -134,10 +206,10 @@ dev.off()
 # A C B F D E G H I J
 # 1 1 2 2 3 4 4 5 6 7
 # Groups/clusters are: A-C, B-F, E-G
-clusters <- sort(cutree(clust, h = threshold))
+# clusters <- sort(cutree(clust, h = threshold))
 
 # Filter for clusters (take out the samples with their own number, i.e., those not in a group)
-clusters <- clusters[clusters %in% names(which(table(clusters) > 2))]
+# clusters <- clusters[clusters %in% names(which(table(clusters) > 2))]
 
 # dm_no_single <- dm[names(clusters), names(clusters)]
 # 
@@ -156,10 +228,10 @@ clusters <- clusters[clusters %in% names(which(table(clusters) > 2))]
 # two_samp_clusts <- names(clusters[clusters %in% names(which(table(clusters) == 2))])
 
 # Convert to dataframe
-cluster_table <- data.frame(id = names(clusters), cluster = clusters)
+# cluster_table <- data.frame(id = names(clusters), cluster = clusters)
 
 # Save
-write.table(cluster_table, file = output_clusters_file, quote = F, row.names = F, sep = "\t")
+# write.table(cluster_table, file = output_clusters_file, quote = F, row.names = F, sep = "\t")
 
 # ---------------------
 # APPENDIX - examples

@@ -21,6 +21,8 @@ library(dplyr)
 library(ggplot2)
 library(reshape2)
 library(janitor)
+library(ape)
+library(scales)
 
 # Functions ----
 
@@ -38,12 +40,7 @@ hs <- function(x, ...){
   str(x, ...)
 }
 
-add_commas <- function(x){
-formatted_ns <- attr(x, "core") %>% # extract the tabyl's underlying Ns
-  adorn_totals(c("row", "col")) %>% # to match the data.frame we're appending to
-  dplyr::mutate_if(is.numeric, format, big.mark = ",")
-return(formatted_ns)
-}
+clear <- function(){rm(list=ls(envir = .GlobalEnv),envir = .GlobalEnv); }
 
 to_table <- function(x){
   x <- x %>% adorn_totals(c("row", "col")) %>%
@@ -65,6 +62,7 @@ study_acc_col <- "study_accession_word"
 
 trans_path <- "~/Documents/transmission/"
 metadata_path <- "~/Documents/metadata/"
+fasta_path <- "fasta/"
 
 setwd(trans_path)
 
@@ -72,14 +70,17 @@ setwd(trans_path)
 # File names ----
 
 metadata_file <- paste0(metadata_path, "tb_data_28_01_2021_clean.csv")
+fasta_file <- paste0(fasta_path, "THAILAND_TEST.clust_1.dated.fa")
 
 print("FILES:")
 print(c("metadata_file: ", metadata_file))
+print(c("fasta_file: ", fasta_file))
 
 
 # Read in files ----
 
 metadata <- read.csv(metadata_file, stringsAsFactors = F)
+fasta <- read.FASTA(fasta_file)
 
 
 # Basic stats ----
@@ -102,6 +103,12 @@ names(dr) <- c("Study", dr_vals)
 to_table(dr)
 
 
+
+
+# Plot fasta alignments ----
+
+par(mar=c(5, 10, 4, 2))
+image(fasta, col = c(rainbow(4, alpha = 0.7), "black"))
 
 
 

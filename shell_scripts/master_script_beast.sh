@@ -38,10 +38,9 @@ xml_script_location=beast_xml/
 beast_results_dir=beast_results/
 
 # Files
-# metadata_file=${metadata_dir}tb_data_collated_28_10_2020_clean.csv
-metadata_file=thailand_test/thailand_test_metadata.csv
+metadata_file=${metadata_dir}tb_data_collated_28_10_2020_clean.csv
+# metadata_file=thailand_test/thailand_test_metadata.csv
 xml_template_file=${xml_script_location}tb_template.xml
-
 
 # Variables
 date_column=collection_date
@@ -67,7 +66,7 @@ for study_accession in ${study_accession_list}; do
 
     # In:
     clusters_data_file=${metadata_local_dir}${study_accession}.clusters
-    fasta_file=${fasta_dir}${study_accession}.filt.val.gt.g.snps.fa.filt
+    fasta_file=${fasta_dir}${study_accession}.filt.val.gt.g.snps.fa
     # Out:
     clust_fasta_files=${fasta_dir}${study_accession}.clust_*
 
@@ -82,8 +81,8 @@ for study_accession in ${study_accession_list}; do
 
         echo "Running shell_scripts/subset_fasta.sh - outputs ${clust_fasta_files}"
         set -x
-
-        shell_scripts/subset_fasta.sh ${study_accession} ${clusters_data_file} ${fasta_file}
+        # shell_scripts/subset_fasta.sh <study_accession>   <metadata_file>  <fasta_file>
+        shell_scripts/subset_fasta.sh   ${study_accession}  ${metadata_file} ${fasta_file}
         set +x
         echo "------------------------------------------------------------------------------"
         printf "\n"
@@ -94,13 +93,11 @@ for study_accession in ${study_accession_list}; do
         printf "\n"
     fi
 
-    # Define cluster numbers from clusters file (result of transmission_clusters.R)
-    clusters_file=${metadata_local_dir}${study_accession}.clusters
-    cluster_nums=$(cat ${clusters_file} | tail -n +2 | cut -f2 | sort -n | uniq)
+    # Define cluster numbers from metadata
+    cluster_nums$(cat ${metadata_file} | csvtk grep -f study_accession_word -p ${study_accession} | csvtk cut -f major_lineage | tail -n +2 | sort | uniq)
 
     # Loop over cluster numbers
     for clust_num in ${cluster_nums}; do
-
 
         # ------------------------------------------------------------------------------
 

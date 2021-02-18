@@ -26,8 +26,8 @@ set -o pipefail
 
 # RUN
 # Assume run from ~/transmission :
-# shell_scripts/variant_calling_and_concat_gvcfs.sh <study_accession> <metadata_file>                                  <vcf_dir>  <gvcf_file_suffix>  <ref_file>                                <threads>
-# shell_scripts/variant_calling_and_concat_gvcfs.sh PRJEB7669         ~/metadata/tb_data_collated_28_10_2020_clean.csv ~/vcf/     .g.vcf.gz           ~/refgenome/MTB-h37rv_asm19595v2-eg18.fa  20
+# shell_scripts/variant_calling_and_concat_gvcfs.sh <study_accession> <metadata_file>                           <vcf_dir>  <gvcf_file_suffix>  <ref_file>                                <threads>
+# shell_scripts/variant_calling_and_concat_gvcfs.sh PRJEB7669         ~/metadata/tb_data_28_10_2021_clean.csv   ~/vcf/     .g.vcf.gz           ~/refgenome/MTB-h37rv_asm19595v2-eg18.fa  20
 
 # ------------------------------------------------------------------------------
 
@@ -96,34 +96,14 @@ if [ ! -d ${genomicsDB_dir} ]; then
     mkdir ${genomicsDB_dir}
 fi
 
-# Filter samples on study_accession
-# grep ${study_accession} ${metadata_file} | cut -d, -f1 > ${sample_list_file}
+# ------------------------------------------------------------------------------
 
-# Filter samples:
-# on study_accession number
-# take out mixed infections (";")
-# take out blank lineages
-# take out blank dates
-# take out NA dates
-# save samples to file
-
+# Get list of samples
 cat ${metadata_file} | \
 csvtk grep -f study_accession_word -p ${study_accession} | \
-csvtk grep -f sub_lineage -p ";" -p "^$" -r -v | \
-csvtk grep -f collection_date -p "^$" -r -v | \
-csvtk grep -f collection_date -p "^NA" -r -v | \
 csvtk cut -f wgs_id | tail -n +2 > ${sample_list_file}
 
-echo "Head of samples:"
-head ${sample_list_file}
-printf "\n"
-
-# Make a list of the validated vcf file names
-# vcf_files=`cat ${sample_list_file} | sed "s|.*|${vcf_dir}&${val_gvcf_file_suffix}\\n|"`
-
-# echo "Head of vcf file names:"
-# echo ${vcf_files} | head
-# printf "\n"
+# ------------------------------------------------------------------------------
 
 # Commands
 # see https://github.com/pathogenseq/fastq2matrix/blob/08480865bd2248ddb35a6d9e7321fff66fdd7a0c/scripts/merge_vcfs.py for use of gatk GenomicsDBImport

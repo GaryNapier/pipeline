@@ -46,8 +46,8 @@ set -o pipefail
 
 # RUN
 # Assume run from transmission/
-# shell_scripts/subset_fasta.sh <study_accession> <clusters_file>               <fasta_file>
-# shell_scripts/subset_fasta.sh PRJEB7669         metadata/PRJEB7669.clusters   fasta/PRJEB7669.filt.val.gt.g.snps.fa.filt
+# shell_scripts/subset_fasta.sh <study_accession> <metadata_file>                           <fasta_file>
+# shell_scripts/subset_fasta.sh PRJEB7669         ~/metadata/tb_data_28_10_2021_clean.csv   fasta/PRJEB7669.filt.val.gt.g.snps.fa
 
 
 # ------------------------------------------------------------------------------
@@ -58,13 +58,15 @@ set -o pipefail
 study_accession=${1?Error: Enter study accession number}
 
 # Input files
-clusters_file=${2?Error: Enter clusters file name}
+# clusters_file=${2?Error: Enter clusters file name}
+metadata_file=${2?Error: Enter metadata file name}
 fasta_file=${3?Error: Enter fasta file name}
 
 # Directories
 fasta_dir=`dirname ${fasta_file}`/
 
 # Parameters
+id_clust_tmp=id_clust_tmp
 
 # Commands
 
@@ -73,7 +75,7 @@ printf '\n'
 echo 'Arguments to subset_fasta.sh:'
 printf '\n'
 echo "Study accession: ${study_accession}"
-echo "Clusters file: ${clusters_file}"
+# echo "Clusters file: ${clusters_file}"
 echo "Fasta file: ${fasta_file}"
 printf '\n'
 
@@ -83,15 +85,26 @@ printf '\n'
 # head -n 1 ${clusters_file}  | cat - test_clust_1 test_clust_2 > test_clusts
 
 # Take unique clusters (1, 2, 3 etc) and store
-clusts=$(tail -n +2 ${clusters_file} | cut -f2 | sort -n | uniq)
+# clusts=$(tail -n +2 ${clusters_file} | cut -f2 | sort -n | uniq)
 
-# Loop through the file and subset on cluster
+cat ${metadata_file} | csvtk grep -f study_accession_word -p ${study_accession} | csvtk cut -f wgs_id,major_lineage > ${id_clust_tmp}
+
+# Get list of clusters
+clusts=$(cat ${id_clust_tmp} | cut -d',' -f2 | sort | uniq)
+
+# Loop through the unique clusters and subset on cluster
 for clust in ${clusts}; do
-    awk -v c=${clust} '$2 == c {print}' ${clusters_file} | cut -f1 | seqtk subseq ${fasta_file} - > ${fasta_dir}${study_accession}.clust_${clust}.fa
+    # awk -v c=${clust} '$2 == c {print}' ${clusters_file} | cut -f1 | seqtk subseq ${fasta_file} - > ${fasta_dir}${study_accession}.clust_${clust}.fa
+    cat ${id_clust_tmp} | \
+    csvtk grep -f major_lineage -p ${clust} | \
+    csvtk cut -f wgs_id | tail -n +2 | \
+    seqtk subseq ${fasta_file} - > ${fasta_dir}${study_accession}.clust_${clust}.fa
     printf '\n'
     echo "---"
     echo "Outputting fasta file ${fasta_dir}${study_accession}.clust_${clust}.fa"
 done
+
+rm ${id_clust_tmp}
 
 # Reset
 # rm fasta/*.clust_*

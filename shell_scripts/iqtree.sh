@@ -27,7 +27,6 @@ set -o pipefail
 # RUN
 # Assume run from ~/transmission :
 # shell_scripts/iqtree.sh <study_accession>   <fasta_input_file>                           <newick_output_dir>
-# shell_scripts/iqtree.sh PRJEB7669           fasta/PRJEB7669.filt.val.gt.g.snps.fa        newick/
 # shell_scripts/iqtree.sh KARONGA             fasta/KARONGA.filt.val.gt.g.snps.fa          newick/
 
 # ------------------------------------------------------------------------------
@@ -47,9 +46,8 @@ tmp_dir=tmp/
 # Files
 # fasta_input_file=${fasta_dir}${study_accession}.filt.val.gt.g.snps.fa
 fasta_input_file=${2?Error: enter name of input fasta file}
-# fasta_filtered_file=${fasta_input_file}.filt
 # cluster_file=${cluster_file_dir}${study_accession}.clusters
-tmp_cluster_ids_file=${tmp_dir}${study_accession}.clustered_samps
+# tmp_cluster_ids_file=${tmp_dir}${study_accession}.clustered_samps
 
 # Directories
 fasta_dir=`dirname ${fasta_input_file}`/
@@ -66,7 +64,6 @@ echo ${study_accession}
 echo ${newick_output_dir}
 echo ${tmp_dir}
 echo ${fasta_input_file}
-echo ${fasta_filtered_file}
 
 printf "\n"
 
@@ -105,10 +102,12 @@ iqtree -s ${fasta_input_file} -m GTR+G -nt AUTO
 # Move output files to correct place
 mv ${fasta_dir}*.iqtree ${fasta_dir}*.treefile ${fasta_dir}*.log ${newick_output_dir}
 
+if [ -f ${fasta_dir}*.uniqueseq.phy ]; then
+  mv ${fasta_dir}*.uniqueseq.phy ${newick_output_dir}
+fi
+
 # ------------------------------------------------------------------------------
 
 # Clean up
-# rm ${tmp_cluster_ids_file}
 rm ${fasta_dir}*.bionj
 rm ${fasta_dir}*.mldist
-rm ${fasta_dir}*.uniqueseq.phy

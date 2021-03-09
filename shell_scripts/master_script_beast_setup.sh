@@ -50,7 +50,7 @@ plots_dir=plots/
 
 # Files
 study_accession_list=$(cat ${metadata_local_dir}study_accession_list.txt)
-metadata_file=${metadata_dir}tb_data_28_01_2021_clean.csv
+metadata_file=${metadata_dir}tb_data_18_02_2021_clean.csv
 # metadata_file=thailand_test/thailand_test_metadata.csv
 xml_template_file=${xml_script_location}tb_template.xml
 ref_fasta_file=${ref_dir}MTB-h37rv_asm19595v2-eg18.fa
@@ -85,35 +85,6 @@ for study_accession in ${study_accession_list}; do
     printf "${val_multi_vcf_file} \n ${filt_multi_vcf_file} \n"
     printf "\n"
 
-        # # ------------------------------------------------------------------------------
-        #
-        # # Transmission clusters
-        #
-        # # Out:
-        # clusters_data_file=${metadata_local_dir}${study_accession}.clusters
-        #
-        # if [ ! -f ${clusters_data_file} ]; then
-        #
-        #     echo "------------------------------------------------------------------------------"
-        #
-        #     echo "Transmission clusters"
-        #     printf "\n"
-        #
-        #     echo "Running transmission clusters - outputs file ${clusters_data_file} and plot in ${plots_dir}"
-        #     set -x
-        #     # Rscript r_scripts/transmission_clusters.R <study_accession>   <metadata_file>    <file to save results to>
-        #     Rscript r_scripts/transmission_clusters.R   ${study_accession}  ${metadata_file}   ${metadata_local_dir}
-        #     set +x
-        #     echo "------------------------------------------------------------------------------"
-        #     printf "\n"
-        # else
-        #     echo "------------------------------------------------------------------------------"
-        #     echo "File ${clusters_data_file} exists, skipping r_scripts/transmission_clusters.R"
-        #     echo "------------------------------------------------------------------------------"
-        #     printf "\n"
-        #
-        # fi
-
     # ------------------------------------------------------------------------------
 
     # Concat VCFs
@@ -127,7 +98,7 @@ for study_accession in ${study_accession_list}; do
         echo "Running shell_scripts/variant_calling_and_concat_gvcfs.sh - outputs file ${val_multi_vcf_file}"
         set -x
         # shell_scripts/variant_calling_and_concat_gvcfs.sh <study_accession>   <metadata_file>  <vcf_dir>  <gvcf_file_suffix>  <ref_file>          <threads>
-        shell_scripts/variant_calling_and_concat_gvcfs.sh   ${study_accession}  ${metadata_file} ${vcf_dir} ${gvcf_file_suffix} ${ref_fasta_file}   20
+        shell_scripts/variant_calling_and_concat_gvcfs.sh   ${study_accession}  ${metadata_file} ${vcf_dir} ${gvcf_file_suffix} ${ref_fasta_file}   10
         set +x
         echo "------------------------------------------------------------------------------"
         printf "\n"
@@ -225,46 +196,15 @@ for study_accession in ${study_accession_list}; do
         printf "\n"
     fi
 
-    # # ------------------------------------------------------------------------------
-    #
-    # # Transmission clusters
-    #
-    # if [ ! -f ${clusters_data_file} ]; then
-    #
-    #     echo "------------------------------------------------------------------------------"
-    #
-    #     echo "Transmission clusters"
-    #     printf "\n"
-    #
-    #     echo "Running transmission clusters - outputs file ${clusters_data_file} and plot in ${plots_dir}"
-    #     set -x
-    #     # Rscript r_scripts/transmission_clusters.R <study_accession>   <threshold> <dm_file>    <id_file>       <output dir>           <output dir for plot>
-    #     # Rscript r_scripts/transmission_clusters.R   ${study_accession}  100         ${dist_file} ${dist_id_file} ${metadata_local_dir}  ${plots_dir}
-    #
-    #     # Rscript r_scripts/transmission_clusters.R <study_accession>   <metadata_file>    <file to save results to>
-    #     Rscript r_scripts/transmission_clusters.R   ${study_accession}  ${metadata_file}   ${metadata_local_dir}
-    #     set +x
-    #     echo "------------------------------------------------------------------------------"
-    #     printf "\n"
-    # else
-    #     echo "------------------------------------------------------------------------------"
-    #     echo "File ${clusters_data_file} exists, skipping r_scripts/transmission_clusters.R"
-    #     echo "------------------------------------------------------------------------------"
-    #     printf "\n"
-    #
-    # fi
-
-
     # ------------------------------------------------------------------------------
 
     # IQ tree
 
+    fasta_file_base=$(basename -- ${unfilt_fasta_file})
     # Out:
-    iqtree_file=${newick_output_dir}${study_accession}*iqtree
-    treefile=${newick_output_dir}${study_accession}*treefile
-    # filt_fasta_file=${fasta_dir}${study_accession}.filt.val.gt.g.snps.fa.filt
+    iqtree_file=${newick_output_dir}${fasta_file_base}.iqtree
+    treefile=${newick_output_dir}${fasta_file_base}*treefile
 
-    # if [ ! -f ${iqtree_file} ] || [ ! -f ${treefile} ] || [ ! -f ${filt_fasta_file} ]; then
     if [ ! -f ${iqtree_file} ] || [ ! -f ${treefile} ]; then
 
         echo "------------------------------------------------------------------------------"
@@ -272,7 +212,7 @@ for study_accession in ${study_accession_list}; do
         echo "IQ tree"
         printf "\n"
 
-        echo "Running shell_scripts/iqtree.sh - outputs files ${iqtree_file}, ${treefile} and ${filt_fasta_file}"
+        echo "Running shell_scripts/iqtree.sh - outputs files ${iqtree_file}, ${treefile}"
         set -x
         # shell_scripts/iqtree.sh <study_accession>   <fasta_dir>           <newick_output_dir>
         shell_scripts/iqtree.sh   ${study_accession}  ${unfilt_fasta_file}  ${newick_output_dir}
@@ -285,70 +225,6 @@ for study_accession in ${study_accession_list}; do
         echo "------------------------------------------------------------------------------"
         printf "\n"
     fi
-
-
-    # # ------------------------------------------------------------------------------
-    #
-    # # Create dated fasta file for Beast
-    #
-    # # Define out file
-    # dated_fasta_file=${fasta_dir}${study_accession}.dated.fa
-    #
-    # if [ ! -f ${dated_fasta_file} ]; then
-    #
-    #     echo "------------------------------------------------------------------------------"
-    #
-    #     echo "Dated fasta file"
-    #     printf "\n"
-    #
-    #     echo "Running fasta_add_annotations.py - outputs ${dated_fasta_file}"
-    #     printf "\n"
-    #
-    #     # Run fasta_add_annotations.py to concatenate the metadata collection date with the sample ID in the fasta file
-    #     # e.g. >ERR1234 -> >ERR1234_01_01_10
-    #     # - see https://github.com/pathogenseq/pathogenseq-scripts/tree/master/scripts
-    #     set -x
-    #     fasta_add_annotations.py --fasta ${filt_fasta_file} --csv ${metadata_file} --out ${dated_fasta_file} --annotations ${date_column} --id-key wgs_id
-    #     set +x
-    #     echo "------------------------------------------------------------------------------"
-    #     printf "\n"
-    # else
-    #     echo "------------------------------------------------------------------------------"
-    #     echo "File ${dated_fasta_file} exists, skipping fasta_add_annotations.py"
-    #     echo "------------------------------------------------------------------------------"
-    #     printf "\n"
-    # fi
-
-    # ------------------------------------------------------------------------------
-
-    # # Subset fasta - chop dated_fasta_file into clusters outputted by r_scripts/transmission_clusters.R
-    #
-    # clust_fasta_dir=`dirname ${dated_fasta_file}`/
-    # clust_fasta_files=${clust_fasta_dir}${study_accession}.clust_*
-    #
-    # # n.b. weird/ugly syntax/code for checking if multiple fasta files exist because don't know how many there will be or even if the first cluster is '1'.
-    # # It's likely to be '1', but the clusters are arbitrarily numbered by the transmission_clusters.R script
-    # if ! ls ${clust_fasta_files} 1> /dev/null 2>&1; then
-    #
-    #     echo "------------------------------------------------------------------------------"
-    #
-    #     echo "Subset fasta"
-    #     printf "\n"
-    #
-    #     echo "Running shell_scripts/subset_fasta.sh - outputs ${clust_fasta_files}"
-    #     set -x
-    #
-    #     shell_scripts/subset_fasta.sh ${study_accession} ${clusters_data_file} ${dated_fasta_file}
-    #     set +x
-    #     echo "------------------------------------------------------------------------------"
-    #     printf "\n"
-    # else
-    #     echo "------------------------------------------------------------------------------"
-    #     echo "File(s) ${clust_fasta_files} exist(s), skipping shell_scripts/subset_fasta.sh"
-    #     echo "------------------------------------------------------------------------------"
-    #     printf "\n"
-    # fi
-
 
 # End for-loop on study accession numbers from study_accession_list
 done

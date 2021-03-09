@@ -38,12 +38,12 @@ xml_script_location=beast_xml/
 beast_results_dir=beast_results/
 
 # Files
-metadata_file=${metadata_dir}tb_data_collated_28_10_2020_clean.csv
+metadata_file=${metadata_dir}tb_data_18_02_2021_clean.csv
 # metadata_file=thailand_test/thailand_test_metadata.csv
 xml_template_file=${xml_script_location}tb_template.xml
 
 # Variables
-date_column=collection_date
+date_column=year
 study_accession_list=$(cat ${metadata_local_dir}study_accession_list.txt)
 
 # Parameters
@@ -199,8 +199,34 @@ for study_accession in ${study_accession_list}; do
 
         fi
 
+        # ------------------------------------------------------------------------------
 
-    # End Beast loop on cluster numbers
+        # Run TreeAnnotator to get MCC tree (input to TransPhylo)
+
+        # In
+        ${treeann_in}=${beast_results_dir}${study_accession}.clust_${clust_num}.trees
+        # Out
+        ${treeann_out}=${beast_results_dir}${study_accession}.clust_${clust_num}.mcc.tree
+
+        if [ ! -f ${treeann_out} ]; then
+
+            echo "------------------------------------------------------------------------------"
+
+            echo "Running TreeAnnotator on ${treeann_in} - outputs ${treeann_out}"
+            set -x
+            treeannotator -heights ca -burnin 10 ${treeann_in} ${treeann_out}
+            set +x
+            echo "------------------------------------------------------------------------------"
+            printf "\n"
+        else
+            echo "------------------------------------------------------------------------------"
+            echo "Files ${treeann_out} exists, skipping TreeAnnotator"
+            echo "------------------------------------------------------------------------------"
+            printf "\n"
+
+        fi
+
+    # End loop on cluster numbers
     done
 # End study accession loop
 done

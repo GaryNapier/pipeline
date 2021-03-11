@@ -1,0 +1,14 @@
+beast_results/
+beast_xml/
+dist_and_pca/
+fasta/
+itol_annotations/
+logs/
+metadata/*.clusters
+metadata/study_accession_list.txt
+newick/
+plots/
+refs.bib
+shell_scripts/reset.sh
+tmp/
+thailand_test/

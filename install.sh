@@ -1,4 +1,4 @@
 #! /bin/bash
 
-cp shell_scripts/* ~/bin/
-cp r_scripts/* ~/bin/
+cp ~/pipeline/shell_scripts/* ~/bin/
+cp ~/pipelin/r_scripts/* ~/bin/

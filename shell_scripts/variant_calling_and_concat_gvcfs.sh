@@ -26,8 +26,8 @@ set -o pipefail
 
 # RUN
 # Assume run from ~/transmission :
-# shell_scripts/variant_calling_and_concat_gvcfs.sh <study_accession> <metadata_file>                           <vcf_dir>  <gvcf_file_suffix>  <ref_file>                                <threads>
-# shell_scripts/variant_calling_and_concat_gvcfs.sh PRJEB7669         ~/metadata/tb_data_28_10_2021_clean.csv   ~/vcf/     .g.vcf.gz           ~/refgenome/MTB-h37rv_asm19595v2-eg18.fa  20
+# shell_scripts/variant_calling_and_concat_gvcfs.sh <study_accession> <sample_list_file>             <vcf_dir>  <gvcf_file_suffix>  <ref_file>                                <threads>
+# shell_scripts/variant_calling_and_concat_gvcfs.sh PRJEB7669         metadata/PRJEB7669.samps.csv   ~/vcf/     .g.vcf.gz           ~/refgenome/MTB-h37rv_asm19595v2-eg18.fa  20
 
 # ------------------------------------------------------------------------------
 
@@ -44,12 +44,13 @@ logs_dir=logs/
 genomicsDB_dir=genomicsDB/
 
 # Files and suffixes/prefixes
-metadata_file=${2}
+# metadata_file=${2}
+sample_list_file=${2}
 gvcf_file_suffix=${4}
 val_gvcf_file_suffix=${gvcf_file_suffix}.validated
 ref_file=${5}
 ref_index=${ref_file}.fai
-sample_list_file=tmp/sample_list
+# sample_list_file=tmp/sample_list
 vcf_map_file=${tmp_dir}vcf_map_file
 failed_samples_file=${logs_dir}variant_calling_and_concat_gvcfs_failed_samples
 windows_file=${tmp_dir}windows_file
@@ -68,12 +69,12 @@ echo ${vcf_dir}
 echo ${tmp_dir}
 echo ${logs_dir}
 echo ${genomicsDB_dir}
-echo ${metadata_file}
+# echo ${metadata_file}
+echo ${sample_list_file}
 echo ${gvcf_file_suffix}
 echo ${val_gvcf_file_suffix}
 echo ${ref_file}
 echo ${ref_index}
-echo ${sample_list_file}
 echo ${vcf_map_file}
 echo ${failed_samples_file}
 echo ${windows_file}
@@ -99,9 +100,9 @@ fi
 # ------------------------------------------------------------------------------
 
 # Get list of samples
-cat ${metadata_file} | \
-csvtk grep -f study_accession_word -p ${study_accession} | \
-csvtk cut -f wgs_id | tail -n +2 > ${sample_list_file}
+# cat ${metadata_file} | \
+# csvtk grep -f study_accession_word -p ${study_accession} | \
+# csvtk cut -f wgs_id | tail -n +2 > ${sample_list_file}
 
 # ------------------------------------------------------------------------------
 

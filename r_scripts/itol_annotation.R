@@ -378,75 +378,75 @@ write.table(major_lins_df, file = itol_major_lins_out_file,
 
 
 
-# Clusters ----
-
-print("---")
-print("SUBLINEAGES")
-print("---")
-
-# Subset data
-clusters_data <- metadata[, c("wgs_id", "sub_lineage")]
-
-# Set colours for each cluster
-n_clusts_total <- length(unique(clusters_data$sub_lineage))
-
-## Wrap in alpha function
-# cluster_cols <- scales::alpha(brewer.pal(n = n_clusts, name = "Dark2")[1:n_clusts], alpha = alpha)
-
-# Define colours for all sublins (!!!)
-# Loop through the major lins and assign a new rainbow of length number of sublins in the major lin
-sub_lins <- sort(unique(clusters_data$sub_lineage))
-# Drop animal lineages
-sub_lins <- sub_lins[!(sub_lins %in% animal)]
-sublin_split <- split(sub_lins, substr(sub_lins, 1, 3))
-all_sublin_cols <- vector()
-for(i in seq(sublin_split)){
-  all_sublin_cols <- append(all_sublin_cols, rainbow(length(sublin_split[[i]]), alpha = alpha))
-}
-# Append animal
-all_sublin_cols <- c(all_sublin_cols, lin_colours_char)
-
-# Make df for unique clusters and cols
-clust_col_df <- data.frame(sub_lineage = sort(unique(clusters_data$sub_lineage)), col = all_sublin_cols)
-
-# Merge with cluster data
-clusters_data <- merge(clusters_data, clust_col_df, by = "sub_lineage")
-
-# Clean - rearrange cols
-# clusters_data <- clusters_data[, c("id", "col", "cluster")]
-clusters_data <- clusters_data[, c("wgs_id", "col", "sub_lineage")]
-
-# Do legend shapes and labels
-
-# Legend shapes - repeat "1" for as many unique clusters and intersperse with "\t"
-leg_shapes <- paste0("LEGEND_SHAPES\t",
-                     paste0(paste0(rep(1, n_clusts_total), "\t"), collapse = ""))
-
-itol_clusters <- gsub("#LEGEND_SHAPES 1 1 2 2", leg_shapes, itol_clusters)
-
-
-# Legend colours - same for labels but just the unique cols
-leg_cols <- paste0("LEGEND_COLORS\t",
-                   paste0(paste0(clust_col_df$col, "\t"), collapse = ""))
-
-itol_clusters <- gsub("#LEGEND_COLORS #ff0000 #00ff00 rgba\\(0,255,0,0.5\\) #0000ff",
-                              leg_cols, itol_clusters)
-
-# Legend labels - same for labels but just the unique values
-leg_labels <- paste0("LEGEND_LABELS\t",
-                     paste0(paste0(unique(clusters_data$sub_lineage), "\t"), collapse = ""))
-
-itol_clusters <- gsub("#LEGEND_LABELS value1 value2 value3 value4",
-                              leg_labels, itol_clusters)
-
-# Write the template out under the new file name for the study accession
-write.table(itol_clusters, file = itol_clusters_out_file, sep="\t",
-            row.names=F, col.names=F, quote = F)
-
-# Append the clusters data to the template
-write.table(clusters_data, file = itol_clusters_out_file,
-            append = T, sep="\t",
-            row.names=F, col.names=F, quote = F)
+# # Clusters ----
+# 
+# print("---")
+# print("SUBLINEAGES")
+# print("---")
+# cd ../p
+# # Subset data
+# clusters_data <- metadata[, c("wgs_id", "sub_lineage")]
+# 
+# # Set colours for each cluster
+# n_clusts_total <- length(unique(clusters_data$sub_lineage))
+# 
+# ## Wrap in alpha function
+# # cluster_cols <- scales::alpha(brewer.pal(n = n_clusts, name = "Dark2")[1:n_clusts], alpha = alpha)
+# 
+# # Define colours for all sublins (!!!)
+# # Loop through the major lins and assign a new rainbow of length number of sublins in the major lin
+# sub_lins <- sort(unique(clusters_data$sub_lineage))
+# # Drop animal lineages
+# sub_lins <- sub_lins[!(sub_lins %in% animal)]
+# sublin_split <- split(sub_lins, substr(sub_lins, 1, 3))
+# all_sublin_cols <- vector()
+# for(i in seq(sublin_split)){
+#   all_sublin_cols <- append(all_sublin_cols, rainbow(length(sublin_split[[i]]), alpha = alpha))
+# }
+# # Append animal
+# all_sublin_cols <- c(all_sublin_cols, lin_colours_char)
+# 
+# # Make df for unique clusters and cols
+# clust_col_df <- data.frame(sub_lineage = sort(unique(clusters_data$sub_lineage)), col = all_sublin_cols)
+# 
+# # Merge with cluster data
+# clusters_data <- merge(clusters_data, clust_col_df, by = "sub_lineage")
+# 
+# # Clean - rearrange cols
+# # clusters_data <- clusters_data[, c("id", "col", "cluster")]
+# clusters_data <- clusters_data[, c("wgs_id", "col", "sub_lineage")]
+# 
+# # Do legend shapes and labels
+# 
+# # Legend shapes - repeat "1" for as many unique clusters and intersperse with "\t"
+# leg_shapes <- paste0("LEGEND_SHAPES\t",
+#                      paste0(paste0(rep(1, n_clusts_total), "\t"), collapse = ""))
+# 
+# itol_clusters <- gsub("#LEGEND_SHAPES 1 1 2 2", leg_shapes, itol_clusters)
+# 
+# 
+# # Legend colours - same for labels but just the unique cols
+# leg_cols <- paste0("LEGEND_COLORS\t",
+#                    paste0(paste0(clust_col_df$col, "\t"), collapse = ""))
+# 
+# itol_clusters <- gsub("#LEGEND_COLORS #ff0000 #00ff00 rgba\\(0,255,0,0.5\\) #0000ff",
+#                               leg_cols, itol_clusters)
+# 
+# # Legend labels - same for labels but just the unique values
+# leg_labels <- paste0("LEGEND_LABELS\t",
+#                      paste0(paste0(unique(clusters_data$sub_lineage), "\t"), collapse = ""))
+# 
+# itol_clusters <- gsub("#LEGEND_LABELS value1 value2 value3 value4",
+#                               leg_labels, itol_clusters)
+# 
+# # Write the template out under the new file name for the study accession
+# write.table(itol_clusters, file = itol_clusters_out_file, sep="\t",
+#             row.names=F, col.names=F, quote = F)
+# 
+# # Append the clusters data to the template
+# write.table(clusters_data, file = itol_clusters_out_file,
+#             append = T, sep="\t",
+#             row.names=F, col.names=F, quote = F)
 
 
 

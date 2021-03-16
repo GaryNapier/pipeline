@@ -1,4 +1,4 @@
-#!/usr/bin/env Rscript
+#! /usr/bin/env Rscript
 
 # itol_templates.R
 
@@ -24,7 +24,12 @@
 # Rscript r_scripts/itol_templates.R <itol_templates_location>
 # Rscript r_scripts/itol_templates.R itol_annotations/
 
+# itol_templates.R itol/
+
 # Setup ----
+
+# Read in args
+args <- commandArgs(trailingOnly=TRUE)
 
 library(rvest)
 
@@ -41,7 +46,7 @@ len_str <- function(string){
 # Variables
 
 # Directories
-itol_templates_location <- "itol_annotations/"
+itol_templates_location <- args[1]
 
 # Files and suffixes/prefixes
 itol_dr_file <- paste0(itol_templates_location, "itol.dr.txt")

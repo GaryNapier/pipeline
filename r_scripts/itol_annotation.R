@@ -1,4 +1,4 @@
-#!/usr/bin/env Rscript
+#! /usr/bin/env Rscript
 
 # itol_annotation.R
 
@@ -25,11 +25,16 @@
 # Rscript r_scripts/itol_annotation.R <metadata_file>                                       <itol_location>
 # Rscript r_scripts/itol_annotation.R ~/Documents/metadata/tb_data_28_01_2021_clean.csv     itol_annotations/
 
+
+# Rscript itol_annotation.R ${pakistan_metadata_file}     itol_annotations/
+
+# itol_annotation.R metadata/pakistan_metadata.csv itol/
+
 # Setup ----
 
 library(rvest)
 library(RColorBrewer)
-library(scales)
+library(scales) # show_col
 library(colorspace) # lighten()
 library(gplots) # col2hex
 
@@ -60,6 +65,7 @@ args <- commandArgs(trailingOnly=TRUE)
 # study_acc <- args[1]
 nl <- cat("\n")
 alpha <- 0.8
+brewer_set <- "Set1"
 
 # Directories
 # clusters_data_file_dir <- args[3]
@@ -124,6 +130,10 @@ metadata <- read.csv(metadata_file, stringsAsFactors = F)
 
 
 # Drug resistance ----
+
+print("---")
+print("DR")
+print("---")
 
 # cols <- c("run_accession", "study_accession", "dr_status")
 # dr_columns <- c("wgs_id", "study_accession_word", "dr_status")
@@ -205,6 +215,10 @@ write.table(dr_df, file = itol_dr_out_file,
 
 # Lineage ----
 
+print("---")
+print("LINEAGE")
+print("---")
+
 # Example:
 # <id>        <"range"> <col>     <lineage>
 # ERR2446223	range	    #FF1919E6	1
@@ -213,16 +227,22 @@ write.table(dr_df, file = itol_dr_out_file,
 # Subset data
 lin_data <- metadata[, c("wgs_id", "main_lineage")]
 
-# Get unique lins and split into numeric and 'word' strains - 'word' strains should be animal ones
+# Get unique lins and split into numeric and 'character' strains - 'character' strains should be animal ones
 uniq_lins <- sort(unique(lin_data[!is.na(lin_data[, "main_lineage"]), "main_lineage"]))
 uniq_lins_num <- grep("\\d", uniq_lins, value = T)
 uniq_lins_char <- grep("[^0-9]", uniq_lins, value = T)
 
 # Get unique cols per lineage, per category
 n_cols_lin_num <- length(uniq_lins_num)
-lin_colours_num <- rainbow(n_cols_lin_num, alpha = alpha)
-lin_colours_char <- col2hex(c("grey20", "grey40", "grey60"))
-lin_colours <- c(lin_colours_num, lin_colours_char)
+# lin_colours_num <- rainbow(n_cols_lin_num, alpha = alpha)
+lin_colours_num <- brewer.pal(n = n_cols_lin_num, name = brewer_set)
+lin_colours_char <- col2hex(c("grey10", "grey40", "grey80"))
+if(length(uniq_lins_char) > 0){
+  lin_colours_char <- lin_colours_char[1:length(lin_colours_char)]
+  lin_colours <- c(lin_colours_num, lin_colours_char) 
+} else {
+  lin_colours <- lin_colours_num
+}
 
 # Make df for unique lins and cols 
 lin_col_df <- data.frame(main_lineage = uniq_lins, col = lin_colours)
@@ -269,6 +289,10 @@ write.table(lin_data, file = itol_lineage_out_file,
 
 # Major lineages ----
 
+print("---")
+print("MAJOR LINEAGES")
+print("---")
+
 # Have to take major lins from sublins first (rather than adding the major lin to metadata first) 
 # because of the sodding animal lineages
 
@@ -281,10 +305,19 @@ major_lins <- unique(substr(sub_lins, 1, 3))
 major_lins_split <- split(major_lins, substr(major_lins, 1, 1))
 all_major_lins_cols <- vector()
 for(i in seq(major_lins_split)){
-  all_major_lins_cols <- append(all_major_lins_cols, rainbow(length(major_lins_split[[i]]), alpha = alpha))
+  # all_major_lins_cols <- append(all_major_lins_cols, rainbow(length(major_lins_split[[i]]), alpha = alpha))
+  if (length(major_lins_split[[i]]) == 1){
+    all_major_lins_cols <- append(all_major_lins_cols, lin_colours[i])
+  }else{
+    n <- length(major_lins_split[[i]])
+    cols <- brewer.pal(n = n, name = brewer_set)
+    all_major_lins_cols <- append(all_major_lins_cols, cols[1:n])
+  }
 }
 # Add animal strain colours to major lin colours
-all_major_lins_cols <- c(all_major_lins_cols, lin_colours_char)
+if(length(uniq_lins_char) > 0){
+  all_major_lins_cols <- c(all_major_lins_cols, lin_colours_char)
+}
 
 # Add major lin column to metadata for merge
 metadata$major_lineage <- substr(metadata$sub_lineage, 1, 3)
@@ -295,8 +328,10 @@ metadata$major_lineage <- ifelse(metadata$sub_lineage %in% animal, metadata$sub_
 # Re-define major lins data now with the animal strains
 major_lin_data <- metadata[, c("wgs_id", "major_lineage")]
 
-# Re-define major_lines now with animal strains... Christ this is a fucking ball-ache. 
-major_lins <- c(major_lins, animal)
+# Re-define major_lins now with animal strains...
+
+# major_lins <- c(major_lins, animal)
+major_lins <- c(major_lins, uniq_lins_char)
 
 # Put major lins and colours in dataframe
 major_lins_df <- data.frame(major_lineage = major_lins, col = all_major_lins_cols)
@@ -345,6 +380,9 @@ write.table(major_lins_df, file = itol_major_lins_out_file,
 
 # Clusters ----
 
+print("---")
+print("SUBLINEAGES")
+print("---")
 
 # Subset data
 clusters_data <- metadata[, c("wgs_id", "sub_lineage")]

@@ -1,97 +1,5 @@
 
 
-library(babette)
-
-
-# SITE MODEL ----
-site_model <- create_site_model_gtr()
-
-
-
-
-# CREATE INFERENCE MODEL
-
-inference_model <- create_test_inference_model(site_model = site_model)
-
-# MCMC ----
-
-# Chain length
-# 100,000,000
-# 100000000
-chain_length <- 100000000
-
-# Store/log/print every.. 
-every <- 10000
-
-store_every <- every
-log_every <- every
-
-tracelog <- create_tracelog(log_every = every)
-
-screenlog_every <- every
-
-?create_screenlog
-
-treelog_every <- every
-
-
-create_mcmc(
-  chain_length = chain_length,
-  store_every = store_every,
-  pre_burnin = 0,
-  n_init_attempts = 10,
-  sample_from_prior = FALSE,
-  tracelog = tracelog,
-  screenlog = create_screenlog(),
-  treelog = create_treelog()
-)
-
-
-
-
-
-
-
-# SITE MODELS ----
-
-
-beast_path <- "/Users/garynapier/miniconda3/bin/beast"
-
-beast_options <- create_beast2_options(beast2_path = beast_path)
-
-fasta_filename <- beautier::get_babette_path("anthus_aco_sub.fas")
-library(testthat)
-expect_true(file.exists(fasta_filename))
-
-out <- babette::bbt_run_from_model(beast2_options = beast_options, 
-                          fasta_filename = fasta_filename)
-
-
-
-inference_model <- create_inference_model()
-
-out <- bbt_run_from_model(
-  beast2_options = beast_options,
-  fasta_filename = fasta_filename,
-  inference_model = inference_model
-)
-
-# Saves these files to ./
-# anthus_aco_sub.log	
-# anthus_aco_sub.trees		
-# beast2_b1017ffde289.xml.state
-
-# Saves xml file to:
-# ~/Library/Caches/beast2_b1017ffde289.xml
-# !!!
-
-
-
-# --------------------------------------------------------------------------------------------------------------
-
-
-
-
 
 # Checklist for Babette
 # See XML file in (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7725332/)
@@ -157,72 +65,86 @@ out <- bbt_run_from_model(
 # TreeAnnotator
 
 
-# "Test-driven development"
-
-
 # -----------
 
+remotes::install_github("ropensci/beautier")
+
+library(babette)
+library(seqinr)
+
+remove_tail <- function(x, sep = "_", del = 1){
+  sapply(strsplit(x, split = sep, fixed = TRUE),
+         function(i) paste(head(i, -del), collapse = sep))
+}
+
+# DIRECTORIES
+
+setwd("~/Documents/transmission/")
+
+fasta_dir <- "fasta/"
+metadata_local_dir <- "metadata/"
 
 # FILES
-fasta_file <- "fasta/THAILAND_TEST.clust_1.dated.fa"
+fasta_file <- paste0(fasta_dir, "THAILAND_TEST.clust_1.dated.fa")
+fasta_id_date_df_outfile <- paste0(metadata_local_dir, remove_tail(basename(fasta_file), sep = "."), ".txt")
 
 
-# GENERAL
-id <- get_alignment_id(fasta_file, capitalize_first_char_id = FALSE)
-check_alignment_id(id)
+# READ IN FILES
+fasta <- read.fasta(file = fasta_file, forceDNAtolower = F)
+
+# Get fasta sample names and parse into name and date
+fasta_names <- names(fasta)
+
+fasta_id_date_df <- do.call(rbind, lapply(strsplit(fasta_names ,"_"), function(x){
+  data.frame(id = paste(x[1:(length(x))], collapse = "_"), year = x[length(x)])
+  }))
+
+# Save df of ids and year as csv for model
+write.table(fasta_id_date_df, file = fasta_id_date_df_outfile, quote = F, row.names = F, col.names = F, sep = "\t")
 
 
 # CLOCK MODEL
 clock_rate <- 0.0000001
-clock_model <- create_clock_model_strict(create_clock_rate_param(value = clock_rate, id = NA))
+clock_model <- create_strict_clock_model(clock_rate_param = create_clock_rate_param(value = clock_rate),
+                                         clock_rate_distr = create_log_normal_distr(value = clock_rate, m = 1, s = 1.25))
 
-# -------------------------
-# -------------------------
-# create_clock_rate_param:
-# Note
-# It cannot be estimated (as a hyper parameter) yet.
-# -------------------------
-# -------------------------
+# MCMC
+every <- 10000
 
-
-
-# PRIORS
-# - Tree.t - Coalescent Constant Population
-#   - Pop Size = 100 
-
-# - popSize.t
-#   - Log Normal
-#   - Lower = 0
-#   - Upper = 200
-#   - Value = 100
-
-create_ccp_tree_prior(
-  id = NA,
-  pop_size_distr = beautier::create_log_normal_distr(id = NA, m = 1, s = 1.25)
+mcmc <- create_mcmc(
+  chain_length = 1e+08,
+  tracelog = beautier::create_tracelog(log_every = every),
+  screenlog = beautier::create_screenlog(log_every = every),
+  treelog = beautier::create_treelog(log_every = every)
 )
 
+# TREE PRIOR
+tree_prior <- create_ccp_tree_prior(
+  pop_size_distr = create_log_normal_distr(
+    m = 1,
+    s = 1.25,
+    value = 100.0,
+    lower = 0.0,
+    upper = 200.0
+  ))
 
-?create_param
-
-
-
-
-library(XML)
-
-london_xml_file <- "~/Documents/transmission/beast_xml/BEAST2_GTR_Model_London_TB_Outbreak.xml"
-
-data <- xmlParse(london_xml_file)
-
-xml_data <- xmlToList(data)
-
-str(xml_data)
-
+# MRCA PRIOR
+mrca_prior <- create_mrca_prior(
+  is_monophyletic = TRUE, 
+  mrca_distr = create_laplace_distr(mu = 1990))
 
 
-
-
-
-
+# MAKE XML
+create_beast2_input_file(
+  fasta_file,
+  "beast_xml/THAILAND_TEST.babette.xml",
+  site_model = create_gtr_site_model(),
+  clock_model = clock_model,
+  tree_prior = tree_prior,
+  mrca_prior = mrca_prior,
+  mcmc = mcmc,
+  tipdates_filename = fasta_id_date_df_outfile
+)
 
 
 

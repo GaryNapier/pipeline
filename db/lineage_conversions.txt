@@ -1,0 +1,120 @@
+mtbc_lineage	lsp_lineage	spoligotype_family	rd_number
+1	Indo-Oceanic	EAI	RD239
+1.1	Indo-Oceanic	EAI3;EAI4;EAI5;EAI6	RD239
+1.1.1	Indo-Oceanic	EAI4;EAI5	RD239
+1.1.1.1	Indo-Oceanic	EAI4;ZERO	RD239
+1.1.2	Indo-Oceanic	EAI3;EAI5	RD239
+1.1.3	Indo-Oceanic	EAI6	RD239
+1.1.3.1	Indo-Oceanic	NA	RD239
+1.1.3.2	Indo-Oceanic	NA	RD239
+1.1.3.3	Indo-Oceanic	NA	RD239
+1.2.1	Indo-Oceanic	EAI2	RD239
+1.2.1.1	Indo-Oceanic	NA	RD239
+1.2.1.2	Indo-Oceanic	NA	RD239
+1.2.1.2.1	Indo-Oceanic	NA	RD239
+1.2.2	Indo-Oceanic	EAI1	RD239
+1.2.2.1	Indo-Oceanic	NA	RD239
+1.2.2.2	Indo-Oceanic	NA	RD239
+2	East-Asian	Beijing	RD105
+2.1	East-Asian (non-Beijing)	None	None
+2.2	East-Asian (Beijing)	Beijing-RD207	RD105;RD207
+2.2.1	East-Asian (Beijing)	Beijing-RD181	RD105;RD207;RD181
+2.2.1.1	East-Asian (Beijing)	Beijing-RD150	RD105;RD207;RD181;RD150
+2.2.1.2	East-Asian (Beijing)	Beijing-RD142	RD105;RD207;RD181;RD142
+2.2.2	East-Asian (Beijing)	Beijing-RD105/RD207	RD105;RD207
+3	East-African-Indian	CAS	RD750
+3.1	East-African-Indian	Non-CAS1-Delhi	RD750
+3.1.1	East-African-Indian	CAS1-Kili	RD750
+3.1.2	East-African-Indian	CAS;CAS2	RD750
+3.1.2.1	East-African-Indian	CAS2	RD750
+3.1.2.2	East-African-Indian	CAS	RD750
+3.1.3	East-African-Indian	CAS	RD750
+4	Euro-American	LAM;T;S;X;H	None
+4.1	Euro-American	T;X;H	None
+4.1.1	Euro-American (X-type)	X1;X2;X3	None
+4.1.1.1	Euro-American (X-type)	X2	RD183
+4.1.1.2	Euro-American (X-type)	X1	None
+4.1.1.3	Euro-American (X-type)	X1;X3	RD193
+4.1.1.3.1	Euro-American (X-type)	X1;X3	RD193
+4.1.2	Euro-American	T;H	None
+4.1.2.1	Euro-American (Haarlem)	T1;H1	RD182
+4.1.2.1.1	Euro-American (Haarlem)	T1;H1	RD182
+4.1.3	Euro-American	T;X;H	None
+4.1.4	Euro-American	T;X;H	None
+4.2	Euro-American	H;T;LAM	None
+4.2.1	Euro-American (TUR)	H3;H4	None
+4.2.1.1	Euro-American (TUR)	H3;H4	None
+4.2.2	Euro-American (Ural)	T;LAM7-TUR	None
+4.2.2.1	Euro-American	LAM7-TUR	None
+4.2.2.2	Euro-American (Ural)	T;LAM7-TUR	None
+4.3	Euro-American (LAM)	mainly-LAM	None
+4.3.1	Euro-American (LAM)	LAM9	None
+4.3.1.1	Euro-American (LAM)	LAM9	None
+4.3.2	Euro-American (LAM)	LAM3	None
+4.3.2.1	Euro-American (LAM)	LAM3	RD761
+4.3.3	Euro-American (LAM)	LAM;T	RD115
+4.3.4	Euro-American (LAM)	LAM	RD174
+4.3.4.1	Euro-American (LAM)	LAM1;LAM2	RD174
+4.3.4.2	Euro-American (LAM)	LAM1;LAM4;LAM11	RD174
+4.3.4.2.1	Euro-American (LAM)	LAM11	RD174
+4.4	Euro-American	S;T	None
+4.4.1	Euro-American (S-type)	S;T	None
+4.4.1.1	Euro-American	S;Orphans	None
+4.4.1.1.1	Euro-American	S;Orphans	None
+4.4.1.2	Euro-American	T1	None
+4.4.2	Euro-American	T1;T2	None
+4.5	Euro-American	H;T	RD122
+4.6	Euro-American	T;LAM	None
+4.6.1	Euro-American (Uganda)	T2	RD724
+4.6.1.1	Euro-American	T2-Uganda	RD724
+4.6.1.2	Euro-American	T2	RD724
+4.6.2	Euro-American	T;LAM	RD726
+4.6.2.1	Euro-American	T3	RD726
+4.6.2.2	Euro-American (Cameroon)	LAM10-CAM	RD726
+4.6.3	Euro-American	T;LAM	None
+4.6.4	Euro-American	T;LAM	None
+4.6.5	Euro-American	T;LAM	None
+4.7	Euro-American (mainly T)	T1;T5	None
+4.8	Euro-American (mainly T)	T1;T2;T3;T5	RD219
+4.8.1	Euro-American (mainly T)	T1;T2;T3;T5	RD219
+4.8.2	Euro-American (mainly T)	T1;T2;T3;T5	RD219
+4.8.3	Euro-American (mainly T)	T1;T2;T3;T5	RD219
+4.9	Euro-American (H37Rv-like)	T1	None
+4.9.1	Euro-American (H37Rv-like)	T1	None
+5	West-Africa 1	AFRI_2;AFRI_3	RD711
+5.1	West-Africa 1	AFRI_2;AFRI_3	RD711
+5.1.1	West-Africa 1	AFRI_2;AFRI_3	RD711
+5.1.2	West-Africa 1	AFRI_2;AFRI_3	RD711
+5.1.3	West-Africa 1	AFRI_2;AFRI_3	RD711
+5.1.4	West-Africa 1	AFRI_2;AFRI_3	RD711
+5.1.5	West-Africa 1	AFRI_2;AFRI_3	RD711
+5.2	West-Africa 1	AFRI_2;AFRI_3	RD711
+5.3	West-Africa 1	AFRI_2;AFRI_3	RD711
+6	West-Africa 2	AFRI_1	RD702
+6.1	West-Africa 2	AFRI_1	RD702
+6.1.1	West-Africa 2	AFRI_1	RD702
+6.1.2	West-Africa 2	AFRI_1	RD702
+6.1.3	West-Africa 2	AFRI_1	RD702
+6.2	West-Africa 2	AFRI_1	RD702
+6.2.1	West-Africa 2	AFRI_1	RD702
+6.2.2	West-Africa 2	AFRI_1	RD702
+6.2.3	West-Africa 2	AFRI_1	RD702
+6.3	West-Africa 2	AFRI_1	RD702
+6.3.1	West-Africa 2	AFRI_1	RD702
+6.3.2	West-Africa 2	AFRI_1	RD702
+6.3.3	West-Africa 2	AFRI_1	RD702
+7	Lineage 7	None	None
+8	Lineage 8	None	None
+9	Lineage 9	None	None
+M.bovis	M. bovis	BOV_1;BOV_2	None
+M.bovis	M. bovis	BOV_1;BOV_3	None
+M.bovis	M. bovis	BOV_1;BOV_4	None
+M.bovis	M. bovis	BOV_1;BOV_5	None
+M.bovis	M. bovis	BOV_1;BOV_6	None
+M.bovis	M. bovis	BOV_1;BOV_7	None
+M.bovis	M. bovis	BOV_1;BOV_8	None
+M.bovis	M. bovis	BOV_1;BOV_9	None
+M.bovis	M. bovis	BOV_1;BOV_10	None
+M.bovis	M. bovis	BOV_1;BOV_11	None
+M.caprae	M. caprae	None	None
+M.orygis	M. orygis	None	None

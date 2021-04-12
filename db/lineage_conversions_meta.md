@@ -7,7 +7,7 @@ The SNPs have been identified as belonging to an "MTBC lineage" - i.e. column 1,
 
 The supplementary material for this paper
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6814786/
-contains a table which corresponds to our table (minus the RD numbers; they are referenced below in the Faksri *et al* 2016 paper), and also seems to reference the origins of the different systems. Column headers and reference for that table are as follows:
+contains a table which corresponds to our table (minus the RD numbers; they are referenced below in the **Faksri *et al* 2016** paper), and also references sources for the classification schemes. These are not the primary sources, however. Column headers and reference for that table are as follows:
 
 
 | MTBC lineage (1, 2) | LSP lineage (2) | Spoligotype family (4) |
@@ -20,7 +20,7 @@ contains a table which corresponds to our table (minus the RD numbers; they are 
 For a regions of difference-lineage conversion, see table 1 in **In silico region of difference (RD) analysis of Mycobacterium tuberculosis complex from sequence reads using RD-Analyzer, Faksri *et al* 2016**
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5093977/
 
-This figure is from **Variable host–pathogen compatibility in Mycobacterium tuberculosis, Gagneux, DeRiemer *et al* 2006**  (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1413851/). Here the RD numbers and LSP (geographical) names are united in one figure. 
+This figure is from **Variable host–pathogen compatibility in Mycobacterium tuberculosis, Gagneux, DeRiemer *et al* 2006**  (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1413851/). Here the RD numbers and LSP (geographical) names are united in one figure. In the paper RDs seem to be synonymous with "LSP markers"; this makes sense since a "Region of Difference" is more-or-less the same thing as a "Large Sequence Polymorphism"
 <img src=../img/Gagneux_DeRiemer_2006.png style="padding-right: 25px; padding-top: 25px;">
 **Caption:** *The global population structure and geographical distribution of M. tuberculosis. (a) LSPs define a global phylogeny for M. tuberculosis. The names of the lineage-defining LSPs or regions of difference are shown in rectangles. The geographic regions associated with specific lineages are indicated. (b) The six main lineages of M. tuberculosis are geographically structured. Each dot corresponds to 1 of 80 countries represented in the global strain collection. The colors of the dots relate to the six main lineages defined in Fig. 1a and indicate the dominant lineage(s) in the respective countries.*
 

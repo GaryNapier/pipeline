@@ -21,7 +21,7 @@ contains a table which corresponds to our table (minus the RD numbers; they are 
 3. Gagneux, S. et al. Variable host-pathogen compatibility in Mycobacterium tuberculosis. Proc. Natl. Acad. Sci. 103, 2869–2873 (2006).
 4. Demay, C. et al. SITVITWEB – A publicly available international multimarker database for studying Mycobacterium tuberculosis genetic diversity and molecular epidemiology. Infect. Genet. Evol. 12, 755–766 (2012).
 
-<img align ="left" src=img/Gagneux_DeRiemer_2006.png width=250px style="padding-right: 25px; padding-top: 25px;">
+<img align ="left" src=db/img/Gagneux_DeRiemer_2006.png width=250px style="padding-right: 25px; padding-top: 25px;">
 
 For a regions of difference-lineage conversion, see table 1 in **In silico region of difference (RD) analysis of Mycobacterium tuberculosis complex from sequence reads using RD-Analyzer**
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5093977/

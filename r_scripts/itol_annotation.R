@@ -78,7 +78,7 @@ metadata_file <- args[1]
 # clusters_data_file <- args[3]
 
 itol_dr_in_file <- paste0(itol_location, "itol.dr.txt")
-itol_clusters_in_file <- paste0(itol_location, "itol.clusters.txt")
+# itol_clusters_in_file <- paste0(itol_location, "itol.clusters.txt")
 itol_lineage_in_file <- paste0(itol_location, "itol.lineages.txt")
 itol_major_lineage_in_file <- paste0(itol_location, "itol.major_lineages.txt")
 
@@ -89,7 +89,7 @@ itol_major_lineage_in_file <- paste0(itol_location, "itol.major_lineages.txt")
 metadata_file_base <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(metadata_file))
 
 itol_dr_out_file <- paste0(itol_location, metadata_file_base, ".dr.txt")
-itol_clusters_out_file <- paste0(itol_location, metadata_file_base, ".clusters.txt")
+# itol_clusters_out_file <- paste0(itol_location, metadata_file_base, ".clusters.txt")
 itol_lineage_out_file <- paste0(itol_location, metadata_file_base, ".lineages.txt")
 itol_major_lins_out_file <- paste0(itol_location, metadata_file_base, ".major_lins.txt")
 
@@ -100,12 +100,12 @@ print(c("metadata_file:", metadata_file))
 # print(c("clusters_data_file:", clusters_data_file))
 print("")
 print(c("itol_dr_in_file:", itol_dr_in_file))
-print(c("itol_clusters_in_file:", itol_clusters_in_file))
+# print(c("itol_clusters_in_file:", itol_clusters_in_file))
 print(c("itol_lineage_in_file:", itol_lineage_in_file))
 print(c("itol_major_lineage_in_file", itol_major_lineage_in_file))
 print("")
 print(c("itol_dr_out_file:", itol_dr_out_file))
-print(c("itol_clusters_out_file:", itol_clusters_out_file))
+# print(c("itol_clusters_out_file:", itol_clusters_out_file))
 print(c("itol_lineage_out_file:", itol_lineage_out_file))
 
 # Read in templates ----
@@ -115,7 +115,7 @@ print(c("itol_lineage_out_file:", itol_lineage_out_file))
 # itol_lineage_in_file
 
 itol_dr <- readChar(itol_dr_in_file, nchars = 1e6)
-itol_clusters <- readChar(itol_clusters_in_file, nchars = 1e6)
+# itol_clusters <- readChar(itol_clusters_in_file, nchars = 1e6)
 itol_lineage <- readChar(itol_lineage_in_file, nchars = 1e6) 
 itol_major_lins <- readChar(itol_major_lineage_in_file, nchars = 1e6)
 

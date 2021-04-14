@@ -1,6 +1,4 @@
 
-
-
 # Checklist for Babette
 # See XML file in (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7725332/)
 # Upload XML file to Beauti to get parameters:
@@ -67,6 +65,8 @@
 
 # -----------
 
+rm(list=ls())
+
 remotes::install_github("ropensci/beautier")
 
 library(babette)
@@ -103,6 +103,17 @@ fasta_id_date_df <- do.call(rbind, lapply(strsplit(fasta_names ,"_"), function(x
 write.table(fasta_id_date_df, file = fasta_id_date_df_outfile, quote = F, row.names = F, col.names = F, sep = "\t")
 
 
+# SITE MODEL
+# gamma_site_distr <- create_log_normal_distr(value = 0.25, lower = 0.0, upper = 1.0, m = 1, s = 1.25)
+  # # gamma_site_distr <- create_normal_distr(id = NA, mean = 1, sigma = 2, value = 0.25, lower = 0, upper = 1)
+# gamma_site_model <- create_gamma_site_model(gamma_cat_count = 4,
+#                                             gamma_shape_prior_distr = gamma_site_distr)
+# 
+# site_model <- create_gtr_site_model(id = NA, gamma_site_model = gamma_site_model) 
+
+site_model <- create_gtr_site_model()
+
+
 # CLOCK MODEL
 clock_rate <- 0.0000001
 clock_model <- create_strict_clock_model(clock_rate_param = create_clock_rate_param(value = clock_rate),
@@ -131,22 +142,22 @@ tree_prior <- create_ccp_tree_prior(
 # MRCA PRIOR
 mrca_prior <- create_mrca_prior(
   is_monophyletic = TRUE, 
-  mrca_distr = create_laplace_distr(mu = 1990))
+  mrca_distr = create_laplace_distr(mu = 1990), 
+  name = "TreePrior")
 
 
 # MAKE XML
 create_beast2_input_file(
   fasta_file,
   "beast_xml/THAILAND_TEST.babette.xml",
-  site_model = create_gtr_site_model(),
+  site_model = site_model,
   clock_model = clock_model,
   tree_prior = tree_prior,
   mrca_prior = mrca_prior,
   mcmc = mcmc,
-  tipdates_filename = fasta_id_date_df_outfile
+  tipdates_filename = fasta_id_date_df_outfile, 
+  beauti_options = beautier::create_beauti_options(nucleotides_uppercase = T)
 )
-
-
 
 
 

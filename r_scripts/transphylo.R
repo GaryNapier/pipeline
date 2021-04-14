@@ -158,12 +158,12 @@ ttree <- extractTTree(med)
 plot(ttree,type='detailed',w.shape,w.scale, cex = plot_text_sz)
 
 # Matrix of probability of direct transmission for all pairs of individuals 
-mat <- computeMatWIW(res)
-lattice::levelplot(mat, xlab='', ylab='', cex = plot_text_sz, scales=list(x=list(rot=90)))
+mat_prob <- computeMatWIW(res)
+lattice::levelplot(mat_prob, xlab='', ylab='', cex = plot_text_sz, scales=list(x=list(rot=90)))
 
 # Plot matrix indicating for each pair of individuals how many intermediates there are in the transmission chain
-mat <- computeMatTDist(res)
-lattice::levelplot(mat, xlab='', ylab='', cex = plot_text_sz, scales=list(x=list(rot=90)))
+mat_pair <- computeMatTDist(res)
+lattice::levelplot(mat_pair, xlab='', ylab='', cex = plot_text_sz, scales=list(x=list(rot=90)))
 
 # Plot of sampled and unsampled cases over time:
 a <- getIncidentCases(res, show.plot = T)
@@ -184,7 +184,7 @@ a <- getOffspringDist(res,k=c('1','2'),show.plot = T)
 
 
 
-
+  
 
 
 

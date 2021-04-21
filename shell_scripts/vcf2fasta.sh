@@ -76,7 +76,7 @@ fi
 echo "Converting genotyped and filtered multi-VCF to multi-fasta file"
 # Make fasta file of genotyped and filtered multi-vcf
 # Nb needs datamash - conda install -c bioconda datamash
-vcf2fasta.py --vcf ${vcf_input_file} --ref ${ref_fasta} --threads 20 --snps
+vcf2fasta.py --vcf ${vcf_input_file} --ref ${ref_fasta} --threads 20 --snps --snps-no-filter
 
 # Move results to output directory
 mv ${fasta_output_file} ${fasta_output_dir}

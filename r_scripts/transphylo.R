@@ -29,13 +29,264 @@ hs <- function(x, ...){
 }
 
 
+# Customise Transphylo plot functions
+
+plotCTree_x <- function (tree, showLabels = TRUE, showStars = TRUE, cols = NA, maxTime = NA, cex = 1) {
+  nam = tree$nam
+  tree = tree$ctree
+  nsam <- sum(tree[, 2] + tree[, 3] == 0)
+  nh <- nrow(tree) - 3 * nsam + 1
+  ntot <- nsam + nh
+  oldpar <- par("yaxt", "bty", "xpd")
+  on.exit(par(oldpar))
+  # par(yaxt = "n", bty = "n", xpd = T)
+  par(yaxt = "n", bty = "n", xpd = T, cex.axis = 0.75)
+  
+  # NEW
+  time_range <- c(min(tree[, 1]), max(tree[, 1]))
+  max_x <- time_range[2] + ceiling(length(seq(time_range[1], time_range[2]))*0.1)
+  max_x_maxTime <- maxTime + ceiling(length(seq(time_range[1], maxTime))*0.1)
+  
+  # plot(0, 0, type = "l", 
+  #      xlim = c(min(tree[, 1])-1, 
+  #               ifelse(is.na(maxTime), max(tree[, 1]), maxTime)), 
+  #      ylim = c(0, nsam + 1), xlab = "", ylab = "")
+  
+  plot(0, 0, type = "l", 
+       xlim = c(min(time_range)-1, 
+                ifelse(is.na(maxTime), 
+                       max_x, 
+                       max_x_maxTime)), 
+       ylim = c(0, nsam + 1), xlab = "", ylab = "")
+  
+  host <- tree[, 4]
+  
+  if (ntot > 1) {
+    if (is.na(cols[1])) 
+      grDevices::palette(grDevices::rainbow(min(1024, ntot)))
+    else grDevices::palette(cols)
+  }
+  
+  root <- which(host == 0)
+  ys <- matrix(0, nsam, 1)
+  todo <- cbind(root, 0, 0.5, 1)
+  while (nrow(todo) > 0) {
+    w <- todo[1, 1]
+    x <- todo[1, 2]
+    y <- todo[1, 3]
+    scale <- todo[1, 4]
+    if (tree[w, 2] == 0 && tree[w, 3] == 0) {
+      ys[w] <- y
+    }
+    else if (tree[w, 3] == 0) {
+      todo <- rbind(todo, cbind(tree[w, 2], tree[w, 1], 
+                                y, scale, deparse.level = 0))
+    }
+    else {
+      todo <- rbind(todo, cbind(tree[w, 2], tree[w, 1], 
+                                y + scale/2, scale/2, deparse.level = 0), 
+                    cbind(tree[w, 3], tree[w, 1], y - scale/2, scale/2, deparse.level = 0))
+    }
+    todo <- rbind(todo[-1, ])
+  }
+  
+  ys <- rank(ys)
+  for (i in ((nsam + 1):nrow(tree))) {
+    children <- c()
+    todo <- i
+    while (length(todo) > 0) {
+      children = c(children, todo[1])
+      todo = c(todo[-1], setdiff(tree[todo[1], 2:3], 0))
+    }
+    ys[i] <- mean(ys[children[which(children <= nsam)]])
+  }
+  
+  todo <- cbind(root, tree[root, 1])
+  while (nrow(todo) > 0) {
+    w <- todo[1, 1]
+    x <- todo[1, 2]
+    y <- ys[w]
+    col = host[w]
+    if (tree[w, 2] == 0 && tree[w, 3] == 0) {
+      lines(c(x, tree[w, 1]), c(y, y), col = col, lwd = 2)
+      if (showLabels) 
+        text(tree[w, 1], y, nam[w], cex = cex, pos = 4)
+    }
+    else if (tree[w, 3] == 0) {
+      lines(c(x, tree[w, 1]), c(y, y), col = col, lwd = 2)
+      todo <- rbind(todo, cbind(tree[w, 2], tree[w, 1]))
+    }
+    else {
+      lines(c(x, tree[w, 1]), c(y, y), col = col, lwd = 2)
+      lines(c(tree[w, 1], tree[w, 1]), cbind(ys[tree[w, 2]], ys[tree[w, 3]]), col = col, lwd = 2)
+      todo <- rbind(todo, cbind(tree[w, 2], tree[w, 1]), 
+                    cbind(tree[w, 3], tree[w, 1]))
+    }
+    todo <- rbind(todo[-1, ])
+  }
+  todo <- cbind(root, tree[root, 1])
+  while (nrow(todo) > 0 && showStars) {
+    w <- todo[1, 1]
+    x <- todo[1, 2]
+    y <- ys[w]
+    col = host[w]
+    if (tree[w, 2] == 0 && tree[w, 3] == 0) {
+    }
+    else if (tree[w, 3] == 0) {
+      points(tree[w, 1], y, col = "red", pch = 8)
+      todo <- rbind(todo, cbind(tree[w, 2], tree[w, 1]))
+    }
+    else {
+      todo <- rbind(todo, cbind(tree[w, 2], tree[w, 1]), 
+                    cbind(tree[w, 3], tree[w, 1]))
+    }
+    todo <- rbind(todo[-1, ])
+  }
+  return(invisible(tree))
+}
+
+plotTTree2_x <- function (ttree, showLabels = TRUE, showMissingLinks = 0, cex = 1) {
+  nam = ttree$nam
+  ttree = ttree$ttree
+  ttree = cbind(ttree, rep(1, nrow(ttree)))
+  if (showMissingLinks > 0) {
+    i = which(is.na(ttree[, 2]))[1]
+    while (i < nrow(ttree)) {
+      w = which(ttree[, 3] == i)
+      if (length(w) == 1) {
+        ttree[w, 3] = ttree[i, 3]
+        ttree[w, 4] = ttree[w, 4] + ttree[i, 4]
+        ttree = ttree[-i, ]
+        ttree[which(ttree[, 3] > i), 3] = ttree[which(ttree[, 3] > i), 3] - 1
+      }
+      else i = i + 1
+    }
+  }
+  if (showMissingLinks == 2) {
+    ttree[which(ttree[, 4] >= 2), 4] = 2
+  }
+  n = nrow(ttree)
+  ys <- rep(0, n)
+  scale <- rep(1, n)
+  todo = c(which(ttree[, 3] == 0))
+  while (length(todo) > 0) {
+    f = which(ttree[, 3] == todo[1])
+    o = rank(-ttree[f, 1])
+    f[o] = f
+    for (i in f) {
+      ys[i] = ys[todo[1]] + scale[todo[1]] * which(f == i)/(length(f) + 1)
+      scale[i] = scale[todo[1]]/(length(f) + 1)
+      todo = c(todo, i)
+    }
+    todo = todo[-1]
+  }
+  ys = rank(ys)
+  oldpar <- par("yaxt", "bty")
+  on.exit(par(oldpar))
+  par(yaxt = "n", bty = "n", cex.axis = 0.75)
+  mi = min(ttree[which(!is.na(ttree[, 1])), 1])-1
+  ma = max(ttree[which(!is.na(ttree[, 1])), 1])+2
+  plot(c(), c(), 
+       # xlim = c(mi - (ma - mi) * 0.05, ma + (ma - mi) * 0.05), 
+       xlim = c( (mi - (ma - mi) * 0.05), 
+                 (ma + (ma - mi) * 0.15) ), 
+       ylim = c(0, n + 1), 
+       xlab = "", ylab = "")
+  pal = grDevices::gray.colors(max(ttree[, 4]))
+  for (i in 1:n) {
+    if (ttree[i, 3] != 0) {
+      dircol = pal[ttree[i, 4]]
+      arrows(ttree[ttree[i, 3], 1], ys[ttree[i, 3]], ttree[i, 
+                                                           1], ys[i], length = 0, col = dircol)
+    }
+    if (showLabels && !is.na(ttree[i, 2])) 
+      text(ttree[i, 1], ys[i], nam[i], pos = 4, cex = cex)
+  }
+  for (i in 1:n) {
+    points(ttree[i, 1], ys[i], pch = 21, bg = ifelse(is.na(ttree[i, 
+                                                                 2]), "white", "black"), cex = cex)
+  }
+  if (length(pal) > 2) 
+    legend("topleft", legend = 0:(length(pal) - 1), col = pal, 
+           lty = 1, cex = cex, title = "Missing links")
+  return(invisible(ttree))
+}
+
+getInfectionTimeDist_x <- function(record, burnin = 0.5, k, numBins = 10, show.plot = F) {
+  record = record[max(1, round(length(record) * burnin)):length(record)]
+  for (i in 1:length(record)) record[[i]] = extractTTree(record[[i]]$ctree)
+  times = matrix(NA, length(k), length(record))
+  for (i in 1:length(k)) for (j in 1:length(record)) {
+    ii = which(record[[j]]$nam == k[i])
+    times[i, j] = record[[j]]$ttree[ii, 1]
+  }
+  if (show.plot) {
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
+    # par(mfrow = c(length(k), 1))
+    scale <- 0.75
+    par(mfrow = n2mfrow(length(k)), 
+        cex.axis = scale, 
+        cex.main = scale, 
+        cex.lab = scale)
+    xlim = c(min(times), max(times))
+    uni = length(unique(as.vector(times)))
+    numBins = min(numBins, uni)
+    br = seq(xlim[1], xlim[2], length.out = numBins + 1)
+    for (i in 1:length(k)) {
+      h = hist(times[i, ], breaks = br, plot = F)$counts/length(record)
+      # barplot(h, main = "", xlab = "", ylab = sprintf("Infection time of %s", k[i]))
+      barplot(h, main = k[i], xlab = "", ylab = "Infection time")
+      if (xlim[1] == xlim[2]) 
+        axis(1, at = 0.7, labels = xlim[1])
+      else {
+        labs = pretty(xlim, 6)
+        axis(1, at = (labs - xlim[1])/(xlim[2] - xlim[1]) * 1.2 * numBins, labels = labs)
+      }
+    }
+  }
+  if (length(k) == 1) 
+    times = as.vector(times)
+  return(times)
+}
+
+getOffspringDist_x <- function (record, burnin = 0.5, k, show.plot = F) {
+  record = record[max(1, round(length(record) * burnin)):length(record)]
+  for (i in 1:length(record)) record[[i]] = extractTTree(record[[i]]$ctree)
+  offspring = matrix(NA, length(k), length(record))
+  for (i in 1:length(k)) for (j in 1:length(record)) {
+    ii = which(record[[j]]$nam == k[i])
+    offspring[i, j] = as.numeric(length(which(record[[j]]$ttree[, 3] == ii)))
+  }
+  if (show.plot) {
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
+    # par(mfrow = c(length(k), 1))
+    scale <- 0.75
+    par(mfrow = n2mfrow(length(k)), 
+        cex.axis = scale, 
+        cex.main = scale, 
+        cex.lab = scale)
+    xlim = c(-0.5, max(offspring) + 0.5)
+    br = seq(xlim[1], xlim[2])
+    for (i in 1:length(k)) {
+      h = hist(offspring[i, ], breaks = br, plot = F)$counts/length(record)
+      # barplot(h, main = "", xlab = "", ylab = sprintf("Offspring of %s", 
+      #                                                 k[i]), names.arg = 0:max(offspring))
+      barplot(h, main = k[i], xlab = "", 
+              ylab = "Offspring", names.arg = 0:max(offspring))
+    }
+  }
+  if (length(k) == 1)
+    offspring = as.vector(offspring)
+  return(offspring)
+}
+
+
+
 # Variables - setup ----
 
 # Plots
-units <- "px"
-wth <- 3000
-ht <- 2000
-resolution <- 300
 plot_text_sz <- 0.5
 
 
@@ -88,6 +339,7 @@ print("mcmc_iter: ", mcmc_iter)
 
 # Other files ----
 
+# Plots
 transphylo_res_plot_file <- paste0(out_dir, study_accession, ".transphylo.pdf")
 medoid_tree_plot_file <- paste0(out_dir, study_accession, ".med_tree.pdf")
 trans_tree_plot_file <- paste0(out_dir, study_accession, ".trans_tree.pdf")
@@ -98,6 +350,10 @@ gen_time_plot_file <- paste0(out_dir, study_accession, ".gen_time.pdf")
 samp_time_plot_file <- paste0(out_dir, study_accession, ".samp_time.pdf")
 inf_time_plot_file <- paste0(out_dir, study_accession, ".inf_time.pdf")
 offspring_plot_file <- paste0(out_dir, study_accession, ".offspring.pdf")
+
+# Tables
+es_table_file <- paste0(out_dir, study_accession, ".es_table.csv")
+
 
 # TransPhylo parameters ----
 
@@ -142,6 +398,7 @@ for (i in seq(tree_list)){
   ptree_list[[i]] <- ptreeFromPhylo(tree_list[[i]], dateLastSample=last_date_list[[i]])
 }
 
+
 # Transphylo ----
 # https://xavierdidelot.github.io/TransPhylo/articles/infer.html
 
@@ -185,8 +442,8 @@ for (i in seq(res_list)){
   es_list[[i]] <- effectiveSize(mcmc_list[[i]])
 }
 
-
-# NEED TO DO SOMETHING WITH THIS
+es_table <- do.call("rbind", es_list)
+write.csv(es_table, es_table_file, header = T)
 
 
 # Interpretation of output ----
@@ -199,7 +456,7 @@ med_list <- list()
 pdf(medoid_tree_plot_file)
 for (i in seq(res_list)){
   med_list[[i]] <- medTTree(res_list[[i]])
-  plot(med_list[[i]], cex = plot_text_sz, maxTime = last_date_list[[i]]+1)
+  plotCTree_x(med_list[[i]], cex = plot_text_sz, maxTime = last_date_list[[i]]+1)
 }
 dev.off()
 
@@ -211,7 +468,7 @@ ttree_list <- list()
 pdf(trans_tree_plot_file)
 for(i in seq(med_list)){
   ttree_list[[i]] <- extractTTree(med_list[[i]])
-  plot(ttree_list[[i]], cex = plot_text_sz)
+  plotTTree2_x(ttree_list[[i]], cex = plot_text_sz)
 }
 dev.off()
 
@@ -270,22 +527,15 @@ for(i in seq(res_list)){
 dev.off()
 
 
-
-
-
 # Distribution of infection time for the individuals labelled ‘1’ and ‘2’:
 # a <- getInfectionTimeDist(res, k=c('1','2'), show.plot = T)
 
 inf_time_list <- list()
 pdf(inf_time_plot_file)
 for(i in seq(res_list)){
-  inf_time_list[[i]] <- getInfectionTimeDist(res_list[[i]], k = clusters_split[[i]]$id, show.plot = T)
+  inf_time_list[[i]] <- getInfectionTimeDist_x(res_list[[i]], k = clusters_split[[i]]$id, show.plot = T)
 }
 dev.off()
-
-
-
-
 
 # Offspring distribution for the individuals labelled ‘1’ and ‘2’:
 # a <- getOffspringDist(res,k=c('1','2'),show.plot = T)
@@ -293,14 +543,12 @@ dev.off()
 offspring_list <- list()
 pdf(offspring_plot_file)
 for(i in seq(res_list)){
-  offspring_list[[i]] <- getOffspringDist(res_list[[i]], k = clusters_split[[i]]$id, show.plot = T)
+  offspring_list[[i]] <- getOffspringDist_x(res_list[[i]], k = clusters_split[[i]]$id, show.plot = T)
 }
 dev.off()
 
 
 
-
-  
 
 
 

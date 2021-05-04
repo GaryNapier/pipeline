@@ -13,6 +13,9 @@ library(optparse)
 library(ape)
 library(TransPhylo)
 library(coda)
+library(foreach)
+library(doParallel)
+library(parallel)
 
 
 heaD <- function(x,...){
@@ -433,7 +436,7 @@ doParallel::registerDoParallel(cl)
 # }
 
 res_list <- foreach::foreach(i = seq(ptree_list)) %dopar% {
-  inferTTree(ptree_list[[i]], mcmcIterations = mcmc_iter, 
+  TransPhylo::inferTTree(ptree_list[[i]], mcmcIterations = mcmc_iter, 
              w.shape = w.shape, w.scale = w.scale, 
              dateT = last_date_list[[i]]+runif(1)*1e-08)
 }

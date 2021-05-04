@@ -315,7 +315,7 @@ study_accession <- opt$study_accession
 tree_file <- opt$tree_file
 clusters_file <- opt$clusters_file
 out_dir <- opt$out_dir
-mcmc_iter <- opt$mcmc_iter
+mcmc_iter <- as.numeric(opt$mcmc_iter)
 
 print("ARGUMENTS:")
 print(c("study_accession: ", study_accession))

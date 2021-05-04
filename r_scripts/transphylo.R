@@ -293,14 +293,8 @@ plot_text_sz <- 0.5
 # Arguments ----
 
 option_list = list(
-  # EXAMPLE:
-  # make_option(c("-t", "--template_file_name"), type="character", default=NULL,
-  #             help="input template xml file", metavar="character"),
-
   make_option(c("-s", "--study_accession"), type="character", default=NULL,
               help="enter study accession code e.g. PAKISTAN", metavar="character"),
-  # make_option(c("-p", "--plots_path"), type="character", default="./",
-  #             help="path to save plots to; default is ./", metavar="character"),
   make_option(c("-t", "--tree_file"), type="character", default=NULL,
               help="input (dated) tree file - i.e. MCC tree from BEAST and TreeAnnotator", metavar="character"),
   make_option(c("-c", "--clusters_file"), type="character", default=NULL,
@@ -324,11 +318,11 @@ out_dir <- opt$out_dir
 mcmc_iter <- opt$mcmc_iter
 
 print("ARGUMENTS:")
-print("study_accession: ", study_accession)
-print("tree_file: ", tree_file)
-print("clusters_file: ", clusters_file)
-print("out_dir: ", out_dir)
-print("mcmc_iter: ", mcmc_iter)
+print(c("study_accession: ", study_accession))
+print(c("tree_file: ", tree_file))
+print(c("clusters_file: ", clusters_file))
+print(c("out_dir: ", out_dir))
+print(c("mcmc_iter: ", mcmc_iter))
 
 # study_accession <- "PAKISTAN_ALL"
 # tree_file <- "beast_results/PAKISTAN_ALL.mcc.tree"

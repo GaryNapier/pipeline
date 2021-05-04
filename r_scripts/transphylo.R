@@ -14,6 +14,7 @@ library(ape)
 library(TransPhylo)
 library(coda)
 
+
 heaD <- function(x,...){
   head(x, ...)
 }
@@ -333,6 +334,9 @@ print(c("mcmc_iter: ", mcmc_iter))
 
 # Other files ----
 
+# Trees 
+trees_file <- paste0(out_dir, study_accession, ".ptree_list.")
+
 # Plots
 transphylo_res_plot_file <- paste0(out_dir, study_accession, ".transphylo.pdf")
 medoid_tree_plot_file <- paste0(out_dir, study_accession, ".med_tree.pdf")
@@ -392,6 +396,18 @@ for (i in seq(tree_list)){
   ptree_list[[i]] <- ptreeFromPhylo(tree_list[[i]], dateLastSample=last_date_list[[i]])
 }
 
+# # Save ptrees
+# for (i in seq(ptree_list)){
+#   save(trees_file, paste0(trees_file, i, ".Rdata") )
+# }
+
+
+
+
+
+
+
+
 
 # Transphylo ----
 # https://xavierdidelot.github.io/TransPhylo/articles/infer.html
@@ -403,13 +419,32 @@ for (i in seq(tree_list)){
 # Need to add small number greater than 1e-10 - bug in the inferTTree() function 
 # See - https://github.com/xavierdidelot/TransPhylo/blob/master/R/inferTTree.R
 # res <- inferTTree(ptree, mcmcIterations = mcmc_iter, w.shape=w.shape, w.scale=w.scale, dateT=dateT)
-res_list <- list()
-for(i in seq(ptree_list)){
-  res_list[[i]] <- inferTTree(ptree_list[[i]], 
-                              mcmcIterations = mcmc_iter, 
-                              w.shape = w.shape, w.scale = w.scale, 
-                              dateT = last_date_list[[i]]+runif(1)*1e-08)
+
+cores <- detectCores()
+cl <- makeCluster(cores[1]-1) #not to overload your computer
+doParallel::registerDoParallel(cl)
+
+# res_list <- list()
+# for(i in seq(ptree_list)){
+#   res_list[[i]] <- inferTTree(ptree_list[[i]], 
+#                               mcmcIterations = mcmc_iter, 
+#                               w.shape = w.shape, w.scale = w.scale, 
+#                               dateT = last_date_list[[i]]+runif(1)*1e-08)
+# }
+
+res_list <- foreach::foreach(i = seq(ptree_list)) %dopar% {
+  inferTTree(ptree_list[[i]], mcmcIterations = mcmc_iter, 
+             w.shape = w.shape, w.scale = w.scale, 
+             dateT = last_date_list[[i]]+runif(1)*1e-08)
 }
+#stop cluster
+stopCluster(cl)
+
+
+
+
+
+
 
 # Plot to check convergence
 # png(transphylo_res_plot_file, units=units, width=wth, height=ht, res = resolution)

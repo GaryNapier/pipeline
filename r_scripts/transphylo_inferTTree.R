@@ -139,8 +139,8 @@ for (i in seq(tree_list)){
 # See - https://github.com/xavierdidelot/TransPhylo/blob/master/R/inferTTree.R
 # res <- inferTTree(ptree, mcmcIterations = mcmc_iter, w.shape=w.shape, w.scale=w.scale, dateT=dateT)
 
-cores <- parallel::detectCores()
-cl <- parallel::makeCluster(cores[1]-1) #not to overload your computer
+# cores <- parallel::detectCores()
+cl <- parallel::makeCluster(cores) 
 doParallel::registerDoParallel(cl)
 
 res_list <- foreach::foreach(i = 17) %dopar% {

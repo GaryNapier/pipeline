@@ -27,7 +27,9 @@ option_list = list(
   make_option(c("-o", "--out_dir"), type="character", default=NULL,
               help="name of transphylo output directory - outputs files and plots", metavar="character"),
   make_option(c("-m", "--mcmc_iter"), type="character", default=1000,
-              help="number of mcmc iterations of TransPhylo", metavar="character")
+              help="number of mcmc iterations of TransPhylo", metavar="character"), 
+  make_option(c("-p", "--processors"), type="character", default=4,
+              help="number of processors/cores to use", metavar="character")
 );
 
 opt_parser = OptionParser(option_list=option_list);

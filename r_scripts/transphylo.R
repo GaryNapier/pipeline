@@ -2,8 +2,7 @@
 
 
 # RUN:
-# transphylo.R -s <study_accession> -t <tree_file> -o <out_dir> -c <clusters_file>
-# transphylo.R
+# transphylo.R -s <study_accession> -t <tree_file> -o <out_dir> -c <clusters_file> -p <processors>
 
 # Setup ----
 
@@ -306,7 +305,9 @@ option_list = list(
   make_option(c("-o", "--out_dir"), type="character", default=NULL,
               help="name of transphylo output directory - outputs files and plots", metavar="character"),
   make_option(c("-m", "--mcmc_iter"), type="character", default=1000,
-              help="number of mcmc iterations of TransPhylo", metavar="character")
+              help="number of mcmc iterations of TransPhylo", metavar="character"),
+  make_option(c("-p", "--processors"), type="character", default=4,
+              help="number of processors/cores to use", metavar="character")
 );
 
 opt_parser = OptionParser(option_list=option_list);
@@ -320,6 +321,7 @@ tree_file <- opt$tree_file
 clusters_file <- opt$clusters_file
 out_dir <- opt$out_dir
 mcmc_iter <- as.numeric(opt$mcmc_iter)
+cores <- as.numeric(opt$processors)
 
 print("ARGUMENTS:")
 print(c("study_accession: ", study_accession))
@@ -327,6 +329,8 @@ print(c("tree_file: ", tree_file))
 print(c("clusters_file: ", clusters_file))
 print(c("out_dir: ", out_dir))
 print(c("mcmc_iter: ", mcmc_iter))
+print(c("processors/cores: ", cores))
+
 
 # study_accession <- "PAKISTAN_ALL"
 # tree_file <- "beast_results/PAKISTAN_ALL.mcc.tree"
@@ -361,6 +365,8 @@ es_table_file <- paste0(out_dir, study_accession, ".es_table.csv")
 # Parameters of Gamma distr representing generation time
 w.shape <- 2.2
 w.scale <- 2.1
+
+
 
 
 # Load in data ---- 
@@ -399,17 +405,6 @@ for (i in seq(tree_list)){
   ptree_list[[i]] <- ptreeFromPhylo(tree_list[[i]], dateLastSample=last_date_list[[i]])
 }
 
-# # Save ptrees
-# for (i in seq(ptree_list)){
-#   save(trees_file, paste0(trees_file, i, ".Rdata") )
-# }
-
-
-
-
-
-
-
 
 
 # Transphylo ----
@@ -423,8 +418,8 @@ for (i in seq(tree_list)){
 # See - https://github.com/xavierdidelot/TransPhylo/blob/master/R/inferTTree.R
 # res <- inferTTree(ptree, mcmcIterations = mcmc_iter, w.shape=w.shape, w.scale=w.scale, dateT=dateT)
 
-cores <- parallel::detectCores()
-cl <- parallel::makeCluster(cores[1]-1) #not to overload your computer
+# cores <- parallel::detectCores()
+cl <- parallel::makeCluster(cores) 
 doParallel::registerDoParallel(cl)
 
 # res_list <- list()
@@ -442,10 +437,6 @@ res_list <- foreach::foreach(i = seq(ptree_list)) %dopar% {
 }
 #stop cluster
 parallel::stopCluster(cl)
-
-
-
-
 
 
 

@@ -304,10 +304,24 @@ option_list = list(
               help="input file of sample names and their clusters from cut_tree.py", metavar="character"),
   make_option(c("-o", "--out_dir"), type="character", default=NULL,
               help="name of transphylo output directory - outputs files and plots", metavar="character"),
-  make_option(c("-m", "--mcmc_iter"), type="character", default=1000,
-              help="number of mcmc iterations of TransPhylo", metavar="character"),
   make_option(c("-p", "--processors"), type="character", default=4,
-              help="number of processors/cores to use", metavar="character")
+              help="number of processors/cores to use", metavar="character"), 
+  make_option(c("--wshape"), type="numeric", default=2.2,
+              help="Shape parameter of the Gamma distribution representing the generation time", metavar="character"),
+  make_option(c("--wscale"), type="numeric", default=2.1,
+              help="Scale parameter of the Gamma distribution representing the generation time", metavar="character"), 
+  make_option(c("--wsshape"), type="numeric", default=2.2,
+              help="Shape parameter of the Gamma distribution representing the sampling time", metavar="character"), 
+  make_option(c("--wsscale"), type="numeric", default=2.1,
+              help="Scale parameter of the Gamma distribution representing the sampling time", metavar="character"), 
+  make_option(c("--neg"), type="numeric", default=1.48,
+              help="Starting value of within-host coalescent parameter Ne*g", metavar="character"), 
+  make_option(c("--r_zero"), type="numeric", default=1,
+              help="Starting value of parameter off.r [reproduction number - R_0]", metavar="character"), 
+  make_option(c("--pi"), type="numeric", default=,
+              help="Starting value of sampling proportion (or 'sampling density') pi", metavar="character"), 
+  make_option(c("--mcmc_iter"), type="character", default=1000,
+              help="number of mcmc iterations of TransPhylo", metavar="character")
 );
 
 opt_parser = OptionParser(option_list=option_list);
@@ -316,12 +330,35 @@ opt = parse_args(opt_parser);
 
 # Input args ----
 
+# Files / directories
+
 study_accession <- opt$study_accession
 tree_file <- opt$tree_file
 clusters_file <- opt$clusters_file
 out_dir <- opt$out_dir
-mcmc_iter <- as.numeric(opt$mcmc_iter)
+
+# Variables
 cores <- as.numeric(opt$processors)
+
+# TransPhylo parameters
+
+# Shape parameter of the Gamma distribution representing the generation time
+w.shape <- opt$wshape
+# Scale parameter of the Gamma distribution representing the generation time
+w.scale <- opt$wscale
+# Shape parameter of the Gamma distribution representing the sampling time
+ws.shape <- opt$wsshape
+# Scale parameter of the Gamma distribution representing the sampling time
+ws.scale <- opt$wsscale
+# Starting value of within-host coalescent parameter Ne*g
+startNeg <- opt$neg
+# Starting value of parameter off.r
+startOff.r <- opt$r_zero
+# Starting value of sampling proportion pi
+startPi <- opt$pi
+# n MCMC iterations
+mcmc_iter <- as.numeric(opt$mcmc_iter)
+
 
 print("ARGUMENTS:")
 print(c("study_accession: ", study_accession))
@@ -360,11 +397,6 @@ offspring_plot_file <- paste0(out_dir, study_accession, ".offspring.pdf")
 es_table_file <- paste0(out_dir, study_accession, ".es_table.csv")
 
 
-# TransPhylo parameters ----
-
-# Parameters of Gamma distr representing generation time
-w.shape <- 2.2
-w.scale <- 2.1
 
 
 
@@ -422,22 +454,58 @@ for (i in seq(tree_list)){
 cl <- parallel::makeCluster(cores) 
 doParallel::registerDoParallel(cl)
 
-# res_list <- list()
-# for(i in seq(ptree_list)){
-#   res_list[[i]] <- inferTTree(ptree_list[[i]], 
-#                               mcmcIterations = mcmc_iter, 
-#                               w.shape = w.shape, w.scale = w.scale, 
-#                               dateT = last_date_list[[i]]+runif(1)*1e-08)
-# }
-
 res_list <- foreach::foreach(i = seq(ptree_list)) %dopar% {
-  TransPhylo::inferTTree(ptree_list[[i]], mcmcIterations = mcmc_iter, 
-             w.shape = w.shape, w.scale = w.scale, 
-             dateT = last_date_list[[i]]+runif(1)*1e-08)
+  TransPhylo::inferTTree(# Phylogenetic tree
+                         ptree_list[[i]], 
+                         # Shape parameter of the Gamma distribution representing the generation time
+                         w.shape = w.shape,
+                         # Scale parameter of the Gamma distribution representing the generation time
+                         w.scale = w.scale,
+                         # Mean of the Gamma distribution representing the generation time
+                         w.mean = NA,
+                         # Std of the Gamma distribution representing the generation time
+                         w.std = NA,
+                         # Shape parameter of the Gamma distribution representing the sampling time
+                         ws.shape = ws.shape,
+                         # Scale parameter of the Gamma distribution representing the sampling time
+                         ws.scale = ws.scale,
+                         # Mean of the Gamma distribution representing the sampling time
+                         ws.mean = NA,
+                         # Std of the Gamma distribution representing the sampling time
+                         ws.std = NA,
+                         # Starting value of within-host coalescent parameter Ne*g
+                         startNeg = startNeg,
+                         # Whether of not to update the parameter Ne*g
+                         updateNeg = TRUE,
+                         # Starting value of parameter off.r
+                         startOff.r = startOff.r,
+                         # Whether or not to update the parameter off.r
+                         updateOff.r = TRUE,
+                         # Starting value of parameter off.p
+                         startOff.p = 0.5,
+                         # Whether or not to update the parameter off.p
+                         updateOff.p = FALSE,
+                         # Starting value of sampling proportion pi
+                         startPi = startPi,
+                         # Whether or not to update the parameter pi
+                         updatePi = TRUE,
+                         # Optional combined tree to start from  
+                         startCTree = NA,
+                         # Whether or not to update the transmission tree
+                         updateTTree = TRUE,
+                         # Type of optimisation to apply to MCMC start point (0=none, 1=slow, 2=fast)
+                         optiStart = 2,
+                         # Date when process stops (this can be Inf for fully simulated outbreaks)
+                         dateT = last_date_list[[i]]+runif(1)*1e-08,
+                         # Number of MCMC iterations to run the algorithm for
+                         mcmcIterations = mcmc_iter,
+                         # MCMC thinning interval between two sampled iterations
+                         thinning = mcmc_iter * 0.01,
+                         # Whether or not to use verbose mode (default is false)
+                         verbose = T)
 }
 #stop cluster
 parallel::stopCluster(cl)
-
 
 
 # Plot to check convergence

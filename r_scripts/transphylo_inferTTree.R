@@ -144,9 +144,53 @@ cl <- parallel::makeCluster(cores)
 doParallel::registerDoParallel(cl)
 
 res_list <- foreach::foreach(i = 17) %dopar% {
-  TransPhylo::inferTTree(ptree_list[[i]], mcmcIterations = mcmc_iter, 
-                         w.shape = w.shape, w.scale = w.scale, 
-                         dateT = last_date_list[[i]]+runif(1)*1e-08)
+  TransPhylo::inferTTree(ptree_list[[i]], 
+                         # Shape parameter of the Gamma distribution representing the generation time
+                         w.shape = 2.2,
+                         # Scale parameter of the Gamma distribution representing the generation time
+                         w.scale = 2.1,
+                         # Mean of the Gamma distribution representing the generation time
+                         w.mean = 3.9,
+                         # Std of the Gamma distribution representing the generation time
+                         w.std = NA,
+                         # Shape parameter of the Gamma distribution representing the sampling time
+                         ws.shape = 2.2,
+                         # Scale parameter of the Gamma distribution representing the sampling time
+                         ws.scale = 2.1,
+                         # Mean of the Gamma distribution representing the sampling time
+                         ws.mean = 3.9,
+                         # Std of the Gamma distribution representing the sampling time
+                         ws.std = NA,
+                         # Starting value of within-host coalescent parameter Ne*g
+                         startNeg = 1.48,
+                         # Whether of not to update the parameter Ne*g
+                         updateNeg = TRUE,
+                         # Starting value of parameter off.r
+                         startOff.r = 1,
+                         # Whether or not to update the parameter off.r
+                         updateOff.r = TRUE,
+                         # Starting value of parameter off.p
+                         startOff.p = 0.5,
+                         # Whether or not to update the parameter off.p
+                         updateOff.p = FALSE,
+                         # Starting value of sampling proportion pi
+                         startPi = 0.01,
+                         # Whether or not to update the parameter pi
+                         updatePi = TRUE,
+                         # Optional combined tree to start from  
+                         startCTree = NA,
+                         # Whether or not to update the transmission tree
+                         updateTTree = TRUE,
+                         # Type of optimisation to apply to MCMC start point (0=none, 1=slow, 2=fast)
+                         optiStart = 2,
+                         # Date when process stops (this can be Inf for fully simulated outbreaks)
+                         dateT = last_date_list[[i]]+runif(1)*1e-08,
+                         # Number of MCMC iterations to run the algorithm for
+                         mcmcIterations = mcmc_iter,
+                         # MCMC thinning interval between two sampled iterations   
+                         thinning = mcmc_iter * 0.01,
+                         # Whether or not to use verbose mode (default is false)
+                         verbose = T)
 }
 #stop cluster
 parallel::stopCluster(cl)

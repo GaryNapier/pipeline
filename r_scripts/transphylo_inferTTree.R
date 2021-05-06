@@ -143,7 +143,7 @@ res_list <- foreach::foreach(i = 17) %dopar% {
                          # Scale parameter of the Gamma distribution representing the generation time
                          w.scale = 2.1,
                          # Mean of the Gamma distribution representing the generation time
-                         w.mean = 3.9,
+                         w.mean = NA,
                          # Std of the Gamma distribution representing the generation time
                          w.std = NA,
                          # Shape parameter of the Gamma distribution representing the sampling time
@@ -151,7 +151,7 @@ res_list <- foreach::foreach(i = 17) %dopar% {
                          # Scale parameter of the Gamma distribution representing the sampling time
                          ws.scale = 2.1,
                          # Mean of the Gamma distribution representing the sampling time
-                         ws.mean = 3.9,
+                         ws.mean = NA,
                          # Std of the Gamma distribution representing the sampling time
                          ws.std = NA,
                          # Starting value of within-host coalescent parameter Ne*g

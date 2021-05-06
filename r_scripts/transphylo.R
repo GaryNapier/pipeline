@@ -500,7 +500,7 @@ res_list <- foreach::foreach(i = seq(ptree_list)) %dopar% {
                          # Number of MCMC iterations to run the algorithm for
                          mcmcIterations = mcmc_iter,
                          # MCMC thinning interval between two sampled iterations
-                         thinning = mcmc_iter * 0.01,
+                         thinning = 100, # 1% of any mcmc number of iterations
                          # Whether or not to use verbose mode (default is false)
                          verbose = T)
 }

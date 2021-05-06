@@ -59,7 +59,7 @@ print(c("processors/cores: ", cores))
 # tree_file <- "beast_results/PAKISTAN_ALL.mcc.tree"
 # clusters_file <- "metadata/PAKISTAN_ALL.clusters.csv"
 # out_dir <- "transphylo_results/"
-# mcmc_iter <- 1000
+# mcmc_iter <- 10000
 
 
 # Other files ----
@@ -81,13 +81,6 @@ offspring_plot_file <- paste0(out_dir, study_accession, ".offspring.pdf")
 
 # Tables
 es_table_file <- paste0(out_dir, study_accession, ".es_table.csv")
-
-
-# TransPhylo parameters ----
-
-# Parameters of Gamma distr representing generation time
-w.shape <- 2.2
-w.scale <- 2.1
 
 
 # Load in data ---- 
@@ -143,7 +136,7 @@ for (i in seq(tree_list)){
 cl <- parallel::makeCluster(cores) 
 doParallel::registerDoParallel(cl)
 
-res_list <- foreach::foreach(i = 16) %dopar% {
+res_list <- foreach::foreach(i = 17) %dopar% {
   TransPhylo::inferTTree(ptree_list[[i]], 
                          # Shape parameter of the Gamma distribution representing the generation time
                          w.shape = 2.2,
@@ -188,18 +181,15 @@ res_list <- foreach::foreach(i = 16) %dopar% {
                          # Number of MCMC iterations to run the algorithm for
                          mcmcIterations = mcmc_iter,
                          # MCMC thinning interval between two sampled iterations   
-                         thinning = mcmc_iter * 0.01,
+                         # thinning = mcmc_iter * 0.01,
+                         thinning = 100, # 1% of any mcmc number of iterations
                          # Whether or not to use verbose mode (default is false)
                          verbose = T)
 }
 #stop cluster
 parallel::stopCluster(cl)
 
-
-save(res_list, file = paste0(out_dir, "TP_cluster_16_test.Rdata"))
-
-
-
+save(res_list, file = paste0(out_dir, "TP_cluster_17_test.Rdata"))
 
 
 

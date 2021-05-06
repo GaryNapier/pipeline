@@ -143,7 +143,7 @@ for (i in seq(tree_list)){
 cl <- parallel::makeCluster(cores) 
 doParallel::registerDoParallel(cl)
 
-res_list <- foreach::foreach(i = 17) %dopar% {
+res_list <- foreach::foreach(i = 16) %dopar% {
   TransPhylo::inferTTree(ptree_list[[i]], 
                          # Shape parameter of the Gamma distribution representing the generation time
                          w.shape = 2.2,
@@ -196,7 +196,7 @@ res_list <- foreach::foreach(i = 17) %dopar% {
 parallel::stopCluster(cl)
 
 
-save(res_list, file = paste0(out_dir, "TP_cluster_17_test.Rdata"))
+save(res_list, file = paste0(out_dir, "TP_cluster_16_test.Rdata"))
 
 
 

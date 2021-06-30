@@ -43,7 +43,7 @@ median_cov_file=${output_dir}${study_accession}.median_cov.txt
 
 
 parallel_cmd="bedtools genomecov -d -ibam ${bam_dir}{}.bqsr.cram | datamash median 3"
-cat ${metadata_file} | csvtk grep -f study_accession_word -p ${study_accession} | csvtk cut -f wgs_id | tail -n +2 | head -n 2 | parallel -j 4 --bar ${parallel_cmd} > ${median_cov_file}
+cat ${metadata_file} | csvtk grep -f study_accession_word -p ${study_accession} | csvtk cut -f wgs_id | tail -n +2 | parallel -j 4 --bar ${parallel_cmd} > ${median_cov_file}
 printf "multisample_median_cov.sh RESULTS \n"
 printf "median coverage: \n"
 cat ${median_cov_file} | datamash median 1

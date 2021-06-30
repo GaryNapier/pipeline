@@ -1,3 +1,6 @@
+#!/usr/bin/env Rscript
+
+
 
 # Checklist for Babette
 # See XML file in (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7725332/)
@@ -79,18 +82,21 @@ remove_tail <- function(x, sep = "_", del = 1){
 
 # DIRECTORIES
 
-setwd("~/Documents/transmission/")
+setwd("~/Documents/pakistan/")
 
 fasta_dir <- "fasta/"
 metadata_local_dir <- "metadata/"
+xml_dir <- "beast_xml/"
 
 # FILES
-fasta_file <- paste0(fasta_dir, "THAILAND_TEST.clust_1.dated.fa")
+study_accession <- "PAKISTAN_ALL"
+fasta_file <- paste0(fasta_dir, study_accession, ".dated.fa")
 fasta_id_date_df_outfile <- paste0(metadata_local_dir, remove_tail(basename(fasta_file), sep = "."), ".txt")
+xml_outfile <- paste0(xml_dir, study_accession, ".xml")
 
 
 # READ IN FILES
-fasta <- read.fasta(file = fasta_file, forceDNAtolower = F)
+fasta <- seqinr::read.fasta(file = fasta_file, forceDNAtolower = F)
 
 # Get fasta sample names and parse into name and date
 fasta_names <- names(fasta)
@@ -104,13 +110,6 @@ write.table(fasta_id_date_df, file = fasta_id_date_df_outfile, quote = F, row.na
 
 
 # SITE MODEL
-# gamma_site_distr <- create_log_normal_distr(value = 0.25, lower = 0.0, upper = 1.0, m = 1, s = 1.25)
-  # # gamma_site_distr <- create_normal_distr(id = NA, mean = 1, sigma = 2, value = 0.25, lower = 0, upper = 1)
-# gamma_site_model <- create_gamma_site_model(gamma_cat_count = 4,
-#                                             gamma_shape_prior_distr = gamma_site_distr)
-# 
-# site_model <- create_gtr_site_model(id = NA, gamma_site_model = gamma_site_model) 
-
 site_model <- create_gtr_site_model()
 
 
@@ -121,7 +120,6 @@ clock_model <- create_strict_clock_model(clock_rate_param = create_clock_rate_pa
 
 # MCMC
 every <- 10000
-
 mcmc <- create_mcmc(
   chain_length = 1e+08,
   tracelog = beautier::create_tracelog(log_every = every),
@@ -142,14 +140,14 @@ tree_prior <- create_ccp_tree_prior(
 # MRCA PRIOR
 mrca_prior <- create_mrca_prior(
   is_monophyletic = TRUE, 
-  mrca_distr = create_laplace_distr(mu = 1990), 
+  mrca_distr = create_laplace_distr(mu = 0), 
   name = "TreePrior")
 
 
 # MAKE XML
 create_beast2_input_file(
   fasta_file,
-  "beast_xml/THAILAND_TEST.babette.xml",
+  xml_outfile,
   site_model = site_model,
   clock_model = clock_model,
   tree_prior = tree_prior,
@@ -158,6 +156,25 @@ create_beast2_input_file(
   tipdates_filename = fasta_id_date_df_outfile, 
   beauti_options = beautier::create_beauti_options(nucleotides_uppercase = T)
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

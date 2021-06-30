@@ -9,7 +9,7 @@ The supplementary material for **Cancino-Muñoz (2019)** (https://www.ncbi.nlm.n
 
 Column headers and references for the **Cancino-Muñoz (2019)** table are as follows:
 
-| MTBC lineage (1, 2) | LSP lineage (2) | Spoligotype family (4) |
+| MTBC lineage (1, 2) | LSP lineage (3) | Spoligotype family (4) |
 
 1. Comas, I. et al. Human T cell epitopes of Mycobacterium tuberculosis are evolutionarily hyperconserved. Nat. Genet. 42, 498–503 (2010). 
 2. Stucki, D. et al. Mycobacterium tuberculosis lineage 4 comprises globally distributed and geographically restricted sublineages. Nat. Genet. 48, 1535–1543 (2016).

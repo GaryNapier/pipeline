@@ -197,10 +197,3 @@ fi
 if [ ! -f "${output_vcf_file}.tbi" ]; then
     bcftools index -t ${output_vcf_file}
 fi
-
-# ------------------------------------------------------------------------------
-
-# Clean up
-
-rm -r ${tmp_dir}
-rm -r ${genomicsDB_dir}

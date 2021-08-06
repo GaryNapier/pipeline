@@ -49,7 +49,7 @@ ref_fasta=${4?Error: enter reference fasta file}
 vcf_dir=`dirname ${vcf_input_file}`
 fasta_output_dir=${3?Error: enter where multi-fasta results are to be saved}
 
-# Define output fast file name - see vcf_to_fasta() function in https://github.com/pathogenseq/fastq2matrix/blob/master/fastq2matrix/vcf.py
+# Define output fasta file name - see vcf_to_fasta() function in https://github.com/pathogenseq/fastq2matrix/blob/master/fastq2matrix/vcf.py
 fasta_output_file=${vcf_dir}/${study_accession}*snps.fa
 
 # Parameters

@@ -6,6 +6,7 @@
 - lineage_conversions_meta.md
 
 #### python_scripts
+- __init__.py
 - cut_tree.py
 - gwas.py
 - run_fst_analysis.py

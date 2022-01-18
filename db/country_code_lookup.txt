@@ -1,0 +1,249 @@
+country	region	subregion	country_code_upper	country_code_lower	country_code_three_letter_upper	country_code_three_letter_lower	numeric
+Afghanistan	Asia	South Asia	AF	af	AFG	afg	4
+Albania	Europe	Southern Europe	AL	al	ALB	alb	8
+Algeria	Africa	North Africa	DZ	dz	DZA	dza	12
+American Samoa	Oceania	Polynesia	AS	as	ASM	asm	16
+Andorra	Europe	Southern Europe	AD	ad	AND	and	20
+Angola	Africa	Central Africa	AO	ao	AGO	ago	24
+Anguilla	Americas	Caribbean	AI	ai	AIA	aia	660
+Antarctica	Antarctica	Antarctica	AQ	aq	ATA	ata	10
+Antigua and Barbuda	Americas	Caribbean	AG	ag	ATG	atg	28
+Argentina	Americas	South America	AR	ar	ARG	arg	32
+Armenia	Asia	Western Asia	AM	am	ARM	arm	51
+Aruba	Americas	Caribbean	AW	aw	ABW	abw	533
+Australia	Oceania	Australia and New Zealand	AU	au	AUS	aus	36
+Austria	Europe	Western Europe	AT	at	AUT	aut	40
+Azerbaijan	Asia	Western Asia	AZ	az	AZE	aze	31
+Bahamas	Americas	Caribbean	BS	bs	BHS	bhs	44
+Bahrain	Asia	Western Asia	BH	bh	BHR	bhr	48
+Bangladesh	Asia	South Asia	BD	bd	BGD	bgd	50
+Barbados	Americas	Caribbean	BB	bb	BRB	brb	52
+Belarus	Europe	Eastern Europe	BY	by	BLR	blr	112
+Belgium	Europe	Western Europe	BE	be	BEL	bel	56
+Belize	Americas	Central America	BZ	bz	BLZ	blz	84
+Benin	Africa	West Africa	BJ	bj	BEN	ben	204
+Bermuda	Americas	Northern America	BM	bm	BMU	bmu	60
+Bhutan	Asia	South Asia	BT	bt	BTN	btn	64
+Bolivia	Americas	South America	BO	bo	BOL	bol	68
+Bonaire, Sint Eustatius and Saba	Americas	Caribbean	BQ	bq	BES	bes	535
+Bosnia and Herzegovina	Europe	Southern Europe	BA	ba	BIH	bih	70
+Botswana	Africa	Southern Africa	BW	bw	BWA	bwa	72
+Bouvet Island	Americas	South America	BV	bv	BVT	bvt	74
+Brazil	Americas	South America	BR	br	BRA	bra	76
+British Indian Ocean Territory	Africa	East Africa	IO	io	IOT	iot	86
+Brunei	Asia	Southeast Asia	BN	bn	BRN	brn	96
+Bulgaria	Europe	Eastern Europe	BG	bg	BGR	bgr	100
+Burkina Faso	Africa	West Africa	BF	bf	BFA	bfa	854
+Burundi	Africa	East Africa	BI	bi	BDI	bdi	108
+Cabo Verde	Africa	West Africa	CV	cv	CPV	cpv	132
+Cambodia	Asia	Southeast Asia	KH	kh	KHM	khm	116
+Cameroon	Africa	Central Africa	CM	cm	CMR	cmr	120
+Canada	Americas	Northern America	CA	ca	CAN	can	124
+Cayman Islands	Americas	Caribbean	KY	ky	CYM	cym	136
+Central African Republic	Africa	Central Africa	CF	cf	CAF	caf	140
+Chad	Africa	Central Africa	TD	td	TCD	tcd	148
+Chile	Americas	South America	CL	cl	CHL	chl	152
+China	Asia	East Asia	CN	cn	CHN	chn	156
+Christmas Island	Oceania	Australia and New Zealand	CX	cx	CXR	cxr	162
+Cocos Islands	Oceania	Australia and New Zealand	CC	cc	CCK	cck	166
+Colombia	Americas	South America	CO	co	COL	col	170
+Comoros	Africa	East Africa	KM	km	COM	com	174
+DRC	Africa	Central Africa	CD	cd	COD	cod	180
+Congo	Africa	Central Africa	CG	cg	COG	cog	178
+Cook Islands	Oceania	Polynesia	CK	ck	COK	cok	184
+Costa Rica	Americas	Central America	CR	cr	CRI	cri	188
+Croatia	Europe	Southern Europe	HR	hr	HRV	hrv	191
+Cuba	Americas	Caribbean	CU	cu	CUB	cub	192
+Curacao	Americas	Caribbean	CW	cw	CUW	cuw	531
+Cyprus	Asia	Western Asia	CY	cy	CYP	cyp	196
+Czechia	Europe	Eastern Europe	CZ	cz	CZE	cze	203
+Ivory Coast	Africa	West Africa	CI	ci	CIV	civ	384
+Denmark	Europe	Northern Europe	DK	dk	DNK	dnk	208
+Djibouti	Africa	East Africa	DJ	dj	DJI	dji	262
+Dominica	Americas	Caribbean	DM	dm	DMA	dma	212
+Dominican Republic	Americas	Caribbean	DO	do	DOM	dom	214
+Ecuador	Americas	South America	EC	ec	ECU	ecu	218
+Egypt	Africa	North Africa	EG	eg	EGY	egy	818
+El Salvador	Americas	Central America	SV	sv	SLV	slv	222
+Equatorial Guinea	Africa	Central Africa	GQ	gq	GNQ	gnq	226
+Eritrea	Africa	East Africa	ER	er	ERI	eri	232
+Estonia	Europe	Northern Europe	EE	ee	EST	est	233
+Eswatini	Africa	Southern Africa	SZ	sz	SWZ	swz	748
+Ethiopia	Africa	East Africa	ET	et	ETH	eth	231
+Falkland Islands	Americas	South America	FK	fk	FLK	flk	238
+Faroe Islands	Europe	Northern Europe	FO	fo	FRO	fro	234
+Fiji	Oceania	Melanesia	FJ	fj	FJI	fji	242
+Finland	Europe	Northern Europe	FI	fi	FIN	fin	246
+France	Europe	Western Europe	FR	fr	FRA	fra	250
+French Guiana	Americas	South America	GF	gf	GUF	guf	254
+French Polynesia	Oceania	Polynesia	PF	pf	PYF	pyf	258
+French Southern Territories	Africa	East Africa	TF	tf	ATF	atf	260
+Gabon	Africa	Central Africa	GA	ga	GAB	gab	266
+Gambia	Africa	West Africa	GM	gm	GMB	gmb	270
+Georgia	Asia	Western Asia	GE	ge	GEO	geo	268
+Germany	Europe	Western Europe	DE	de	DEU	deu	276
+Ghana	Africa	West Africa	GH	gh	GHA	gha	288
+Gibraltar	Europe	Southern Europe	GI	gi	GIB	gib	292
+Greece	Europe	Southern Europe	GR	gr	GRC	grc	300
+Greenland	Americas	Northern America	GL	gl	GRL	grl	304
+Grenada	Americas	Caribbean	GD	gd	GRD	grd	308
+Guadeloupe	Americas	Caribbean	GP	gp	GLP	glp	312
+Guam	Oceania	Micronesia	GU	gu	GUM	gum	316
+Guatemala	Americas	Central America	GT	gt	GTM	gtm	320
+Guernsey	Europe	Northern Europe	GG	gg	GGY	ggy	831
+Guinea	Africa	West Africa	GN	gn	GIN	gin	324
+Guinea-Bissau	Africa	West Africa	GW	gw	GNB	gnb	624
+Guyana	Americas	South America	GY	gy	GUY	guy	328
+Haiti	Americas	Caribbean	HT	ht	HTI	hti	332
+Heard Island and McDonald Islands	Oceania	Australia and New Zealand	HM	hm	HMD	hmd	334
+Vatican City	Europe	Southern Europe	VA	va	VAT	vat	336
+Honduras	Americas	Central America	HN	hn	HND	hnd	340
+Hong Kong	Asia	East Asia	HK	hk	HKG	hkg	344
+Hungary	Europe	Eastern Europe	HU	hu	HUN	hun	348
+Iceland	Europe	Northern Europe	IS	is	ISL	isl	352
+India	Asia	South Asia	IN	in	IND	ind	356
+Indonesia	Asia	Southeast Asia	ID	id	IDN	idn	360
+Iran	Asia	South Asia	IR	ir	IRN	irn	364
+Iraq	Asia	Western Asia	IQ	iq	IRQ	irq	368
+Ireland	Europe	Northern Europe	IE	ie	IRL	irl	372
+Israel	Asia	Western Asia	IL	il	ISR	isr	376
+Italy	Europe	Southern Europe	IT	it	ITA	ita	380
+Jamaica	Americas	Caribbean	JM	jm	JAM	jam	388
+Japan	Asia	East Asia	JP	jp	JPN	jpn	392
+Jersey	Europe	Northern Europe	JE	je	JEY	jey	832
+Jordan	Asia	Western Asia	JO	jo	JOR	jor	400
+Kazakhstan	Asia	Central Asia	KZ	kz	KAZ	kaz	398
+Kenya	Africa	East Africa	KE	ke	KEN	ken	404
+Kiribati	Oceania	Micronesia	KI	ki	KIR	kir	296
+North Korea	Asia	East Asia	KP	kp	PRK	prk	408
+South Korea	Asia	East Asia	KR	kr	KOR	kor	410
+Kuwait	Asia	Western Asia	KW	kw	KWT	kwt	414
+Kyrgyzstan	Asia	Central Asia	KG	kg	KGZ	kgz	417
+Laos	Asia	Southeast Asia	LA	la	LAO	lao	418
+Latvia	Europe	Northern Europe	LV	lv	LVA	lva	428
+Lebanon	Asia	Western Asia	LB	lb	LBN	lbn	422
+Lesotho	Africa	Southern Africa	LS	ls	LSO	lso	426
+Liberia	Africa	West Africa	LR	lr	LBR	lbr	430
+Libya	Africa	North Africa	LY	ly	LBY	lby	434
+Liechtenstein	Europe	Western Europe	LI	li	LIE	lie	438
+Lithuania	Europe	Northern Europe	LT	lt	LTU	ltu	440
+Luxembourg	Europe	Western Europe	LU	lu	LUX	lux	442
+Macao	Asia	East Asia	MO	mo	MAC	mac	446
+Madagascar	Africa	East Africa	MG	mg	MDG	mdg	450
+Malawi	Africa	East Africa	MW	mw	MWI	mwi	454
+Malaysia	Asia	Southeast Asia	MY	my	MYS	mys	458
+Maldives	Asia	South Asia	MV	mv	MDV	mdv	462
+Mali	Africa	West Africa	ML	ml	MLI	mli	466
+Malta	Europe	Southern Europe	MT	mt	MLT	mlt	470
+Marshall Islands	Oceania	Micronesia	MH	mh	MHL	mhl	584
+Martinique	Americas	Caribbean	MQ	mq	MTQ	mtq	474
+Mauritania	Africa	West Africa	MR	mr	MRT	mrt	478
+Mauritius	Africa	East Africa	MU	mu	MUS	mus	480
+Mayotte	Africa	East Africa	YT	yt	MYT	myt	175
+Mexico	Americas	Central America	MX	mx	MEX	mex	484
+Micronesia	Oceania	Micronesia	FM	fm	FSM	fsm	583
+Moldova	Europe	Eastern Europe	MD	md	MDA	mda	498
+Monaco	Europe	Western Europe	MC	mc	MCO	mco	492
+Mongolia	Asia	East Asia	MN	mn	MNG	mng	496
+Montenegro	Europe	Southern Europe	ME	me	MNE	mne	499
+Montserrat	Americas	Caribbean	MS	ms	MSR	msr	500
+Morocco	Africa	North Africa	MA	ma	MAR	mar	504
+Mozambique	Africa	East Africa	MZ	mz	MOZ	moz	508
+Myanmar	Asia	Southeast Asia	MM	mm	MMR	mmr	104
+Namibia	Africa	Southern Africa	NA	na	NAM	nam	516
+Nauru	Oceania	Micronesia	NR	nr	NRU	nru	520
+Nepal	Asia	South Asia	NP	np	NPL	npl	524
+Netherlands	Europe	Western Europe	NL	nl	NLD	nld	528
+New Caledonia	Oceania	Melanesia	NC	nc	NCL	ncl	540
+New Zealand	Oceania	Australia and New Zealand	NZ	nz	NZL	nzl	554
+Nicaragua	Americas	Central America	NI	ni	NIC	nic	558
+Niger	Africa	West Africa	NE	ne	NER	ner	562
+Nigeria	Africa	West Africa	NG	ng	NGA	nga	566
+Niue	Oceania	Polynesia	NU	nu	NIU	niu	570
+Norfolk Island	Oceania	Australia and New Zealand	NF	nf	NFK	nfk	574
+Northern Mariana Islands	Oceania	Micronesia	MP	mp	MNP	mnp	580
+Norway	Europe	Northern Europe	NO	no	NOR	nor	578
+Oman	Asia	Western Asia	OM	om	OMN	omn	512
+Pakistan	Asia	South Asia	PK	pk	PAK	pak	586
+Palau	Oceania	Micronesia	PW	pw	PLW	plw	585
+Palestine	Asia	Western Asia	PS	ps	PSE	pse	275
+Panama	Americas	Central America	PA	pa	PAN	pan	591
+Papua New Guinea	Oceania	Melanesia	PG	pg	PNG	png	598
+Paraguay	Americas	South America	PY	py	PRY	pry	600
+Peru	Americas	South America	PE	pe	PER	per	604
+Philippines	Asia	Southeast Asia	PH	ph	PHL	phl	608
+Pitcairn	Oceania	Polynesia	PN	pn	PCN	pcn	612
+Poland	Europe	Eastern Europe	PL	pl	POL	pol	616
+Portugal	Europe	Southern Europe	PT	pt	PRT	prt	620
+Puerto Rico	Americas	Caribbean	PR	pr	PRI	pri	630
+Qatar	Asia	Western Asia	QA	qa	QAT	qat	634
+North Macedonia	Europe	Southern Europe	MK	mk	MKD	mkd	807
+Romania	Europe	Eastern Europe	RO	ro	ROU	rou	642
+Russia	Europe	Eastern Europe	RU	ru	RUS	rus	643
+Rwanda	Africa	East Africa	RW	rw	RWA	rwa	646
+Reunion	Africa	East Africa	RE	re	REU	reu	638
+Saint Barthelemy	Americas	Caribbean	BL	bl	BLM	blm	652
+Saint Helena, Ascension and Tristan da Cunha	Africa	West Africa	SH	sh	SHN	shn	654
+Saint Kitts and Nevis	Americas	Caribbean	KN	kn	KNA	kna	659
+Saint Lucia	Americas	Caribbean	LC	lc	LCA	lca	662
+Saint Martin	Americas	Caribbean	MF	mf	MAF	maf	663
+Saint Pierre and Miquelon	Americas	Northern America	PM	pm	SPM	spm	666
+Saint Vincent and the Grenadines	Americas	Caribbean	VC	vc	VCT	vct	670
+Samoa	Oceania	Polynesia	WS	ws	WSM	wsm	882
+San Marino	Europe	Southern Europe	SM	sm	SMR	smr	674
+Sao Tome and Principe	Africa	Central Africa	ST	st	STP	stp	678
+Saudi Arabia	Asia	Western Asia	SA	sa	SAU	sau	682
+Senegal	Africa	West Africa	SN	sn	SEN	sen	686
+Serbia	Europe	Southern Europe	RS	rs	SRB	srb	688
+Seychelles	Africa	East Africa	SC	sc	SYC	syc	690
+Sierra Leone	Africa	West Africa	SL	sl	SLE	sle	694
+Singapore	Asia	Southeast Asia	SG	sg	SGP	sgp	702
+Sint Maarten	Americas	Caribbean	SX	sx	SXM	sxm	534
+Slovakia	Europe	Eastern Europe	SK	sk	SVK	svk	703
+Slovenia	Europe	Southern Europe	SI	si	SVN	svn	705
+Solomon Islands	Oceania	Melanesia	SB	sb	SLB	slb	90
+Somalia	Africa	East Africa	SO	so	SOM	som	706
+South Africa	Africa	Southern Africa	ZA	za	ZAF	zaf	710
+South Georgia and the South Sandwich Islands	Americas	South America	GS	gs	SGS	sgs	239
+South Sudan	Africa	East Africa	SS	ss	SSD	ssd	728
+Spain	Europe	Southern Europe	ES	es	ESP	esp	724
+Sri Lanka	Asia	South Asia	LK	lk	LKA	lka	144
+Sudan	Africa	North Africa	SD	sd	SDN	sdn	729
+Suriname	Americas	South America	SR	sr	SUR	sur	740
+Svalbard and Jan Mayen	Europe	Northern Europe	SJ	sj	SJM	sjm	744
+Sweden	Europe	Northern Europe	SE	se	SWE	swe	752
+Switzerland	Europe	Western Europe	CH	ch	CHE	che	756
+Syrian Arab Republic	Asia	Western Asia	SY	sy	SYR	syr	760
+Taiwan	Asia	East Asia	TW	tw	TWN	twn	158
+Tajikistan	Asia	Central Asia	TJ	tj	TJK	tjk	762
+Tanzania	Africa	East Africa	TZ	tz	TZA	tza	834
+Thailand	Asia	Southeast Asia	TH	th	THA	tha	764
+Timor-Leste	Asia	Southeast Asia	TL	tl	TLS	tls	626
+Togo	Africa	West Africa	TG	tg	TGO	tgo	768
+Tokelau	Oceania	Polynesia	TK	tk	TKL	tkl	772
+Tonga	Oceania	Polynesia	TO	to	TON	ton	776
+Trinidad and Tobago	Americas	Caribbean	TT	tt	TTO	tto	780
+Tunisia	Africa	North Africa	TN	tn	TUN	tun	788
+Turkey	Asia	Western Asia	TR	tr	TUR	tur	792
+Turkmenistan	Asia	Central Asia	TM	tm	TKM	tkm	795
+Turks and Caicos Islands	Americas	Caribbean	TC	tc	TCA	tca	796
+Tuvalu	Oceania	Polynesia	TV	tv	TUV	tuv	798
+Uganda	Africa	East Africa	UG	ug	UGA	uga	800
+Ukraine	Europe	Eastern Europe	UA	ua	UKR	ukr	804
+United Arab Emirates	Asia	Western Asia	AE	ae	ARE	are	784
+United Kingdom	Europe	Northern Europe	GB	gb	GBR	gbr	826
+United States Minor Outlying Islands	Oceania	Micronesia	UM	um	UMI	umi	581
+United States of America	Americas	Northern America	US	us	USA	usa	840
+Uruguay	Americas	South America	UY	uy	URY	ury	858
+Uzbekistan	Asia	Central Asia	UZ	uz	UZB	uzb	860
+Vanuatu	Oceania	Melanesia	VU	vu	VUT	vut	548
+Venezuela	Americas	South America	VE	ve	VEN	ven	862
+Vietnam	Asia	Southeast Asia	VN	vn	VNM	vnm	704
+Virgin Islands (British)	Americas	Caribbean	VG	vg	VGB	vgb	92
+Virgin Islands (U.S.)	Americas	Caribbean	VI	vi	VIR	vir	850
+Wallis and Futuna	Oceania	Polynesia	WF	wf	WLF	wlf	876
+Western Sahara	Africa	North Africa	EH	eh	ESH	esh	732
+Yemen	Asia	Western Asia	YE	ye	YEM	yem	887
+Zambia	Africa	East Africa	ZM	zm	ZMB	zmb	894
+Zimbabwe	Africa	East Africa	ZW	zw	ZWE	zwe	716
+Aland Islands	Europe	Northern Europe	AX	ax	ALA	ala	248

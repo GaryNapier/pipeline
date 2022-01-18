@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# Example:
+# vlookup ~/metadata/x.csv ~/metadata/y.txt 1 1 2 2
+
+# Do vlookup in same way as Excel
+
+# Needs R script rvlookup to do this.
+
+# R code:
+
+# #! /usr/bin/env Rscript
+#
+# # Vlookup function - look up matching values in one column and replace values of another column
+#
+# args <- commandArgs(trailingOnly=TRUE)
+#
+# # Test if there is at least one argument: if not, return error
+# if (length(args) < 6) {
+#   stop("Error. Args needed: [1]: File name. This is the 'bigger' file that will have rows replaced. Also the name of the output file.
+# [2]: File with the new data. This will contain the rows that replace the rows in file_1.
+#        [3]: Column in file_1 that will match with file_2.
+#        [4]: Column in file_2 that will match with file_1.
+#        [5]: Col number in file_1 that is to be replaced.
+#        [6]: Col number in file_2 that is to do the replacing.")
+# }
+#
+# print("--- ARGS ---")
+# print(args)
+#
+# file_1 <- read.table(args[1], header = F)
+# file_2 <- read.table(args[2], header = F)
+# lookup_col_file_1 <- as.numeric(args[3])
+# lookup_col_file_2 <- as.numeric(args[4])
+# change_col_file_1 <- as.numeric(args[5])
+# change_col_file_2 <- as.numeric(args[6])
+#
+# # Get the rows of the column from the new data (file_2) that match the rows of the matching column,
+# # interpolating with NA the rows from file_1 that do not match.
+# new_col <- file_2[match(file_1[, lookup_col_file_1], file_2[,lookup_col_file_2]), change_col_file_2]
+# # Result:
+# # NA          NA          NA          NA          NA          NA          NA          "group_3.1" "group_3.1"
+#
+# # Get the rest of the rows that do not match from file_1 (i.e. the ones that are NA above)
+# # and replace the NAs above
+# new_col[is.na(new_col)] <- file_1[which(is.na(new_col)), change_col_file_1]
+# # Result:
+# # Pulls these from file_1
+# # "group_1" "group_1" "group_1" "group_2" "group_2" "group_2" "group_3"
+# # then puts replaces the NAs in 'new_col' to get:
+# # "group_1"   "group_1"   "group_1"   "group_2"   "group_2"   "group_2"   "group_3"   "group_3.1" "group_3.1"
+#
+# # Replace the column in file_1 with this new data
+# file_1[, change_col_file_1] <- new_col
+# # Result:
+# # V1        V2
+# # 1 sample_1   group_1
+# # 2 sample_2   group_1
+# # 3 sample_3   group_1
+# # 4 sample_4   group_2
+# # 5 sample_5   group_2
+# # 6 sample_6   group_2
+# # 7 sample_7   group_3
+# # 8 sample_8 group_3.1
+# # 9 sample_9 group_3.1
+#
+# # Write to file:
+# write.table(file_1, file = args[1], quote = F, sep = "\t", row.names = F, col.names = F)
+
+file_1=${1?Error: enter data file}
+file_2=${2?Error: enter lookup (new) file}
+lookup_col_file_1=${3?Error: enter col num of file_1 to match to file_2}
+lookup_col_file_2=${4?Error: enter col num of file_2 to match to file_1}
+change_col_file_1=${5?Error: enter col num of file_1 to be replaced}
+change_col_file_2=${6?Error: enter col num of file_2 to replace the col in file_1}
+
+# Convert files to tab-separated
+cat ${file_1} | tr "," "\t" > ${file_1}.txt
+cat ${file_2} | tr "," "\t" > ${file_2}.txt
+
+rvlookup ${file_1}.txt ${file_2}.txt ${lookup_col_file_1} ${lookup_col_file_2} ${change_col_file_1} ${change_col_file_2}
+
+# Convert file_1 (back) to csv
+cat ${file_1}.txt | tr "\t" "," > ${file_1}
+# cat ${file_2}.txt | tr "\t" "," > ${file_2}.csv
+
+# Cleanup
+rm ${file_1}.txt
+rm ${file_2}.txt

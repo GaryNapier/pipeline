@@ -1,7 +1,7 @@
 ### Universal functions and scripts for TB bioinformatics analysis pipelines
 
 #### db - Database of useful tables - see also https://github.com/jodyphelan/tbdb/
-- lineage_conversions.txt:
+- lineage_conversions.txt
 - lineage_conversions_meta.md
 
 #### python_scripts

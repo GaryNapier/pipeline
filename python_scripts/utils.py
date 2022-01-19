@@ -1,5 +1,9 @@
 # My general bioinformatics functions
 
+import csv
+from csv import DictReader
+import re
+
 def flat_list(mylist):
     return [item for sublist in mylist for item in sublist]
 
@@ -90,7 +94,6 @@ def csv_to_dict_multi(file):
             out_dict[row[key]].append(row)
     return out_dict
 
-
 def is_dict(in_dict):
     if not isinstance(in_dict, dict):
         raise Exception('is_dict() function: input is not a dictionary') 
@@ -111,4 +114,53 @@ def reformat_mutations(x):
     else:
         return None
 
+
+def resolve_lineages(data):
+    # Examples:
+
+    # x = {'lineage2': 5, 'lineage2.2.1':5, 'lineage2.1':5, 'lineage4': 5, 'lineage4.1':5, 'lineage4.1.1':5, 'lineage4.2.1.1':5, 'lineage4.3.1': 5}
+    # resolve_lineages(x)
+    # {'lineage2': 10,
+    # 'lineage2.2.1': 5,
+    # 'lineage4': 15,
+    # 'lineage4.2.1.1': 5,
+    # 'lineage4.3.1': 5}
+    
+    # x = {'lineage2': 5, 'lineage2.2.1':5, 'lineage2.1':5, 'lineage4': 5, 'lineage4.1':5, 'lineage4.1.1':5, 'lineage4.2.1':5, 'lineage4.3.1':5, 'lineage4.3':5}
+    # resolve_lineages(x)
+    # {'lineage2': 10, 'lineage2.2.1': 5, 'lineage4': 25, 'lineage4.2.1': 5}
+
+    data = dict(data)
+    while True:
+        improved = False
+        for child in sorted(data,reverse= True,key=lambda x : len(x)):
+            parent = ".".join(child.split(".")[:-1])
+            if any([parent == x for x in data]):
+                data[parent] = data[parent] + data[child] 
+                del data[child]
+                improved = True
+                break
+        if not improved:
+            break
+    return data
+
+
+# x = {
+#     'lineage1.2.1.2.1': 1,
+#     'lineage4.1.2.1': 1,
+#     'lineage4.1.1.3': 1,
+#     'lineage4.1.1': 1,
+#     'lineage4.2.1': 1,
+#     'lineage4.2.1.1': 1
+#     }
+
+# data = dict(x)
+
+# # sorted(data,reverse= True,key=lambda x : len(x))
+# for child in sorted(data,reverse= True,key=lambda x : len(x)):
+#     print('CHILD')
+#     print(child)
+#     parent = ".".join(child.split(".")[:-1])
+#     print('PARENT')
+#     print(parent)
 

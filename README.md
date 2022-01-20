@@ -26,6 +26,8 @@
 - transphylo_inferTTree.R
 
 #### shell_scripts
+- bash_aliases [from Julian]
+- bash_functions [from Julian]
 - generate_representative_tree.sh
 - iqtree.sh
 - merge_vcfs.sh
@@ -36,3 +38,4 @@
 - variant_filtering.sh
 - vcf2fasta.sh
 - vlookup
+

@@ -1,0 +1,49 @@
+# remove dangling docker images
+alias docker_rmi_dangling="docker rmi $(docker images -qa -f 'dangling=true')"
+
+# sort ls output by filesize
+alias lt='ls --human-readable --size -1 -S --classify'
+
+# parse output of mount to only show hard drives
+alias mnt="mount | awk -F' ' '{ printf \"%s\t%s\n\",\$1,\$3; }' | column -t | egrep ^/dev/ | sort"
+
+# grep the history
+alias hg='history|grep'
+
+# sort ls output by modification time
+alias left='ls -t -1'
+
+# (recursively) count files in directory
+alias count='lf | wc -l'
+alias countr='find . -type f | wc -l'
+
+# copy files with progress bar
+alias cpv='rsync -ah --info=progress2'
+
+# go to root directory of git repository
+alias cg='cd `git rev-parse --show-toplevel`'
+
+# add, commit with generic message and push to remote
+alias git_update='git add .; git commit -m "update"; git push'
+
+# common commands with -v flag
+alias cp='cp -v'
+alias rename='rename -v'
+alias mv='mv -v'
+alias rm='rm -v'
+
+# take a peek into a large file
+alias peek='head | cut -c-50'
+
+# watson shortcuts:
+alias wl='watson log -c'
+# aggregate last couple days 
+alias wa='watson aggregate -c -G -f `date +"%Y-%m-%d" -d "$(date -d yesterday +%u) days ago"`'
+alias wa_long='watson aggregate -c -f 2021 | tail -n60 | less +G'
+alias waw='aggregate_watson_for_current_week.py'
+
+# use xclip with system clipboard like this `cat file | xc'
+alias xc="perl -p -e 'chomp if eof' | xclip -selection clipboard"
+
+# open current working directory in file browser
+alias xo="xdg-open ."

@@ -1,0 +1,153 @@
+# get random string of specified length
+rand_str () {
+	tr -dc 'A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_`{|}~' </dev/urandom | head -c $1  ; echo
+}
+
+# print output of a git command only on error and also exit on error
+# this is useful because many git commands write to STDERR even when
+# completing without error
+git_cmd () {
+	if ! output=$(git $@ 2>&1); then
+		echo "ERROR with git command: 'git $@' in '$PWD'!"
+		echo $output
+		exit 1
+	fi
+}
+
+# run watson commands with syncing to github
+watson_with_sync () {
+	# run in subshell so that watson commands are
+	# not executed in case `git pull` fails
+	(
+		cd ~/.config/watson
+		git_cmd pull
+		watson $@
+		# check if anything has changed and push to github
+		if [[ `git status --porcelain` ]]; then
+			git_cmd add .
+			git_cmd commit -m 'update'
+			git_cmd push
+		fi
+	)
+}
+# watson restart
+wr () {
+	watson_with_sync restart
+}
+# watson stop
+ws () {
+	watson_with_sync stop
+}
+# watson edit
+we () {
+	watson_with_sync edit
+}
+# only pull from github
+wpull () {
+	(
+		cd ~/.config/watson
+		git_cmd pull
+	)
+}
+
+# let ls only report directories
+lsd () {
+	ls -p "$@" | grep '/$\|:\|^$' | sed 's-/$--'
+}
+
+#let ls only report files
+lsf () {
+	ls -p "$@" | grep -v /$
+}
+
+# ls only hidden files
+lsh () {
+	ls -a "$@" | grep '^\.[^\.]'
+}
+
+# cd and ls in one step
+cl () {
+	DIR="$*";
+		# if no DIR given, go home
+		if [ $# -lt 1 ]; then
+			DIR=$HOME;
+		fi;
+	builtin cd "${DIR}" && \
+	# use your preferred ls command
+		ls --color=auto
+}
+
+# perform command in background
+bgg () {
+	command="$*";
+	nohup ${command} &>/dev/null &
+}
+
+# edit command in editor without executing on exit
+_edit_wo_executing() {
+    local editor="${EDITOR}"
+    tmpf="$(mktemp)"
+    printf '%s\n' "$READLINE_LINE" > "$tmpf"
+    "$editor" "$tmpf"
+    READLINE_LINE="$(<"$tmpf")"
+    READLINE_POINT="${#READLINE_LINE}"
+    rm "$tmpf"
+}
+bind -x '"\C-x\C-e":_edit_wo_executing'
+
+# open jupyter lab on remote machine
+jplab () {
+	remote=$1
+	port="7979"
+	ssh -CNL localhost:$port:localhost:$port $remote &
+	sleep 2
+	firefox localhost:$port
+	fg > /dev/null
+}
+
+# ssh relay jupyter notebook server to localhost:7980 for hydrogen in atom
+rem_nb_kernel () {
+	remote=$1
+	port=$2
+	if [ ! -z $2 ]; then
+		port=$2
+	else
+		port="7980"
+	fi
+	fuser $port/tcp -k 			# kill process if already listening on that port
+	ssh -CNL localhost:$port:localhost:$port $remote
+}
+
+sftp_atom () {
+	fuser 2222/tcp -k 			# kill process if already listening on 2222
+	ssh -NL localhost:2222:localhost:22 $1
+}
+
+remote_for_atom () {
+	rem_nb_kernel "$@" &
+	sftp_atom $1
+}
+
+# sum up a list of numbers
+sum_pipe () {
+	awk '{s+=$1} END {
+		if (s >= 10000 || s <= -10000) {printf "%.2e\n", s}
+		else {print s}}'
+}
+
+# calculate the mean of a list of numbers 
+mean_pipe () {
+	awk '{s+=$1} END {m=s/NR;
+		if (m >= 10000 || m <= -10000) {printf "%.2e\n", m}
+		else {print m}}'
+}
+
+# get the maximum of a list of numbers
+max_pipe () {
+	awk 'NR==1{max = $1 + 0; next} {if ($1 > max) max = $1;} END {print max}' 
+}
+
+# get the minimum of a list of numbers
+min_pipe () {
+	awk 'NR==1{min = $1 + 0; next} {if ($1 < min) min = $1;} END {print min}' 
+}

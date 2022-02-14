@@ -1,0 +1,15 @@
+{
+"Sensitive":"Sensitive",
+"Pre-MDR":"Pre-MDR-TB",
+"HR-TB":"Pre-MDR-TB",
+"RR-TB":"Pre-MDR-TB",
+"MDR":"MDR-TB",
+"MDR-TB":"MDR-TB",
+"Pre-XDR":"Pre-XDR-TB",
+"Pre-XDR-TB":"Pre-XDR-TB",
+"XDR":"XDR-TB",
+"XDR-TB":"XDR-TB",
+"Other":"Other"
+}
+
+

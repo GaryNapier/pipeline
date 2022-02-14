@@ -174,3 +174,14 @@ def resolve_lineages(data):
             break
     return data
 
+
+def get_embedded_keys(in_dict):
+    # Pull keys from embedded dictionary
+    
+    # Example
+    # x = {'samp_1': {'id': 'samp_1', 'lin': 'lin1', 'type': 'XDR'}, 
+    # 'samp_2': {'id': 'samp_2', 'lin': 'lin3', 'type': 'MDR'}}
+    # x[list(x)[0]].keys()
+    # dict_keys(['id', 'lin', 'type'])
+
+    return in_dict[list(in_dict)[0]].keys()

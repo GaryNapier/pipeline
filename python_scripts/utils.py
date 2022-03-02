@@ -74,7 +74,7 @@ def csv_to_dict(file):
         out_dict[row[key]] = row
     return out_dict
 
-def csv_to_dict_multi(file):
+def csv_to_dict_multi(file, leading_key=""):
     # If the csv file contains multiple rows for the key of interest ('Gene' in the example below), use this function
     
     # Convert from e.g.:
@@ -114,8 +114,35 @@ def csv_to_dict_multi(file):
     #    'Interaction': '',
     #    'Literature': ''},... etc
 
+    # Specify the 'leading key' in the args if the keys are to be another column
+    # e.g. csv_to_dict_multi(file, leading_key='Drug'):
+    # 'rifampicin': [{'Gene': 'rpoC',
+    #    'Mutation': 'p.Asp485Asn',
+    #    'Drug': 'rifampicin',
+    #    'Confers': 'resistance',
+    #    'Interaction': '',
+    #    'Literature': ''},
+    #   {'Gene': 'rpoC',
+    #    'Mutation': 'p.Asp735Asn',
+    #    'Drug': 'rifampicin',
+    #    'Confers': 'resistance',
+    #    'Interaction': '',
+    #    'Literature': ''},...
+    # 'streptomycin': [{'Gene': 'rpsL',
+    #    'Mutation': 'p.Arg86Pro',
+    #    'Drug': 'streptomycin',
+    #    'Confers': 'resistance',
+    #    'Interaction': '',
+    #    'Literature': ''},
+    #   {'Gene': 'rpsL',
+    #    'Mutation': 'p.Arg86Trp',
+    #    'Drug': 'streptomycin',
+    #    'Confers': 'resistance',
+    #    'Interaction': '',
+    #    'Literature': ''},... etc
+
     reader = csv.DictReader(file)
-    key = reader.fieldnames[0]
+    key = leading_key if leading_key!="" else reader.fieldnames[0]        
     out_dict = {}
     for row in reader:
         if row[key] in out_dict.keys():

@@ -22,22 +22,7 @@
 
 library(optparse)
 
-heaD <- function(x,...){
-  head(x, ...)
-}
-
-len_str <- function(string){
-  length(unlist(strsplit(string, split = "")))
-}
-
-hs <- function(x, ...){
-  print(head(x, ...))
-  print("---")
-  str(x, ...)
-}
-
-
-
+source("https://raw.githubusercontent.com/GaryNapier/Packages_functions/master/Functions.R")
 
 # Arguments ----
 

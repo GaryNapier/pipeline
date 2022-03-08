@@ -13,9 +13,10 @@ def invert_dict_listed(d):
     # invert_dict_listed(x)
     # {'apples': ['a'], 'bananas': ['b'], 'pears': ['c']}
 
+    # Dictionary with multiple elements in list
     # x = {'a':['apples'], 'b':['bananas'], 'c':['pears', 'grapes']}
     # invert_dict_listed(x)
-    # invert_dict_listed(x)
+    # {'apples': ['a'], 'bananas': ['b'], 'pears': ['c'], 'grapes': ['c']}
 
     inverse = dict()
     for key in d:

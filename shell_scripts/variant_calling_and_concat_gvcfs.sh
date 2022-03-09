@@ -26,8 +26,8 @@ set -o pipefail
 
 # RUN
 # Assume run from ~/transmission :
-# shell_scripts/variant_calling_and_concat_gvcfs.sh <study_accession> <sample_list_file>             <vcf_dir>  <gvcf_file_suffix>  <ref_file>                                <threads>
-# shell_scripts/variant_calling_and_concat_gvcfs.sh PRJEB7669         metadata/PRJEB7669.samps.csv   ~/vcf/     .g.vcf.gz           ~/refgenome/MTB-h37rv_asm19595v2-eg18.fa  20
+# shell_scripts/variant_calling_and_concat_gvcfs.sh <study_accession> <sample_list_file>             <vcf_dir>  <gvcf_file_suffix>  <ref_file>                                <threads> <output_vcf_dir> <vcf_remote>
+# shell_scripts/variant_calling_and_concat_gvcfs.sh PRJEB7669         metadata/PRJEB7669.samps.csv   ~/vcf/     .g.vcf.gz           ~/refgenome/MTB-h37rv_asm19595v2-eg18.fa  20        vcf/             /mnt/storage7/jody/tb_ena/per_sample/
 
 # ------------------------------------------------------------------------------
 
@@ -39,6 +39,8 @@ study_accession=${1}
 
 # Directories
 vcf_dir=${3}
+output_vcf_dir=${7}
+vcf_remote=${8}
 tmp_dir=tmp/
 logs_dir=logs/
 genomicsDB_dir=genomicsDB/
@@ -55,7 +57,7 @@ vcf_map_file=${tmp_dir}vcf_map_file
 failed_samples_file=${logs_dir}variant_calling_and_concat_gvcfs_failed_samples
 windows_file=${tmp_dir}windows_file
 genotyped_vcf_suffix=.val.gt${gvcf_file_suffix}
-output_vcf_file=${vcf_dir}${study_accession}${genotyped_vcf_suffix}
+output_vcf_file=${output_vcf_dir}${study_accession}${genotyped_vcf_suffix}
 
 # Parameters
 threads=${6}
@@ -66,6 +68,7 @@ echo "Parameters:"
 printf "\n"
 echo ${study_accession}
 echo ${vcf_dir}
+echo ${output_vcf_dir}
 echo ${tmp_dir}
 echo ${logs_dir}
 echo ${genomicsDB_dir}
@@ -115,6 +118,15 @@ mkdir ${genomicsDB_dir}
 
 # ------------------------------------------------------------------------------
 
+# WRANGLE DATA
+
+# Clean samples file - make sure there are no hidden characters!
+remove_hidden.sh ${sample_list_file}
+
+# Make sure all the samples have been pulled from the remote DB (symbolic links)
+vcf_links.sh ${sample_list_file} ${vcf_remote} ${vcf_dir} ${gvcf_file_suffix}
+
+# ------------------------------------------------------------------------------
 # Commands
 # see https://github.com/pathogenseq/fastq2matrix/blob/08480865bd2248ddb35a6d9e7321fff66fdd7a0c/scripts/merge_vcfs.py for use of gatk GenomicsDBImport
 bedtools_cmd="bedtools makewindows -n ${num_genome_chunks} -g ${ref_index}"
@@ -151,15 +163,14 @@ touch ${failed_samples_file}
 
 # Check if validated gvcf files exist for each sample and add to map if exist
 for samp in $(cat ${sample_list_file}); do
+    echo "CHECKING FILE ${vcf_dir}${samp}${val_gvcf_file_suffix} EXISTS"
     if [ -f ${vcf_dir}${samp}${val_gvcf_file_suffix} ]; then
         # sed "s|.*|&\t${fastq_dir}&.gvcf.gz|" ${metadata_dir}${samples_list_file} >> ${metadata_dir}${study_accession}_sample_map.txt
         echo -e "${samp}\t${vcf_dir}${samp}${gvcf_file_suffix}" >> ${vcf_map_file}
+        echo "FILE PASSED! ${vcf_dir}${samp}${val_gvcf_file_suffix}"
     else
-        printf "\n"
         echo -e "${samp}" >> ${failed_samples_file}
-        printf "\n"
-        echo "Failed sample!: ${samp}"
-        printf "\n"
+        echo "Failed sample!: ${vcf_dir}${samp}${val_gvcf_file_suffix}"
     fi
 done
 

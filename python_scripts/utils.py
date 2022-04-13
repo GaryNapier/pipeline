@@ -3,6 +3,7 @@
 import csv
 from csv import DictReader
 import re
+import pathogenprofiler as pp
 
 def flat_list(mylist):
     return [item for sublist in mylist for item in sublist]
@@ -202,7 +203,6 @@ def resolve_lineages(data):
             break
     return data
 
-
 def get_embedded_keys(in_dict):
     # Pull keys from embedded dictionary
     
@@ -213,3 +213,9 @@ def get_embedded_keys(in_dict):
     # dict_keys(['id', 'lin', 'type'])
 
     return in_dict[list(in_dict)[0]].keys()
+
+def clean_file(file_name):
+    # Remove stupid "^M" ('carriage return') character that python stupidly puts on to the end of each line
+    # https://unix.stackexchange.com/questions/32001/what-is-m-and-how-do-i-get-rid-of-it
+    cmd = "sed -i -e 's/\r//g' %s" % file_name
+    pp.run_cmd(cmd)

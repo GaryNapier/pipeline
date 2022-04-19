@@ -97,7 +97,7 @@ fi
 echo "Running iqtree on ${fasta_input_file}"
 echo "Number of samples: `grep ">" ${fasta_input_file} | wc -l`"
 # Run tree
-iqtree -s ${fasta_input_file} -m GTR+G -nt AUTO -redo -B 1000
+iqtree -s ${fasta_input_file} -m GTR+G -nt AUTO -redo -bb 1000
 
 # Move output files to correct place
 mv ${fasta_dir}*.iqtree ${fasta_dir}*.treefile ${fasta_dir}*.log ${newick_output_dir}

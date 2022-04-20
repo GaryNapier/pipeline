@@ -33,8 +33,8 @@ set -o pipefail
 # newick file - tree of input samples
 
 # RUN EXAMPLE
-# tree_pipeline.sh 1              2        3                      4                5           6            7                 8                       9
-# tree_pipeline.sh <project_code> <vcf_db> <samples_for_vcf_file> <vcf_output_dir> <fasta_dir> <newick_dir> <refgenome_fasta> <exclude_loci_bed_file> <threads>
+# tree_pipeline.sh 1              2        3                4                      5           6            7                 8                       9            10
+# tree_pipeline.sh <project_code> <vcf_db> <vcf_output_dir> <samples_for_vcf_file> <fasta_dir> <newick_dir> <refgenome_fasta> <exclude_loci_bed_file> <vcf_remote> <threads>
 
 # ------------------------------------------------------------------------------
 
@@ -52,18 +52,19 @@ set -o pipefail
 
 # Variables
 project_code=${1}
-threads=${9:-20}
+threads=${10:-20}
 
 # Directories
 vcf_db=${2}
-vcf_output_dir=${4}
+vcf_output_dir=${3}
+vcf_remote=${9:-/mnt/storage7/jody/tb_ena/per_sample/}
 fasta_dir=${5}
 newick_dir=${6}
 
 # Files and suffixes/prefixes
 
 # variant_calling_and_concat_gvcfs.sh
-samples_for_vcf_file=${3}
+samples_for_vcf_file=${4}
 gvcf_file_suffix=.g.vcf.gz 
 refgenome_fasta=${7:-~/refgenome/MTB-h37rv_asm19595v2-eg18.fa}
 
@@ -93,7 +94,7 @@ echo "newick directory: " ${newick_dir}
 printf "\n"
 
 # Do joint variant calling on validated gvcfs of samples specific to study accession ready for distance matrix calculation.
-variant_calling_and_concat_gvcfs.sh ${project_code} ${samples_for_vcf_file} ${vcf_db} ${gvcf_file_suffix} ${refgenome_fasta} ${threads} ${vcf_output_dir}
+variant_calling_and_concat_gvcfs.sh ${project_code} ${samples_for_vcf_file} ${vcf_db} ${gvcf_file_suffix} ${refgenome_fasta} ${threads} ${vcf_output_dir} ${vcf_remote}
 
 # Do variant filtering (TB specific)
 variant_filtering.sh ${multi_samp_vcf} ${filt_multi_samp_vcf_file} ${exclude_loci_bed_file} ${refgenome_fasta}

@@ -103,7 +103,8 @@ variant_filtering.sh ${multi_samp_vcf} ${filt_multi_samp_vcf_file} ${exclude_loc
 vcf2fasta.sh ${project_code} ${filt_multi_samp_vcf_file} ${fasta_dir} ${refgenome_fasta}
 
 # Run IQtree on fasta
-iqtree.sh ${project_code} ${fasta_file} ${newick_dir}
+# iqtree.sh ${project_code} ${fasta_file} ${newick_dir}
+FastTreeMP_double -gtr -nt ${fasta_file} > ${newick_dir}${project_code}.treefile
 
 echo "---"
 echo "tree_pipeline.sh DONE"

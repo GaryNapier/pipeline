@@ -68,6 +68,16 @@ samples_for_vcf_file=${4}
 gvcf_file_suffix=.g.vcf.gz 
 refgenome_fasta=${7:-~/refgenome/MTB-h37rv_asm19595v2-eg18.fa}
 
+# Make dirs if don't exist 
+if [ ! -d ${vcf_output_dir} ]; then
+    mkdir ${vcf_output_dir}
+fi
+
+if [ ! -d ${newick_dir} ]; then
+    mkdir ${newick_dir}
+fi 
+
+
 # variant_filtering.sh
 multi_samp_vcf=${vcf_output_dir}${project_code}.val.gt.g.vcf.gz
 filt_multi_samp_vcf_file=${vcf_output_dir}${project_code}.filt.val.gt.g.vcf.gz
@@ -107,5 +117,5 @@ vcf2fasta.sh ${project_code} ${filt_multi_samp_vcf_file} ${fasta_dir} ${refgenom
 FastTreeMP_double -gtr -nt ${fasta_file} > ${newick_dir}${project_code}.treefile
 
 echo "---"
-echo "tree_pipeline.sh DONE"
+echo "tree_pipeline.sh for ${project_code} DONE"
 echo "---"

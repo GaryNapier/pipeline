@@ -53,6 +53,7 @@ itol_dr_file <- paste0(itol_templates_location, "itol.dr.txt")
 itol_clusters_file <- paste0(itol_templates_location, "itol.clusters.txt")
 itol_lineage_file <- paste0(itol_templates_location, "itol.lineages.txt")
 itol_major_lineage_file <- paste0(itol_templates_location, "itol.major_lineages.txt")
+itol_binary_file <- paste0(itol_templates_location, "itol.binary.txt")
 
 print("ARGUMENTS:")
 print("")
@@ -73,8 +74,10 @@ binary_template_text <- gsub("#SEPARATOR TAB", "SEPARATOR TAB", binary_template_
 binary_template_text <- gsub("SEPARATOR SPACE", "#SEPARATOR SPACE", binary_template_text)
 binary_template_text <- gsub("SEPARATOR COMMA", "#SEPARATOR COMMA", binary_template_text)
 # Replace comma with tab
+binary_template_text <- gsub("DATASET_LABEL,label1", "DATASET_LABEL\tlabel1", binary_template_text)
 binary_template_text <- gsub("COLOR,#ff0000", "COLOR\t#ff0000", binary_template_text)
-
+binary_template_text <- gsub("#field labels\nFIELD_LABELS,f1", "#field labels\n#FIELD_LABELS,f1", binary_template_text)
+binary_template_text <- gsub("FIELD_SHAPES,1", "#FIELD_SHAPES\t1", binary_template_text)
 
 # Scrape colourstrip template from itol
 
@@ -169,6 +172,32 @@ clusters_template_text <- gsub("#LEGEND_TITLE Dataset_legend", "LEGEND_TITLE\tCl
 
 write.table(clusters_template_text, file = itol_clusters_file,
             row.names=F,col.names=F, quote = F)
+
+
+# Binary data ----
+
+write.table(binary_template_text, file = itol_binary_file, 
+            row.names=F,col.names=F, quote = F)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

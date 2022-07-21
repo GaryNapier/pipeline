@@ -4,7 +4,7 @@
 
 # Annotate trees for each study accession (project) with:
 # - Drug resistance (from metadata)
-# - Clusters based on min SNP distance - output of r_scripts/transmission_clusters.R -> metadata/<study_accession>.clusters)
+# - Clusters based on min SNP distance - output of r_scripts/transmission_clusters.R -> metadata/<study_accession>.clusters
 # - Lineage - output of tbprofiler
 
 # Arguments to script:

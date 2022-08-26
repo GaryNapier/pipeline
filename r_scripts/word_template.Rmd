@@ -6,8 +6,8 @@ output:
     table_caption: yes
     number_sections: no
     reference_docx: ../word_template/use_template.docx
-bibliography: all_refs.bib
-csl: biomed-central.csl
+bibliography: ../references/all_refs.bib
+csl: ../references/biomed-central.csl
 ---
 
 
@@ -59,6 +59,28 @@ knitr::kable(df, row.names = F, caption = cap, format = "pipe")
 #### Heading 4
 
 ##### Heading 5
+
+
+1. A 'molecular barcode' identifying SNPs specific to existing MTBC clades, as well as extensions to the lineage system. 
+
+2. New software updating *in silico* prediction of spoligotypes ('SpolPred2') and association of lineages in (1) to spoligotypes. 
+
+3. Characterisation of *Mtb* drug resistance and transmission in Pakistan. 
+
+4. Detection of new resistance mutations from the presence of compensatory mutations. 
+
+- Bullet 
+- point
+- list
+- with
+- dashes
+
+* Bullet 
+* point
+* list
+* with 
+* asterisks
+
 
 
 Here is a reference [@Napier2020]
